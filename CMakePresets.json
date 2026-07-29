@@ -1,0 +1,70 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "vcpkg-linux-config",
+            "hidden": true,
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic",
+                "VCPKG_PREFIX_PATH": "${sourceDir}/out/build/${presetName}/vcpkg_installed/x64-linux/dynamic",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            }
+        },
+        {
+            "name": "global-config",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "installDir": "${sourceDir}/out/install/${presetName}",
+            "cacheVariables": {
+                "CMAKE_PREFIX_PATH": "${sourceDir}/out/build/${presetName}"
+            }
+        },
+        {
+            "name": "linux-base",
+            "hidden": true,
+            "generator": "Ninja",
+            "inherits": "global-config",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_AR": "llvm-ar",
+                "CMAKE_RANLIB": "llvm-ranlib",
+                "CMAKE_LINKER": "lld",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true,
+                "BUILD_SHARED_LIBS": true
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Linux"
+            }
+        },
+        {
+            "name": "linux-debug",
+            "displayName": "Linux Debug",
+            "inherits": "linux-base",
+            
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "linux-vcpkg-debug",
+            "displayName": "Linux Debug with vcpkg",
+            "inherits": ["linux-debug", "vcpkg-linux-config"]
+        },
+        {
+            "name": "linux-release",
+            "displayName": "Linux Release",
+            "inherits": "linux-base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "linux-vcpkg-release",
+            "displayName": "Linux Release",
+            "inherits": ["linux-release", "vcpkg-linux-config"]
+        }
+    ]
+}
