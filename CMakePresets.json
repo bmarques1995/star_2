@@ -6,7 +6,7 @@
             "hidden": true,
             "cacheVariables": {
                 "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic",
-                "VCPKG_PREFIX_PATH": "${sourceDir}/out/build/${presetName}/vcpkg_installed/x64-linux/dynamic",
+                "VCPKG_PREFIX_PATH": "${sourceDir}/out/build/${presetName}/vcpkg_installed/x64-linux-dynamic",
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
             }
         },
