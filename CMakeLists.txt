@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.28)
 project(Starlang VERSION 0.1.0)
 
 option(BUILD_CLI "Build the command line interface" ON)
+option(BUILD_TESTS "Build tests" ON)
 
 if(VCPKG_PREFIX_PATH)
     list(APPEND CMAKE_PREFIX_PATH "${VCPKG_PREFIX_PATH}")

@@ -1,9 +1,11 @@
 
 file(GLOB_RECURSE STAR_SRC_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "star/*.cc")
 file(GLOB_RECURSE STAR_HDR_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "star/*.hh")
+file(GLOB_RECURSE STAR_TESTS_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "tests/*.cc")
 
 find_package(magic_enum CONFIG REQUIRED)
 find_package(pcre2 CONFIG REQUIRED)
+find_package(GTest CONFIG REQUIRED)
 
 set(LIB_TARGET_NAME star)
 add_library(${LIB_TARGET_NAME} ${STAR_SRC_FILES} ${STAR_HDR_FILES})
@@ -27,5 +29,16 @@ if(BUILD_CLI)
     set_cxx_project_standards(${EXECUTABLE_TARGET_NAME} 20 FALSE)
     if(NOT WIN32)
         append_rpath(TARGET_NAME ${EXECUTABLE_TARGET_NAME})
+    endif()
+endif()
+
+if(BUILD_TESTS)
+    enable_testing()
+    set(TESTS_TARGET_NAME star_tests)
+    add_executable(${TESTS_TARGET_NAME} ${STAR_TESTS_FILES})
+    target_link_libraries(${TESTS_TARGET_NAME} PRIVATE star GTest::gtest GTest::gtest_main)
+    set_cxx_project_standards(${TESTS_TARGET_NAME} 20 FALSE)
+    if(NOT WIN32)
+        append_rpath(TARGET_NAME ${TESTS_TARGET_NAME})
     endif()
 endif()

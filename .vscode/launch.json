@@ -11,6 +11,17 @@
                 "file.st"
             ],
             "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb-dap",
+            "request": "launch",
+            "name": "Star tests vcpkg",
+            "program": "${workspaceFolder}/out/build/linux-vcpkg-debug/bin/star_tests",
+            "console": "integratedTerminal",
+            "args": [
+                "file.st"
+            ],
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

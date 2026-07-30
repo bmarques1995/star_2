@@ -5,6 +5,9 @@
     },
     {
         "name": "pcre2"
+    },
+    {
+        "name": "gtest"
     }
   ]
 }
