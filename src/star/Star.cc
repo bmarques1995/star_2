@@ -1,4 +1,5 @@
 #include "Star.hh"
+#include "ColorToken.hh"
 #include <string>
 #include <vector>
 #include <iostream>
@@ -7,14 +8,12 @@
 #include <sstream>
 
 namespace fs = std::filesystem;
-static const char* errorCliColorBeg = "\033[31m";
-static const char* errorCliColorEnd = "\033[0m";
 
 void star::Star::RunFile(const std::string& filePath)
 {
     if(!fs::exists(filePath))
     {
-        std::cerr << errorCliColorBeg <<"File not found: " << filePath << errorCliColorEnd << "\n";
+        std::cerr << ColorToken::s_Red <<"File not found: " << filePath << ColorToken::s_EndColor << "\n";
         std::exit(66);
     }
 
@@ -22,7 +21,7 @@ void star::Star::RunFile(const std::string& filePath)
 
     if(!file)
     {
-        std::cerr << errorCliColorBeg << "Permission denied to open file: " << filePath << errorCliColorEnd <<"\n";
+        std::cerr << ColorToken::s_Red << "Permission denied to open file: " << filePath << ColorToken::s_EndColor <<"\n";
         std::exit(77);
     }
     std::streamsize size = file.tellg();
@@ -31,7 +30,7 @@ void star::Star::RunFile(const std::string& filePath)
 
     if(!file.read(buffer.data(), size))
     {
-        std::cerr << errorCliColorBeg << "Error reading file." << errorCliColorEnd << "\n";
+        std::cerr << ColorToken::s_Red << "Error reading file." << ColorToken::s_EndColor << "\n";
     }
 
     std::string content(buffer.begin(), buffer.end());
