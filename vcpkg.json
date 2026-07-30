@@ -1,7 +1,10 @@
 {
   "dependencies": [
     {
-      "name": "magic-enum"
+        "name": "magic-enum"
+    },
+    {
+        "name": "pcre2"
     }
   ]
 }
