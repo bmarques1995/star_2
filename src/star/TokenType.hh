@@ -6,6 +6,7 @@ namespace star
     {
         LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
         COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+        LEFT_BRACKET, RIGHT_BRACKET,
 
         BANG, BANG_EQUAL,
         EQUAL, EQUAL_EQUAL,
@@ -14,7 +15,7 @@ namespace star
 
         IDENTIFIER, STRING, NUMBER,
 
-        AND, CLASS, ELSE, MY_FALSE, FUN, FOR, IF, NIL, OR,
+        AND, CLASS, ELSE, ST_FALSE, FUN, FOR, IF, NIL, OR,
         PRINT, RETURN, SUPER, THIS, ST_TRUE, VAR, WHILE,
 
         ST_EOF

@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb-dap",
+            "request": "launch",
+            "name": "Star vcpkg",
+            "program": "${workspaceFolder}/out/build/linux-vcpkg-debug/bin/star_cli",
+            "console": "integratedTerminal",
+            "args": [
+                "file.st"
+            ],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

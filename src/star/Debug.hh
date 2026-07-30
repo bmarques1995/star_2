@@ -15,5 +15,6 @@ namespace star
 
     public:
         static void Error(uint32_t line, const std::string&);
+        static bool HadError();
     };
 }

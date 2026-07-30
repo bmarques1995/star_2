@@ -8,6 +8,7 @@ namespace star
     {
     public:
         static const char* s_Red;
+        static const char* s_Green;
         static const char* s_EndColor;
     };
 }

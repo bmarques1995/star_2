@@ -12,3 +12,8 @@ void star::Debug::Error(uint32_t line, const std::string& message)
 {
     Report(line, "", message);
 }
+
+bool star::Debug::HadError()
+{
+    return s_HadError;
+}

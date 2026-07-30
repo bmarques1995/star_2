@@ -23,5 +23,7 @@ if(BUILD_CLI)
     target_link_libraries(${EXECUTABLE_TARGET_NAME} ${LIB_TARGET_NAME})
 
     set_cxx_project_standards(${EXECUTABLE_TARGET_NAME} 20 FALSE)
-    append_rpath(TARGET_NAME ${EXECUTABLE_TARGET_NAME})
+    if(NOT WIN32)
+        append_rpath(TARGET_NAME ${EXECUTABLE_TARGET_NAME})
+    endif()
 endif()

@@ -5,7 +5,8 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
-#include <sstream>
+#include "Scanner.hh"
+#include "Debug.hh"
 
 namespace fs = std::filesystem;
 
@@ -35,6 +36,7 @@ void star::Star::RunFile(const std::string& filePath)
 
     std::string content(buffer.begin(), buffer.end());
     Run(content);
+    if(Debug::HadError()){ std::exit(65); }
 }
 
 void star::Star::RunPrompt()
@@ -47,6 +49,7 @@ void star::Star::RunPrompt()
         if(!std::getline(std::cin, line) || (line == "exit"))
             break;
         Run(line);
+        if(Debug::HadError()){ std::exit(65); }
         std::cout << "\n";
         std::cout << replPrefix;
     }
@@ -54,5 +57,10 @@ void star::Star::RunPrompt()
 
 void star::Star::Run(const std::string& source)
 {
-    std::cout << source;
+    Scanner scanner(source);
+    std::vector<Token> tokens = scanner.ScanTokens();
+    for(auto& t: tokens)
+    {
+        std::cout << ColorToken::s_Green << t << ColorToken::s_EndColor << "\n";
+    }
 }
