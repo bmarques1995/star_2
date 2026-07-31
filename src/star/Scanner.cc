@@ -91,6 +91,7 @@ void star::Scanner::ScanToken()
             m_Line++;
             break;
         case '"':
+            String();
             break;
         default:
             ProcessDefault(c);
@@ -187,11 +188,13 @@ void star::Scanner::ProcessMultilineComment()
 
 void star::Scanner::String()
 {
-    while(Peek() != '\"' && !IsAtEnd())
+    char c = Peek();
+    while(c != '\"' && !IsAtEnd())
     {
-        if(Peek() == '\n')
+        if(c == '\n')
             m_Line++;
         Advance();
+        c = Peek();
     }
 
     if(IsAtEnd())
@@ -202,7 +205,7 @@ void star::Scanner::String()
 
     Advance();
 
-    std::string value{m_Source.substr(m_Start + 1, m_Current - m_Start + 1)};
+    std::string value{m_Source.substr(m_Start + 1, m_Current - m_Start - 2)};
     AddToken(TokenType::STRING, value);
 }
 
