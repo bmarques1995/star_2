@@ -1,11 +1,14 @@
 #pragma once
 
+//REC is for RECURSIVE
+
 namespace star
 {
     enum class TokenType
     {
         LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
-        COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+        COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, MOD, STAR,
+        REC_MINUS, REC_PLUS, REC_MOD, REC_SLASH, REC_STAR,
         LEFT_BRACKET, RIGHT_BRACKET,
 
         BANG, BANG_EQUAL,

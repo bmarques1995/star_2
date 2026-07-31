@@ -61,10 +61,11 @@ void star::Scanner::ScanToken()
         case '}': AddToken(TokenType::RIGHT_BRACE); break;
         case ',': AddToken(TokenType::COMMA); break;
         case '.': AddToken(TokenType::DOT); break;
-        case '-': AddToken(TokenType::MINUS); break;
-        case '+': AddToken(TokenType::PLUS); break;
+        case '-': AddToken(Match('=') ? TokenType::REC_MINUS : TokenType::MINUS); break;
+        case '+': AddToken(Match('=') ? TokenType::REC_PLUS : TokenType::PLUS); break;
         case ';': AddToken(TokenType::SEMICOLON); break;
-        case '*': AddToken(TokenType::STAR); break;
+        case '*': AddToken(Match('=') ? TokenType::REC_STAR : TokenType::STAR); break;
+        case '%': AddToken(Match('=') ? TokenType::REC_MOD : TokenType::MOD); break;
         case '[': AddToken(TokenType::LEFT_BRACKET); break;
         case ']': AddToken(TokenType::RIGHT_BRACKET); break;
         case '!':
@@ -137,7 +138,7 @@ void star::Scanner::ProcessSlash(char c)
         }
     }
     else{
-        AddToken(TokenType::SLASH);
+        AddToken(Match('=') ? TokenType::REC_SLASH : TokenType::SLASH);
     }
 }
 
