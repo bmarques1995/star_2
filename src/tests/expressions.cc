@@ -2,6 +2,7 @@
 #include <gtest/gtest.h>
 #include <string>
 #include <vector>
+#include <utility>
 #define PCRE2_CODE_UNIT_WIDTH 8
 #include <pcre2.h>
 
