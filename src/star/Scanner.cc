@@ -5,6 +5,9 @@
 #include <cstddef>
 #include <cstdint>
 #include <string_view>
+#include <algorithm>
+
+using match_range = std::pair<size_t, size_t>;
 
 const std::unordered_map<std::string, star::TokenType> star::Scanner::s_Keywords =
 {
@@ -85,6 +88,7 @@ void star::Scanner::ScanToken()
         case '\t':
             break;
         case '\n':
+            m_Line++;
             break;
         case '"':
             break;
@@ -133,9 +137,11 @@ char star::Scanner::PeekNext()
 void star::Scanner::ProcessSlash(char c)
 {
     if(Match('/')){
-        while(Peek() != '\n' && !IsAtEnd()){
-            Advance();
-        }
+        ProcessComment();
+    }
+    else if(Match('*'))
+    {
+        ProcessMultilineComment();
     }
     else{
         AddToken(Match('=') ? TokenType::REC_SLASH : TokenType::SLASH);
@@ -156,6 +162,27 @@ void star::Scanner::ProcessDefault(char c)
     {
         Debug::Error(m_Line, "Unexpected character.");
     }
+}
+
+void star::Scanner::ProcessComment()
+{
+    std::string_view currentProcessing;
+    InitCurrentProcessingString(&currentProcessing);
+
+    match_range match = m_LCProcessor.GetFirstMatch(currentProcessing); 
+    m_Current = m_Start + match.second;
+}
+
+void star::Scanner::ProcessMultilineComment()
+{
+    std::string_view currentProcessing;
+    InitCurrentProcessingString(&currentProcessing);
+
+    match_range match = m_MLCProcessor.GetFirstMatch(currentProcessing);
+    std::string text{m_Source.substr(m_Start, match.second)};
+    size_t newLineIncidences = std::count(text.begin(), text.end(), '\n');
+    m_Current = m_Start + match.second;
+    m_Line += newLineIncidences;
 }
 
 void star::Scanner::String()
@@ -193,16 +220,22 @@ void star::Scanner::Number()
 
 void star::Scanner::Identifier()
 {
-    auto strIt = m_Source.begin();
-    strIt += m_Start;
-    std::string_view currentProcessing(strIt, m_Source.end());
+    std::string_view currentProcessing;
+    InitCurrentProcessingString(&currentProcessing);
 
-    std::pair<size_t, size_t> match = m_IdentProcessor.GetFirstMatch(currentProcessing);
+    match_range match = m_IdentProcessor.GetFirstMatch(currentProcessing);
     std::string text{m_Source.substr(m_Start, match.second)};
     auto it = s_Keywords.find(text);
     TokenType type = it == s_Keywords.end() ? TokenType::IDENTIFIER : it->second;
     m_Current = m_Start + match.second;
     AddToken(type);
+}
+
+void star::Scanner::InitCurrentProcessingString(std::string_view* currentText)
+{
+    auto strIt = m_Source.begin();
+    strIt += m_Start;
+    *currentText = std::string_view(strIt, m_Source.end());
 }
 
 star::Scanner::Scanner(const std::string& source) : m_Source(source),

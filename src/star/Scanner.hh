@@ -43,7 +43,6 @@ namespace star
         void ProcessComment();
         void ProcessMultilineComment();
 
-        void ProcessIdentifier();
         void ProcessInteger();
         void ProcessHex();
         void ProcessFloat();
@@ -52,6 +51,7 @@ namespace star
         void Number();
         void Identifier();
 
+        void InitCurrentProcessingString(std::string_view* currentText);
     public:
         Scanner(const std::string& source);
         bool IsAtEnd();
