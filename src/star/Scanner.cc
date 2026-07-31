@@ -2,7 +2,9 @@
 #include "Token.hh"
 #include "TokenType.hh"
 #include "Debug.hh"
+#include <cstddef>
 #include <cstdint>
+#include <string_view>
 
 const std::unordered_map<std::string, star::TokenType> star::Scanner::s_Keywords =
 {
@@ -75,14 +77,7 @@ void star::Scanner::ScanToken()
             AddToken(Match('=') ? TokenType::GREATER_EQUAL : TokenType::GREATER);
             break;
         case '/':
-            if(Match('/')){
-                while(Peek() != '\n' && !IsAtEnd()){
-                    Advance();
-                }
-            }
-            else{
-                AddToken(TokenType::SLASH);
-            }
+            ProcessSlash(c);
             break;
         case ' ':
         case '\r':
@@ -93,18 +88,7 @@ void star::Scanner::ScanToken()
         case '"':
             break;
         default:
-            if(IsDigit(c))
-            {
-                Number();
-            }
-            else if(IsAlpha(c))
-            {
-                Identifier();
-            }
-            else
-            {
-                Debug::Error(m_Line, "Unexpected character.");
-            }
+            ProcessDefault(c);
             break;
     } 
 }
@@ -112,6 +96,13 @@ void star::Scanner::ScanToken()
 char star::Scanner::Advance()
 {
     return m_Source[m_Current++];
+}
+
+std::string star::Scanner::RegexAdvance(size_t offset)
+{
+    std::string result = m_Source.substr(m_Start, offset);
+    m_Current = m_Start + offset;
+    return result;
 }
 
 void star::Scanner::AddToken(TokenType type)
@@ -136,6 +127,34 @@ char star::Scanner::PeekNext()
     if((m_Current + 1) > static_cast<uint32_t>(m_Source.length()))
         return '\0';
     return m_Source.at(m_Current + 1);
+}
+
+void star::Scanner::ProcessSlash(char c)
+{
+    if(Match('/')){
+        while(Peek() != '\n' && !IsAtEnd()){
+            Advance();
+        }
+    }
+    else{
+        AddToken(TokenType::SLASH);
+    }
+}
+
+void star::Scanner::ProcessDefault(char c)
+{
+    if(IsDigit(c) || c == '.')
+    {
+        Number();
+    }
+    else if(IsAlpha(c))
+    {
+        Identifier();
+    }
+    else
+    {
+        Debug::Error(m_Line, "Unexpected character.");
+    }
 }
 
 void star::Scanner::String()
@@ -173,18 +192,25 @@ void star::Scanner::Number()
 
 void star::Scanner::Identifier()
 {
-    while(IsAlphaNumeric(Peek()))
-        Advance();
-    std::string text{m_Source.substr(m_Start, m_Current - m_Start)};
+    auto strIt = m_Source.begin();
+    strIt += m_Start;
+    std::string_view currentProcessing(strIt, m_Source.end());
+
+    std::pair<size_t, size_t> match = m_IdentProcessor.GetFirstMatch(currentProcessing);
+    std::string text{m_Source.substr(m_Start, match.second)};
     auto it = s_Keywords.find(text);
     TokenType type = it == s_Keywords.end() ? TokenType::IDENTIFIER : it->second;
+    m_Current = m_Start + match.second;
     AddToken(type);
 }
 
 star::Scanner::Scanner(const std::string& source) : m_Source(source),
-    m_Start(0), m_Current(0), m_Line(1)
+    m_Start(0), m_Current(0), m_Line(1),
+    m_HexProcessor{"(0[xX][0-9a-fA-F]+)([ui](?:8|16|32|64))?"},
+    m_IntProcessor{"([0-9](?:[0-9]|(?:'[0-9]{3}))*)([ui](?:8|16|32|64))"}, m_IsFloat{"[eEfF.]"}, m_IdentProcessor{"^[a-zA-Z_][a-zA-Z0-9_]*"},
+    m_LCProcessor{"\\/\\/[^\r\n]*"}, m_MLCProcessor{"\\/\\*.*?\\*\\/"}, 
+    m_FloatProcessor{"([0-9]*\\.[0-9]+(?:[eE][+-]?[0-9]+)?|[0-9]+\\.(?:[0-9]+)?(?:[eE][+-]?[0-9]+)?|[0-9]+(?:[eE][+-]?[0-9]+)?)([fF](?:16|32|64))?"}
 {
-    
 }
 
 bool star::Scanner::IsAtEnd()

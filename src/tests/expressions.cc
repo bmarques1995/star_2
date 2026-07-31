@@ -8,10 +8,10 @@
 
 namespace star
 {
-    class ExpressionAnalyser
+    class RegexProcessor
     {
     public:
-        ExpressionAnalyser(std::string_view pattern) : m_Pattern(pattern)
+        RegexProcessor(std::string_view pattern) : m_Pattern(pattern)
         {
             int errornumber;
             size_t erroroffset;
@@ -33,7 +33,7 @@ namespace star
             }
         }
 
-        ~ExpressionAnalyser()
+        ~RegexProcessor()
         {
             pcre2_code_free(m_RE);
         }
@@ -83,7 +83,7 @@ namespace star
 
     TEST(expressions, identifier)
     {
-        ExpressionAnalyser regexp("\\/\\*.*?\\*\\/");
+        RegexProcessor regexp("\\/\\*.*?\\*\\/");
         std::string text = R"(/*This is a long comment
         with line break*/)";
         auto matches = regexp.GetMatches(text);

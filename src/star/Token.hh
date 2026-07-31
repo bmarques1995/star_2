@@ -18,14 +18,14 @@ namespace star
     class STAR_API Token
     {
     public:
-        Token(TokenType type, std::string lexeme, std::any value, uint32_t line);
+        Token(TokenType type, std::string lexeme, std::any value, size_t line);
         std::string ToString() const;
 
     private:
         TokenType m_Type;
         std::string m_Lexeme;
         std::any m_Literal;
-        uint32_t m_Line;
+        size_t m_Line;
 
         static const std::unordered_map<std::type_index, Printer> s_Printers;
     };
