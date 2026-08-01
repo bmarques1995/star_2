@@ -1,11 +1,10 @@
 #pragma once
 
-#include "StarMacro.hh"
 #include <string>
 
 namespace star {
 
-    class STAR_API Star {
+    class Star {
     public:
         static void RunFile(const std::string& filePath);
         static void RunPrompt();

@@ -5,7 +5,7 @@
             "type": "lldb-dap",
             "request": "launch",
             "name": "Star vcpkg",
-            "program": "${workspaceFolder}/out/build/linux-vcpkg-debug/bin/star_cli",
+            "program": "${workspaceFolder}/out/build/linux-vcpkg-debug/bin/star_repl",
             "console": "integratedTerminal",
             "args": [
                 "file.st"

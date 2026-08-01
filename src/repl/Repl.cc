@@ -1,12 +1,12 @@
-#include "Star.hh"
-#include "ColorToken.hh"
+#include "Repl.hh"
+#include <Console.hh>
 #include <string>
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include <filesystem>
-#include "Scanner.hh"
-#include "Debug.hh"
+#include <Scanner.hh>
+#include <Debug.hh>
 
 namespace fs = std::filesystem;
 
@@ -14,7 +14,7 @@ void star::Star::RunFile(const std::string& filePath)
 {
     if(!fs::exists(filePath))
     {
-        std::cerr << ColorToken::s_Red <<"File not found: " << filePath << ColorToken::s_EndColor << "\n";
+        star::ErrorConsole() << "File not found: " << filePath;
         std::exit(66);
     }
 
@@ -22,7 +22,7 @@ void star::Star::RunFile(const std::string& filePath)
 
     if(!file)
     {
-        std::cerr << ColorToken::s_Red << "Permission denied to open file: " << filePath << ColorToken::s_EndColor <<"\n";
+        star::ErrorConsole() << "Permission denied to open file: " << filePath;
         std::exit(77);
     }
     std::streamsize size = file.tellg();
@@ -31,7 +31,7 @@ void star::Star::RunFile(const std::string& filePath)
 
     if(!file.read(buffer.data(), size))
     {
-        std::cerr << ColorToken::s_Red << "Error reading file." << ColorToken::s_EndColor << "\n";
+        star::ErrorConsole() << "Error reading file.";
     }
 
     std::string content(buffer.begin(), buffer.end());
@@ -43,15 +43,14 @@ void star::Star::RunPrompt()
 {
     std::string line;
     static const char* replPrefix = "star> ";
-    std::cout << replPrefix;
+    star::TraceConsole() << replPrefix;
     for(;;)
     {
         if(!std::getline(std::cin, line) || (line == "exit"))
             break;
         Run(line);
         if(Debug::HadError()){ std::exit(65); }
-        std::cout << "\n";
-        std::cout << replPrefix;
+        star::TraceConsole() << "\n" << replPrefix;
     }
 }
 
@@ -61,6 +60,6 @@ void star::Star::Run(const std::string& source)
     std::vector<Token> tokens = scanner.ScanTokens();
     for(auto& t: tokens)
     {
-        std::cout << ColorToken::s_Green << t << ColorToken::s_EndColor << "\n";
+        star::TraceConsole() << t.ToString();
     }
 }

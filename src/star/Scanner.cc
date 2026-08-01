@@ -1,7 +1,7 @@
 #include "Scanner.hh"
 #include "Token.hh"
 #include "TokenType.hh"
-#include "Debug.hh"
+//#include "Debug.hh"
 #include <cstddef>
 #include <cstdint>
 #include <string_view>
@@ -161,7 +161,7 @@ void star::Scanner::ProcessDefault(char c)
     }
     else
     {
-        Debug::Error(m_Line, "Unexpected character.");
+        //Debug::Error(m_Line, "Unexpected character.");
     }
 }
 
@@ -199,7 +199,7 @@ void star::Scanner::String()
 
     if(IsAtEnd())
     {
-        Debug::Error(m_Line, "Unterminated string.");
+        //Debug::Error(m_Line, "Unterminated string.");
         return;
     }
 
