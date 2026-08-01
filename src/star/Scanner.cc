@@ -36,12 +36,13 @@ const std::unordered_map<std::string, star::TokenType> star::Scanner::s_Keywords
 
 namespace star_definitions
 {
+    const std::string s_OperatorPost = R"([\+\-\*\/\%\=\!\<\>\&\|\^\~])";
     const std::string s_CommentRegex = R"(\/\/[^\r\n]*)";
     const std::string s_MultilineCommentRegex = R"((?s)\/\*.*?(?:\*\/|$))";
     const std::string s_IdentifierRegex = R"(^[a-zA-Z_][a-zA-Z0-9_]*)";
     const std::string s_HexRegex = R"(\A(?<number>(0[xX][0-9a-fA-F]+)?)(?<type>i(?:8|16|32|64)|u(?:8|16|32|64))?(?=[\+\-\*\/\%; \t\r\n]|\z))";
     const std::string s_IntRegex = R"(\A(?<number>([0-9](?:[0-9]|(?:'[0-9]{3}))*))(?<type>i(?:8|16|32|64)|u(?:8|16|32|64))?(?=[\+\-\*\/\%; \t\r\n]|\z))";
-    const std::string s_FloatRegex = R"(\A(?<number>(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?)(?<type>f(?:32|64))??(?=[\+\-\*\/; \t\r\n]|\z))";
+    const std::string s_FloatRegex = R"(\A(?<number>(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?)(?<type>f(?:32|64))?(?=[\+\-\*\/; \t\r\n]|\z))";
     const std::string s_IsFloat = R"([eEfF.])";
     const std::string s_NumberInitIdentRegex = R"(^[0-9][a-zA-Z0-9_]*)";
 }
@@ -80,7 +81,18 @@ void star::Scanner::ScanToken()
         case '{': AddToken(TokenType::LEFT_BRACE); break;
         case '}': AddToken(TokenType::RIGHT_BRACE); break;
         case ',': AddToken(TokenType::COMMA); break;
-        case '.': AddToken(TokenType::DOT); break;
+        case '.':
+        {
+            if(IsDigit(Peek()))
+            {
+                Number();
+            }
+            else
+            {
+                AddToken(TokenType::DOT);
+            }
+            break;
+        }
         case '-': AddToken(Match('=') ? TokenType::REC_MINUS : TokenType::MINUS); break;
         case '+': AddToken(Match('=') ? TokenType::REC_PLUS : TokenType::PLUS); break;
         case ';': AddToken(TokenType::SEMICOLON); break;
@@ -267,7 +279,7 @@ void star::Scanner::Number()
     }
 #endif
     char c = m_Source.at(m_Start);
-    if((c == '.') && IsDigit(PeekNext()))
+    if((c == '.') && IsDigit(Peek()))
     {
         if(!ProcessFloat())
         {

@@ -52,6 +52,7 @@ var x = 10;)";
 var x = 10.5;
 var y = 20;
 var y3 = 20.3e-8f32;
+var y4 = .3e-8f32;
 var _y = 20u64;
 var z = 30;)";
         Scanner scanner(input);
@@ -68,9 +69,17 @@ var z = 30;)";
 
     TEST(scanner, hex_attribute_test)
     {
-        std::string input = R"(0x1A3F)";
+        std::string input = R"(0x1A3F 0X64ae)";
         Scanner scanner(input);
         auto tokens = scanner.ScanTokens();
-        EXPECT_TRUE(tokens.size() > 1);
+        EXPECT_TRUE(tokens.size() == 3);
+    }
+
+    TEST(scanner, float_test)
+    {
+        std::string input = R"(.7e8 5.7e6f64)";
+        Scanner scanner(input);
+        auto tokens = scanner.ScanTokens();
+        EXPECT_TRUE(tokens.size() == 3);
     }
 }
