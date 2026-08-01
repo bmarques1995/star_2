@@ -8,7 +8,7 @@
             "program": "${workspaceFolder}/out/build/linux-vcpkg-debug/bin/star_repl",
             "console": "integratedTerminal",
             "args": [
-                "file.st"
+                "samples/file.st"
             ],
             "cwd": "${workspaceFolder}"
         },
