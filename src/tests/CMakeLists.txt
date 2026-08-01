@@ -11,10 +11,12 @@ if(NOT WIN32)
     append_rpath(TARGET_NAME ${TARGET_NAME})
 endif()
 
+get_target_property(STAR_TESTS_RUNTIME_OUTPUT_DIRECTORY ${TARGET_NAME} RUNTIME_OUTPUT_DIRECTORY)
+
 add_custom_target(copy_samples ALL
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${PROJECT_SOURCE_DIR}/samples
-        ${CMAKE_CURRENT_BINARY_DIR}/samples
+        ${STAR_TESTS_RUNTIME_OUTPUT_DIRECTORY}/samples
         COMMENT "Copying samples into binary directory")
 
 add_dependencies(${TARGET_NAME} copy_samples)
