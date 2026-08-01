@@ -4,4 +4,5 @@ Multi line
 comment
 */
 var lang = "Star";
-var lang2 = "Star C++";
+var Lang2 = "Star C++";
+var _Lang3 = "Star C++";

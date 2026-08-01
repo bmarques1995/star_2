@@ -37,7 +37,6 @@ namespace star
         bool Match(char expected);
         void ScanToken();
         char Advance();
-        std::string RegexAdvance(size_t offset);
 
         void AddToken(TokenType type);
         void AddToken(TokenType type, std::any literal);
@@ -51,9 +50,9 @@ namespace star
         void ProcessComment();
         void ProcessMultilineComment();
 
-        void ProcessInteger();
-        void ProcessHex();
-        void ProcessFloat();
+        bool ProcessInteger();
+        bool ProcessHex();
+        bool ProcessFloat();
 
         void String();
         void Number();
@@ -63,7 +62,8 @@ namespace star
     public:
         Scanner(const std::string& source);
         bool IsAtEnd();
-        std::vector<Token> ScanTokens();
+        const std::vector<Token>& ScanTokens();
+
         RegexProcessor m_LCProcessor;
         RegexProcessor m_MLCProcessor;
         RegexProcessor m_IdentProcessor;
@@ -71,5 +71,6 @@ namespace star
         RegexProcessor m_HexProcessor;
         RegexProcessor m_FloatProcessor;
         RegexProcessor m_IsFloat;
+        RegexProcessor m_NumberInitIdentProcessor;
     };
 }

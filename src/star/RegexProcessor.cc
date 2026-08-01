@@ -55,9 +55,10 @@ std::pair<size_t, size_t> star::RegexProcessor::GetFirstMatch(std::string_view t
     
     if(matchesCount > 0)
         pos = {ovector[0], ovector[1]};
+#ifdef STAR_DEBUG
     else
         GetLastError(matchesCount);
-
+#endif
     pcre2_match_data_free(match_data);
     return pos;
 }

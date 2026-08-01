@@ -11,6 +11,10 @@ target_include_directories(${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRE
 target_link_libraries(${TARGET_NAME} PRIVATE magic_enum::magic_enum
                                          PUBLIC PCRE2::8BIT PCRE2::POSIX)
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions(${TARGET_NAME} PUBLIC STAR_DEBUG)
+endif()
+
 if(WIN32)
     target_compile_definitions(${TARGET_NAME} PRIVATE STAR_PLATFORM_WINDOWS)
     if(BUILD_SHARED_LIBS)

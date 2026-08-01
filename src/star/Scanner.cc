@@ -34,6 +34,18 @@ const std::unordered_map<std::string, star::TokenType> star::Scanner::s_Keywords
     {"while",  TokenType::WHILE}
 };
 
+namespace star_definitions
+{
+    const std::string s_CommentRegex = R"(\/\/[^\r\n]*)";
+    const std::string s_MultilineCommentRegex = R"((?s)\/\*.*?(?:\*\/|$))";
+    const std::string s_IdentifierRegex = R"(^[a-zA-Z_][a-zA-Z0-9_]*)";
+    const std::string s_HexRegex = R"(\A(?<number>(0[xX][0-9a-fA-F]+)?)(?<type>i(?:8|16|32|64)|u(?:8|16|32|64))?(?=[\+\-\*\/\%; \t\r\n]|\z))";
+    const std::string s_IntRegex = R"(\A(?<number>([0-9](?:[0-9]|(?:'[0-9]{3}))*))(?<type>i(?:8|16|32|64)|u(?:8|16|32|64))?(?=[\+\-\*\/\%; \t\r\n]|\z))";
+    const std::string s_FloatRegex = R"(\A(?<number>(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?)(?<type>f(?:32|64))??(?=[\+\-\*\/; \t\r\n]|\z))";
+    const std::string s_IsFloat = R"([eEfF.])";
+    const std::string s_NumberInitIdentRegex = R"(^[0-9][a-zA-Z0-9_]*)";
+}
+
 bool star::Scanner::IsAlpha(char c)
 {
     return (c >= 'a' && c <= 'z') || 
@@ -107,13 +119,6 @@ void star::Scanner::ScanToken()
 char star::Scanner::Advance()
 {
     return m_Source[m_Current++];
-}
-
-std::string star::Scanner::RegexAdvance(size_t offset)
-{
-    std::string result = m_Source.substr(m_Start, offset);
-    m_Current = m_Start + offset;
-    return result;
 }
 
 void star::Scanner::AddToken(TokenType type)
@@ -205,7 +210,6 @@ void star::Scanner::String()
     if(IsAtEnd())
     {
         throw ScannerException("Unterminated string, ", m_Line);
-        return;
     }
 
     Advance();
@@ -214,9 +218,46 @@ void star::Scanner::String()
     AddToken(TokenType::STRING, value);
 }
 
+bool star::Scanner::ProcessInteger()
+{
+    std::string_view currentProcessing;
+    InitCurrentProcessingString(&currentProcessing);
+
+    match_range match = m_IntProcessor.GetFirstMatch(currentProcessing);
+    if(match.first == match.second)
+        return false;
+    m_Current = m_Start + match.second;
+    return true;
+}
+
+bool star::Scanner::ProcessHex()
+{
+    std::string_view currentProcessing;
+    InitCurrentProcessingString(&currentProcessing);
+
+    match_range match = m_HexProcessor.GetFirstMatch(currentProcessing);
+    if(match.first == match.second)
+        return false;
+    m_Current = m_Start + match.second;
+    return true;
+}
+
+bool star::Scanner::ProcessFloat()
+{
+    std::string_view currentProcessing;
+    InitCurrentProcessingString(&currentProcessing);
+
+    match_range match = m_FloatProcessor.GetFirstMatch(currentProcessing);
+    if(match.first == match.second)
+        return false;
+    m_Current = m_Start + match.second;
+    return true;
+}
+
 void star::Scanner::Number()
 {
-    while(IsDigit(Peek()))
+#if 0
+    while(IsDigit(Peek()) || (Peek() == '.'))
         Advance();
     if(Peek() == '.' && IsDigit(PeekNext()))
     {
@@ -224,6 +265,35 @@ void star::Scanner::Number()
         while(IsDigit(Peek()))
             Advance();
     }
+#endif
+    char c = m_Source.at(m_Start);
+    if((c == '.') && IsDigit(PeekNext()))
+    {
+        if(!ProcessFloat())
+        {
+            throw ScannerException("Invalid float literal", m_Line);
+        }
+    }
+    if(c == '0' && (Peek() == 'x' || Peek() == 'X'))
+    {
+        if(!ProcessHex())
+        {
+            throw ScannerException("Invalid hex literal", m_Line);
+        }
+    }
+    else if(IsDigit(c))
+    {
+        bool isInteger = ProcessInteger();
+        bool isFloat = ProcessFloat();
+
+        if(!isInteger && !isFloat)
+        {
+            throw ScannerException("Invalid number literal", m_Line);
+        }
+    }
+
+    std::string text{m_Source.substr(m_Start, m_Current - m_Start)};
+    AddToken(TokenType::NUMBER, text);
 }
 
 void star::Scanner::Identifier()
@@ -248,10 +318,14 @@ void star::Scanner::InitCurrentProcessingString(std::string_view* currentText)
 
 star::Scanner::Scanner(const std::string& source) : m_Source(source),
     m_Start(0), m_Current(0), m_Line(1),
-    m_HexProcessor{"(0[xX][0-9a-fA-F]+)([ui](?:8|16|32|64))?"},
-    m_IntProcessor{"([0-9](?:[0-9]|(?:'[0-9]{3}))*)([ui](?:8|16|32|64))"}, m_IsFloat{"[eEfF.]"}, m_IdentProcessor{"^[a-zA-Z_][a-zA-Z0-9_]*"},
-    m_LCProcessor{"\\/\\/[^\r\n]*"}, m_MLCProcessor{"\\/\\*.*?\\*\\/"}, 
-    m_FloatProcessor{"([0-9]*\\.[0-9]+(?:[eE][+-]?[0-9]+)?|[0-9]+\\.(?:[0-9]+)?(?:[eE][+-]?[0-9]+)?|[0-9]+(?:[eE][+-]?[0-9]+)?)([fF](?:16|32|64))?"}
+    m_HexProcessor{star_definitions::s_HexRegex},
+    m_FloatProcessor{star_definitions::s_FloatRegex},
+    m_IntProcessor{star_definitions::s_IntRegex},
+    m_IsFloat{star_definitions::s_IsFloat},
+    m_IdentProcessor{star_definitions::s_IdentifierRegex},
+    m_LCProcessor{star_definitions::s_CommentRegex},
+    m_MLCProcessor{star_definitions::s_MultilineCommentRegex},
+    m_NumberInitIdentProcessor{R"()"}
 {
 }
 
@@ -260,7 +334,7 @@ bool star::Scanner::IsAtEnd()
     return m_Current >= static_cast<uint32_t>(m_Source.length( ));
 }
 
-std::vector<star::Token> star::Scanner::ScanTokens()
+const std::vector<star::Token>& star::Scanner::ScanTokens()
 {
     while(!IsAtEnd())
     {
