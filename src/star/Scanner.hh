@@ -7,10 +7,18 @@
 #include <unordered_map>
 #include "Token.hh"
 #include "StarMacro.hh"
-//#include "Debug.hh"
+#include "BaseException.hh"
 
 namespace star
 {
+
+    class STAR_API ScannerException : public ScriptException
+    {
+    public:
+        ScannerException(const std::string& reason, size_t line = 0);
+        ~ScannerException() = default;
+    };
+
     class STAR_API Scanner
     {
     private:

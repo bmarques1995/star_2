@@ -1,13 +1,18 @@
 #include "Scanner.hh"
 #include "Token.hh"
 #include "TokenType.hh"
-//#include "Debug.hh"
 #include <cstddef>
 #include <cstdint>
 #include <string_view>
 #include <algorithm>
 
 using match_range = std::pair<size_t, size_t>;
+
+star::ScannerException::ScannerException(const std::string& reason, size_t line) : ScriptException()
+{
+    std::string lineInfo = line > 0 ? " at line: " + std::to_string(line) : "";
+    m_Reason = "ScannerException: " + reason + lineInfo;
+}
 
 const std::unordered_map<std::string, star::TokenType> star::Scanner::s_Keywords =
 {
@@ -161,7 +166,7 @@ void star::Scanner::ProcessDefault(char c)
     }
     else
     {
-        //Debug::Error(m_Line, "Unexpected character.");
+        throw ScannerException(std::string("Unexpected character: ") + c, m_Line);
     }
 }
 
@@ -199,7 +204,7 @@ void star::Scanner::String()
 
     if(IsAtEnd())
     {
-        //Debug::Error(m_Line, "Unterminated string.");
+        throw ScannerException("Unterminated string, ", m_Line);
         return;
     }
 
