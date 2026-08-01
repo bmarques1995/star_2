@@ -5,6 +5,13 @@ project(Starlang VERSION 0.1.0)
 option(BUILD_CLI "Build the command line interface" ON)
 option(BUILD_TESTS "Build tests" ON)
 
+option(ENABLE_LLVM_COVERAGE "Enable LLVM source coverage" OFF)
+
+if(ENABLE_LLVM_COVERAGE)
+    add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
+    add_link_options(-fprofile-instr-generate)
+endif()
+
 if(VCPKG_PREFIX_PATH)
     list(APPEND CMAKE_PREFIX_PATH "${VCPKG_PREFIX_PATH}")
 endif()

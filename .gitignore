@@ -4,3 +4,4 @@ compile_commands.json
 *.st
 !samples/*.st
 .cache/
+coverage/
