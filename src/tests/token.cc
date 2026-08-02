@@ -20,7 +20,32 @@ namespace star
         std::string actualOutput = token.ToString();
         EXPECT_NE(actualOutput, expectedOutput);
     }
+
+    TEST(token, int_type)
+    {
+        Token token(TokenType::NUMBER, "10", 10, 1);
+        std::string expectedOutput = "NUMBER 10 10";
+        std::string actualOutput = token.ToString();
+        EXPECT_EQ(actualOutput, expectedOutput);
+    }
+
+    TEST(token, out_operator)
+    {
+        Token token(TokenType::PLUS, "+", nullptr, 1);
+        std::stringstream actualOutput;
+        actualOutput << token;
+        std::string expectedOutput = "PLUS + null";
+        EXPECT_EQ(actualOutput.str(), expectedOutput);
+    }
     
+    TEST(token, no_literal)
+    {
+        Token token(TokenType::IDENTIFIER, "D3DName", nullptr, 1);
+        std::stringstream actualOutput;
+        actualOutput << token;
+        std::string expectedOutput = "IDENTIFIER D3DName null";
+        EXPECT_EQ(actualOutput.str(), expectedOutput);
+    }
 }
 
 #endif

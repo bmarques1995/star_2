@@ -59,11 +59,6 @@ bool star::Scanner::IsDigit(char c)
     return (c >= '0') && (c <= '9');
 }
 
-bool star::Scanner::IsAlphaNumeric(char c)
-{
-    return IsAlpha(c) || IsDigit(c);
-}
-
 bool star::Scanner::Match(char expected)
 {
     if(IsAtEnd() || m_Source.at(m_Current) != expected)
@@ -82,7 +77,6 @@ void star::Scanner::ScanToken()
         case '}': AddToken(TokenType::RIGHT_BRACE); break;
         case ',': AddToken(TokenType::COMMA); break;
         case '.':
-        {
             if(IsDigit(Peek()))
             {
                 Number();
@@ -92,7 +86,6 @@ void star::Scanner::ScanToken()
                 AddToken(TokenType::DOT);
             }
             break;
-        }
         case '-': AddToken(Match('=') ? TokenType::REC_MINUS : TokenType::MINUS); break;
         case '+': AddToken(Match('=') ? TokenType::REC_PLUS : TokenType::PLUS); break;
         case ';': AddToken(TokenType::SEMICOLON); break;
@@ -149,12 +142,6 @@ char star::Scanner::Peek()
     if(IsAtEnd())
         return '\0';
     return m_Source.at(m_Current);
-}
-char star::Scanner::PeekNext()
-{
-    if((m_Current + 1) > static_cast<uint32_t>(m_Source.length()))
-        return '\0';
-    return m_Source.at(m_Current + 1);
 }
 
 void star::Scanner::ProcessSlash(char c)

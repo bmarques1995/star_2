@@ -48,10 +48,12 @@ std::string star::Token::ToString() const
         }
     }
     
+    /*
     else
     {
         output << "[no literal]";
     }
+    */
 
     std::string strToken = output.str();
     return strToken;

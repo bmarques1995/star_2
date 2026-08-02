@@ -57,7 +57,7 @@ var _y = 20u64;
 var z = 30;)";
         Scanner scanner(input);
         auto tokens = scanner.ScanTokens();
-        EXPECT_TRUE(tokens.size() > 1);
+        EXPECT_TRUE(tokens.size() == 31);
     }
 
     TEST(scanner, variable_naming_non_matching_test)
@@ -81,5 +81,62 @@ var z = 30;)";
         Scanner scanner(input);
         auto tokens = scanner.ScanTokens();
         EXPECT_TRUE(tokens.size() == 3);
+    }
+
+    TEST(scanner, test_token_set)
+    {
+        std::string input = R"(( ) { } [ ] , . + - * / % += -= *= /= %= == != < > <= >= ! = ;)";
+        Scanner scanner(input);
+        auto tokens = scanner.ScanTokens();
+        EXPECT_TRUE(tokens.size() == 28);
+    }
+
+    TEST(scanner, test_single_line_comment)
+    {
+        std::string input = R"(// This is a single line comment
+var x = 10;)";
+        Scanner scanner(input);
+        auto tokens = scanner.ScanTokens();
+        EXPECT_TRUE(tokens.size() == 6);
+    }
+
+    TEST(scanner, test_invalid_hex)
+    {
+        std::string input = R"(0xGHIJ)";
+        Scanner scanner(input);
+        EXPECT_THROW(scanner.ScanTokens(), star::ScannerException);
+    }
+
+    TEST(scanner, test_invalid_float)
+    {
+        std::string input = R"(5.7e6f64.3)";
+        Scanner scanner(input);
+        EXPECT_THROW(scanner.ScanTokens(), star::ScannerException);
+    }
+
+    TEST(scanner, test_invalid_dotfloat)
+    {
+        std::string input = R"(.7e6f64.3)";
+        Scanner scanner(input);
+        EXPECT_THROW(scanner.ScanTokens(), star::ScannerException);
+    }
+
+    TEST(scanner, test_invalid_integer)
+    {
+        std::string input = R"(075u6)";
+        Scanner scanner(input);
+        EXPECT_THROW(scanner.ScanTokens(), star::ScannerException);
+    }
+
+    TEST(scanner, test_invalid_symbol)
+    {
+        std::string input = R"(#)";
+        Scanner scanner(input);
+        EXPECT_THROW(scanner.ScanTokens(), star::ScannerException);
+    }
+
+    TEST(scanner, base_exception_test)
+    {
+        EXPECT_THROW(throw star::ScannerException("element"), star::ScannerException);
     }
 }

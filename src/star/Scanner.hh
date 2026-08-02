@@ -32,7 +32,6 @@ namespace star
     
         bool IsAlpha(char c);
         bool IsDigit(char c);
-        bool IsAlphaNumeric(char c);
 
         bool Match(char expected);
         void ScanToken();
@@ -42,7 +41,6 @@ namespace star
         void AddToken(TokenType type, std::any literal);
 
         char Peek();
-        char PeekNext();
 
         void ProcessSlash(char c);
         void ProcessDefault(char c);
