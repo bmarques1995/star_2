@@ -11,6 +11,7 @@ target_include_directories(${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRE
 target_link_libraries(${TARGET_NAME} PRIVATE magic_enum::magic_enum
                                          PUBLIC PCRE2::8BIT PCRE2::POSIX)
 
+enable_coverage(${TARGET_NAME})
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_definitions(${TARGET_NAME} PUBLIC STAR_DEBUG)
 endif()

@@ -10,6 +10,7 @@ set_cxx_project_standards(${TARGET_NAME} 20 FALSE)
 if(NOT WIN32)
     append_rpath(TARGET_NAME ${TARGET_NAME})
 endif()
+enable_coverage(${TARGET_NAME})
 
 get_target_property(STAR_TESTS_RUNTIME_OUTPUT_DIRECTORY ${TARGET_NAME} RUNTIME_OUTPUT_DIRECTORY)
 

@@ -7,10 +7,12 @@ option(BUILD_TESTS "Build tests" ON)
 
 option(ENABLE_LLVM_COVERAGE "Enable LLVM source coverage" OFF)
 
-if(ENABLE_LLVM_COVERAGE)
-    add_compile_options(-fprofile-instr-generate -fcoverage-mapping)
-    add_link_options(-fprofile-instr-generate)
-endif()
+macro(enable_coverage target)
+    if(ENABLE_LLVM_COVERAGE)
+        target_compile_options(${target} PRIVATE -fprofile-instr-generate -fcoverage-mapping)
+        target_link_options(${target} PRIVATE -fprofile-instr-generate)
+    endif()
+endmacro()
 
 if(VCPKG_PREFIX_PATH)
     list(APPEND CMAKE_PREFIX_PATH "${VCPKG_PREFIX_PATH}")
