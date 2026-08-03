@@ -1,11 +1,12 @@
 #include "Repl.hh"
-#include <Console.hh>
+#include "Console.hh"
 #include <string>
 #include <vector>
 #include <iostream>
 #include <fstream>
 #include <filesystem>
-#include <Scanner.hh>
+#include "Scanner.hh"
+#include "Parser.hh"
 #include <Debug.hh>
 
 namespace fs = std::filesystem;
@@ -56,10 +57,20 @@ void star::Star::RunPrompt()
 
 void star::Star::Run(const std::string& source)
 {
-    Scanner scanner(source);
-    std::vector<Token> tokens = scanner.ScanTokens();
-    for(auto& t: tokens)
+    try{
+        Scanner scanner(source);
+        std::vector<Token> tokens = scanner.ScanTokens();
+        Parser parser(tokens);
+        std::shared_ptr<star::Expr> expression = parser.Parse();
+    }
+    catch(const star::ScannerException& e)
     {
-        star::TraceConsole() << t.ToString();
+        star::ErrorConsole() << e.what();
+        return;
+    }
+    catch(const star::ParserException& e)
+    {
+        star::ErrorConsole() << e.what();
+        return;
     }
 }
