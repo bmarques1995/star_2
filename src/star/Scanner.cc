@@ -36,13 +36,14 @@ const std::unordered_map<std::string, star::TokenType> star::Scanner::s_Keywords
 
 namespace star_definitions
 {
-    const std::string s_OperatorPost = R"([\+\-\*\/\%\=\!\<\>\&\|\^\~])";
+    const std::string s_OperatorPost = R"((?=[\+\-\*\/\%=;\!\<\>\&\|\(\) \t\r\n]|\z))";
+    //(?=[\+\-\*\/\%=;\!\<\>\&\| \t\r\n]|\z)
     const std::string s_CommentRegex = R"(\/\/[^\r\n]*)";
     const std::string s_MultilineCommentRegex = R"((?s)\/\*.*?(?:\*\/|$))";
     const std::string s_IdentifierRegex = R"(^[a-zA-Z_][a-zA-Z0-9_]*)";
-    const std::string s_HexRegex = R"(\A(?<number>(0[xX][0-9a-fA-F]+)?)(?<type>i(?:8|16|32|64)|u(?:8|16|32|64))?(?=[\+\-\*\/\%; \t\r\n]|\z))";
-    const std::string s_IntRegex = R"(\A(?<number>([0-9](?:[0-9]|(?:'[0-9]{3}))*))(?<type>i(?:8|16|32|64)|u(?:8|16|32|64))?(?=[\+\-\*\/\%; \t\r\n]|\z))";
-    const std::string s_FloatRegex = R"(\A(?<number>(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?)(?<type>f(?:32|64))?(?=[\+\-\*\/; \t\r\n]|\z))";
+    const std::string s_HexRegex = R"(\A(?<number>(0[xX][0-9a-fA-F]+)?)(?<type>i(?:8|16|32|64)|u(?:8|16|32|64))?)" + s_OperatorPost;
+    const std::string s_IntRegex = R"(\A(?<number>([0-9](?:[0-9]|(?:'[0-9]{3}))*))(?<type>i(?:8|16|32|64)|u(?:8|16|32|64))?)" + s_OperatorPost;
+    const std::string s_FloatRegex = R"(\A(?<number>(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)(?:[eE][+-]?[0-9]+)?)(?<type>f(?:32|64))?)" + s_OperatorPost;
     const std::string s_IsFloat = R"([eEfF.])";
     const std::string s_NumberInitIdentRegex = R"(^[0-9][a-zA-Z0-9_]*)";
 }
