@@ -5,12 +5,17 @@
 #define type_assert(E)
 
 star::ParserException::ParserException(const Token& token, const std::string& reason) : 
-    ScriptException(), std::runtime_error(reason),
+    ScriptException(),
     m_Token(token)
 {
     std::stringstream ss;
-    ss << "ParserException: " << reason << " at: " << token;
+    ss << "ParserException: " << reason << " at: " << m_Token;
     m_Reason = ss.str();
+}
+
+const char* star::ParserException::what() const noexcept
+{
+    return m_Reason.c_str();
 }
 
 void star::Parser::Synchronize()
@@ -168,7 +173,7 @@ std::shared_ptr<star::Expr> star::Parser::Primary()
         return std::make_shared<Grouping>(expr);
     }
 
-    throw ParserException(Peek(), "Expect expression.");
+    throw ParserException(Peek(), "Expected expression");
 }
 
 star::Parser::Parser(const std::vector<star::Token>& tokens) : 

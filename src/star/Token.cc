@@ -2,8 +2,6 @@
 #include <magic_enum/magic_enum.hpp>
 #include <sstream>
 
-#ifdef STAR_DEBUG
-
 template<typename T>
 Printer make_printer()
 {
@@ -18,8 +16,6 @@ static const std::unordered_map<std::type_index, Printer> printers{
     { typeid(double),      make_printer<double>() },
 };
 
-#endif
-
 star::Token::Token(TokenType type, std::string lexeme, std::any value, size_t line) :
     m_Type{type},
     m_Lexeme{lexeme},
@@ -29,7 +25,6 @@ star::Token::Token(TokenType type, std::string lexeme, std::any value, size_t li
 
 }
 
-#ifdef STAR_DEBUG
 std::string star::Token::ToString() const
 {
     std::stringstream output;
@@ -47,7 +42,7 @@ std::string star::Token::ToString() const
             output << "null";
         }
     }
-    
+    output << " at: " << m_Line;
     /*
     else
     {
@@ -64,4 +59,3 @@ std::ostream& operator<<(std::ostream& out, const star::Token& token)
     out << token.ToString();
     return out;
 }
-#endif
