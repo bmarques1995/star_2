@@ -18,6 +18,7 @@ namespace star
 {
     class STAR_API Token
     {
+        friend class Parser;
     public:
         Token(TokenType type, std::string lexeme, std::any value, size_t line);
 #ifdef STAR_DEBUG

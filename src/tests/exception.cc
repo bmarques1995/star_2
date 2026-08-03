@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
 #include <string>
-#include "BaseException.hh"
+#include "Scanner.hh"
 
 namespace star
 {
-    TEST(base_exception, default_constructor)
+    TEST(scanner_exception, default_constructor)
     {
-        star::ScriptException exception;
-        EXPECT_EQ(exception.what(), std::string(""));
+        star::ScannerException exception("Symbol not recognized", 1);
+        EXPECT_EQ(exception.what(), std::string("ScannerException: Symbol not recognized at line: 1"));
     }
 }
