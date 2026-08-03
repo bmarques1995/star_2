@@ -140,7 +140,7 @@ void star::Scanner::AddToken(TokenType type)
 void star::Scanner::AddToken(TokenType type, std::any literal)
 {
     std::string text{m_Source.substr(m_Start, m_Current - m_Start)};
-    m_Tokens.emplace_back(type, text, literal, m_Line);
+    m_Tokens.emplace_back(type, text, literal, m_Line, m_Filepath);
 }
 
 char star::Scanner::Peek()
@@ -321,8 +321,8 @@ void star::Scanner::InitCurrentProcessingString(std::string_view* currentText)
     *currentText = std::string_view(strIt, m_Source.end());
 }
 
-star::Scanner::Scanner(const std::string& source) : m_Source(source),
-    m_Start(0), m_Current(0), m_Line(1),
+star::Scanner::Scanner(const std::string& source, const std::string& filePath) : m_Source(source),
+    m_Start(0), m_Current(0), m_Line(1), m_Filepath(filePath),
     m_HexProcessor{star_definitions::s_HexRegex},
     m_FloatProcessor{star_definitions::s_FloatRegex},
     m_IntProcessor{star_definitions::s_IntRegex},
@@ -346,6 +346,6 @@ const std::vector<star::Token>& star::Scanner::ScanTokens()
         m_Start = m_Current;
         ScanToken();
     }
-    m_Tokens.emplace_back(TokenType::ST_EOF, "", nullptr, m_Line);
+    m_Tokens.emplace_back(TokenType::ST_EOF, "", nullptr, m_Line, m_Filepath);
     return m_Tokens;
 }

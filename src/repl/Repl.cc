@@ -36,7 +36,7 @@ void star::Star::RunFile(const std::string& filePath)
     }
 
     std::string content(buffer.begin(), buffer.end());
-    Run(content);
+    Run(content, filePath);
     if(Debug::HadError()){ std::exit(65); }
 }
 
@@ -55,10 +55,10 @@ void star::Star::RunPrompt()
     }
 }
 
-void star::Star::Run(const std::string& source)
+void star::Star::Run(const std::string& source, const std::string& filePath)
 {
     try{
-        Scanner scanner(source);
+        Scanner scanner(source, filePath);
         std::vector<Token> tokens = scanner.ScanTokens();
         Parser parser(tokens);
         std::shared_ptr<star::Expr> expression = parser.Parse();

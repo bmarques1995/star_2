@@ -65,12 +65,13 @@ namespace star
 
         void InitCurrentProcessingString(std::string_view* currentText);
     public:
-        Scanner(const std::string& source);
+        Scanner(const std::string& source, const std::string& filePath = "::repl");
         ~Scanner() = default;
 
         bool IsAtEnd();
         const std::vector<Token>& ScanTokens();
 
+        const std::string m_Filepath;
         RegexProcessor m_LCProcessor;
         RegexProcessor m_MLCProcessor;
         RegexProcessor m_IdentProcessor;

@@ -9,7 +9,7 @@ namespace star {
         static void RunFile(const std::string& filePath);
         static void RunPrompt();
     private:
-        static void Run(const std::string& source);
+        static void Run(const std::string& source, const std::string& filePath = "::repl");
 
     };
 

@@ -1,6 +1,7 @@
 #include "Token.hh"
 #include <magic_enum/magic_enum.hpp>
 #include <sstream>
+#include <string>
 
 template<typename T>
 Printer make_printer()
@@ -16,11 +17,12 @@ static const std::unordered_map<std::type_index, Printer> printers{
     { typeid(double),      make_printer<double>() },
 };
 
-star::Token::Token(TokenType type, std::string lexeme, std::any value, size_t line) :
+star::Token::Token(TokenType type, std::string lexeme, std::any value, size_t line, std::string source) :
     m_Type{type},
     m_Lexeme{lexeme},
     m_Literal{value},
-    m_Line{line}
+    m_Line{line},
+    m_SourceFile{source}
 {
 
 }
@@ -42,7 +44,7 @@ std::string star::Token::ToString() const
             output << "null";
         }
     }
-    output << " at: " << m_Line;
+    output << " at: " << m_SourceFile << ", l." << m_Line;
     /*
     else
     {

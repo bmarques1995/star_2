@@ -95,7 +95,7 @@ var z = 30;)";
     {
         std::string input = R"(// This is a single line comment
 var x = 10;)";
-        Scanner scanner(input);
+        Scanner scanner(input, "::repl");
         auto tokens = scanner.ScanTokens();
         EXPECT_TRUE(tokens.size() == 6);
     }
