@@ -36,7 +36,18 @@ namespace star
         std::string m_Source;
         std::vector<Token> m_Tokens;
         static const std::unordered_map<std::string, TokenType> s_Keywords;
-    
+        const std::string m_Filepath;
+        std::vector<size_t> m_SourceLinebreaks;
+
+        RegexProcessor m_LCProcessor;
+        RegexProcessor m_MLCProcessor;
+        RegexProcessor m_IdentProcessor;
+        RegexProcessor m_IntProcessor;
+        RegexProcessor m_HexProcessor;
+        RegexProcessor m_FloatProcessor;
+        RegexProcessor m_IsFloat;
+        RegexProcessor m_NumberInitIdentProcessor;
+
         bool IsAlpha(char c);
         bool IsDigit(char c);
 
@@ -64,21 +75,14 @@ namespace star
         void Identifier();
 
         void InitCurrentProcessingString(std::string_view* currentText);
+
+        void MapSourceNewLines();
+
     public:
         Scanner(const std::string& source, const std::string& filePath = "::repl");
         ~Scanner() = default;
 
         bool IsAtEnd();
         const std::vector<Token>& ScanTokens();
-
-        const std::string m_Filepath;
-        RegexProcessor m_LCProcessor;
-        RegexProcessor m_MLCProcessor;
-        RegexProcessor m_IdentProcessor;
-        RegexProcessor m_IntProcessor;
-        RegexProcessor m_HexProcessor;
-        RegexProcessor m_FloatProcessor;
-        RegexProcessor m_IsFloat;
-        RegexProcessor m_NumberInitIdentProcessor;
     };
 }

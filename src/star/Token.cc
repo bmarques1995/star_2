@@ -17,11 +17,13 @@ static const std::unordered_map<std::type_index, Printer> printers{
     { typeid(double),      make_printer<double>() },
 };
 
-star::Token::Token(TokenType type, std::string lexeme, std::any value, size_t line, std::string source) :
+star::Token::Token(TokenType type, std::string lexeme, std::any value, 
+    size_t line, size_t column, std::string source) :
     m_Type{type},
     m_Lexeme{lexeme},
     m_Literal{value},
     m_Line{line},
+    m_Column{column},
     m_SourceFile{source}
 {
 

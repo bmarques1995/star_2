@@ -140,7 +140,8 @@ void star::Scanner::AddToken(TokenType type)
 void star::Scanner::AddToken(TokenType type, std::any literal)
 {
     std::string text{m_Source.substr(m_Start, m_Current - m_Start)};
-    m_Tokens.emplace_back(type, text, literal, m_Line, m_Filepath);
+    m_Tokens.emplace_back(type, text, literal, m_Line, 
+        m_Start - m_SourceLinebreaks[m_Line - 1], m_Filepath);
 }
 
 char star::Scanner::Peek()
@@ -261,16 +262,6 @@ bool star::Scanner::ProcessFloat()
 
 void star::Scanner::Number()
 {
-#if 0
-    while(IsDigit(Peek()) || (Peek() == '.'))
-        Advance();
-    if(Peek() == '.' && IsDigit(PeekNext()))
-    {
-        Advance();
-        while(IsDigit(Peek()))
-            Advance();
-    }
-#endif
     char c = m_Source.at(m_Start);
     if((c == '.') && IsDigit(Peek()))
     {
@@ -321,6 +312,16 @@ void star::Scanner::InitCurrentProcessingString(std::string_view* currentText)
     *currentText = std::string_view(strIt, m_Source.end());
 }
 
+void star::Scanner::MapSourceNewLines()
+{
+    m_SourceLinebreaks.push_back(0);
+    for(size_t i = 0; i < m_Source.length(); i++)
+    {
+        if(m_Source.at(i) == '\n')
+            m_SourceLinebreaks.push_back(i);
+    }
+}
+
 star::Scanner::Scanner(const std::string& source, const std::string& filePath) : m_Source(source),
     m_Start(0), m_Current(0), m_Line(1), m_Filepath(filePath),
     m_HexProcessor{star_definitions::s_HexRegex},
@@ -332,6 +333,7 @@ star::Scanner::Scanner(const std::string& source, const std::string& filePath) :
     m_MLCProcessor{star_definitions::s_MultilineCommentRegex},
     m_NumberInitIdentProcessor{R"()"}
 {
+    MapSourceNewLines();
 }
 
 bool star::Scanner::IsAtEnd()
@@ -346,6 +348,7 @@ const std::vector<star::Token>& star::Scanner::ScanTokens()
         m_Start = m_Current;
         ScanToken();
     }
-    m_Tokens.emplace_back(TokenType::ST_EOF, "", nullptr, m_Line, m_Filepath);
+    m_Tokens.emplace_back(TokenType::ST_EOF, "", nullptr,
+        m_Line, m_SourceLinebreaks[m_Line - 1], m_Filepath);
     return m_Tokens;
 }

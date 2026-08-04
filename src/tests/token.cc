@@ -8,14 +8,14 @@ namespace star
 {
     TEST(token, str_type)
     {
-        Token token(TokenType::STRING, "value", "\"value\"", 1, "::repl");
+        Token token(TokenType::STRING, "value", "\"value\"", 1, 1, "::repl");
         std::string expectedOutput = "";
         std::string actualOutput = token.ToString();
         EXPECT_NE(actualOutput, expectedOutput);
     }
     TEST(token, var_type)
     {
-        Token token(TokenType::VAR, "x", nullptr, 1, "::repl");
+        Token token(TokenType::VAR, "x", nullptr, 1, 1, "::repl");
         std::string expectedOutput = "";
         std::string actualOutput = token.ToString();
         EXPECT_NE(actualOutput, expectedOutput);
@@ -23,7 +23,7 @@ namespace star
 
     TEST(token, int_type)
     {
-        Token token(TokenType::NUMBER, "10", 10, 1, "::repl");
+        Token token(TokenType::NUMBER, "10", 10, 1, 1, "::repl");
         std::string expectedOutput = "NUMBER 10 10 at: ::repl, l.1";
         std::string actualOutput = token.ToString();
         EXPECT_EQ(actualOutput, expectedOutput);
@@ -31,7 +31,7 @@ namespace star
 
     TEST(token, out_operator)
     {
-        Token token(TokenType::PLUS, "+", nullptr, 1, "::repl");
+        Token token(TokenType::PLUS, "+", nullptr, 1, 1, "::repl");
         std::stringstream actualOutput;
         actualOutput << token;
         std::string expectedOutput = "PLUS + null at: ::repl, l.1";
@@ -40,7 +40,7 @@ namespace star
     
     TEST(token, no_literal)
     {
-        Token token(TokenType::IDENTIFIER, "D3DName", nullptr, 1, "::repl");
+        Token token(TokenType::IDENTIFIER, "D3DName", nullptr, 1, 1, "::repl");
         std::stringstream actualOutput;
         actualOutput << token;
         std::string expectedOutput = "IDENTIFIER D3DName null at: ::repl, l.1";
