@@ -2,20 +2,18 @@
 
 #include "StarMacro.hh"
 #include "BaseException.hh"
-#include <exception>
 #include <vector>
 #include "Token.hh"
 #include "Visitor.hh"
 
 namespace star
 {
-    class STAR_API ParserException final : public ScriptException, public std::exception
+    class STAR_API ParserException final : public ScriptException
     {
     public:
         ParserException(const Token& token, const std::string& reason);
         ~ParserException() = default;
 
-        const char* what() const noexcept override;
     private:
         const Token m_Token;
     };

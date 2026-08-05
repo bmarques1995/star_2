@@ -14,11 +14,6 @@ star::ScannerException::ScannerException(const std::string& reason, size_t line)
     m_Reason = "ScannerException: " + reason + lineInfo;
 }
 
-const char* star::ScannerException::what() const noexcept
-{
-    return m_Reason.c_str();
-}
-
 const std::unordered_map<std::string, star::TokenType> star::Scanner::s_Keywords =
 {
     {"and",    TokenType::AND},

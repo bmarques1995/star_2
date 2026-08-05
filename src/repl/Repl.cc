@@ -7,7 +7,6 @@
 #include <filesystem>
 #include "Scanner.hh"
 #include "Parser.hh"
-#include <Debug.hh>
 
 namespace fs = std::filesystem;
 
@@ -37,7 +36,7 @@ void star::Star::RunFile(const std::string& filePath)
 
     std::string content(buffer.begin(), buffer.end());
     Run(content, filePath);
-    if(Debug::HadError()){ std::exit(65); }
+    //if(Debug::HadError()){ std::exit(65); }
 }
 
 void star::Star::RunPrompt()
@@ -50,7 +49,7 @@ void star::Star::RunPrompt()
         if(!std::getline(std::cin, line) || (line == "exit"))
             break;
         Run(line);
-        if(Debug::HadError()){ std::exit(65); }
+        //if(Debug::HadError()){ std::exit(65); }
         star::TraceConsole() << "\n" << replPrefix;
     }
 }
@@ -63,14 +62,9 @@ void star::Star::Run(const std::string& source, const std::string& filePath)
         Parser parser(tokens);
         std::shared_ptr<star::Expr> expression = parser.Parse();
     }
-    catch(const star::ScannerException& e)
+    catch(const star::ScriptException& e)
     {
         star::ErrorConsole() << e.what();
-        return;
-    }
-    catch(const star::ParserException& e)
-    {
-        star::ErrorConsole() << e.what();
-        return;
+        std::exit(65);
     }
 }

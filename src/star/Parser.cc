@@ -13,11 +13,6 @@ star::ParserException::ParserException(const Token& token, const std::string& re
     m_Reason = ss.str();
 }
 
-const char* star::ParserException::what() const noexcept
-{
-    return m_Reason.c_str();
-}
-
 void star::Parser::Synchronize()
 {
     Advance();

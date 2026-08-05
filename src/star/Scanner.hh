@@ -8,7 +8,6 @@
 #include "Token.hh"
 #include "StarMacro.hh"
 #include "BaseException.hh"
-#include <exception>
 
 /*
 * TODO add line, column and file information to the token.
@@ -17,13 +16,11 @@
 namespace star
 {
 
-    class STAR_API ScannerException : public ScriptException, public std::exception
+    class STAR_API ScannerException : public ScriptException
     {
     public:
         ScannerException(const std::string& reason, size_t line = 0);
         ~ScannerException() = default;
-
-        const char* what() const noexcept override;
     };
 
     class STAR_API Scanner

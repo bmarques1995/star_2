@@ -2,14 +2,17 @@
 
 #include "StarMacro.hh"
 #include <string>
+#include <exception>
 
 namespace star 
 {
-    class STAR_API ScriptException
+    class STAR_API ScriptException : public std::exception
     {
     public:
         ScriptException();
         virtual ~ScriptException() = default;
+
+        const char* what() const noexcept override;
     protected:
         std::string m_Reason;
     };
