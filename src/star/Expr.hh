@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Token.hh"
+#include "TokenType.hh"
 #include "Visitor.hh"
 #include <memory>
 #include "StarMacro.hh"
@@ -15,7 +16,7 @@ namespace star
 
         Binary(std::shared_ptr<Expr> left, Token oper, std::shared_ptr<Expr> right);
         ~Binary() = default;
-        std::any Accept(ExprVisitor& visitor) override;
+        token_lexeme_pair Accept(ExprVisitor& visitor) override;
     };
 
     struct STAR_API Grouping final : public Expr, public std::enable_shared_from_this<Grouping>
@@ -24,16 +25,17 @@ namespace star
 
         Grouping(std::shared_ptr<Expr> expression);
         ~Grouping() = default;
-        std::any Accept(ExprVisitor& visitor) override;
+        token_lexeme_pair Accept(ExprVisitor& visitor) override;
     };
 
     struct STAR_API Literal final : public Expr, public std::enable_shared_from_this<Literal>
     {
-        std::any m_Value;
+        std::string m_Lexeme;
+        TokenType m_TokenType;
 
-        Literal(std::any value);
+        Literal(TokenType tokenType,std::string lexeme);
         ~Literal() = default;
-        std::any Accept(ExprVisitor& visitor) override;
+        token_lexeme_pair Accept(ExprVisitor& visitor) override;
     };
 
     struct STAR_API Unary final : public Expr, public std::enable_shared_from_this<Unary>
@@ -43,6 +45,6 @@ namespace star
 
         Unary(Token oper, std::shared_ptr<Expr> right);
         ~Unary() = default;
-        std::any Accept(ExprVisitor& visitor) override;
+        token_lexeme_pair Accept(ExprVisitor& visitor) override;
     };
 }

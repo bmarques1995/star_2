@@ -53,8 +53,7 @@ namespace star
         char Advance();
 
         void AddToken(TokenType type);
-        void AddToken(TokenType type, std::any literal);
-
+        
         char Peek();
 
         void ProcessSlash(char c);

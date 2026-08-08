@@ -129,13 +129,8 @@ char star::Scanner::Advance()
 
 void star::Scanner::AddToken(TokenType type)
 {
-    AddToken(type, nullptr);
-}
-
-void star::Scanner::AddToken(TokenType type, std::any literal)
-{
     std::string text{m_Source.substr(m_Start, m_Current - m_Start)};
-    m_Tokens.emplace_back(type, text, literal, m_Line, 
+    m_Tokens.emplace_back(type, text, m_Line, 
         m_Start - m_SourceLinebreaks[m_Line - 1], m_Filepath);
 }
 
@@ -215,8 +210,8 @@ void star::Scanner::String()
 
     Advance();
 
-    std::string value{m_Source.substr(m_Start + 1, m_Current - m_Start - 2)};
-    AddToken(TokenType::STRING, value);
+    std::string value{m_Source.substr(m_Start, m_Current - m_Start)};
+    AddToken(TokenType::STRING);
 }
 
 bool star::Scanner::ProcessInteger()
@@ -284,7 +279,7 @@ void star::Scanner::Number()
     }
 
     std::string text{m_Source.substr(m_Start, m_Current - m_Start)};
-    AddToken(TokenType::NUMBER, text);
+    AddToken(TokenType::NUMBER);
 }
 
 void star::Scanner::Identifier()
@@ -343,7 +338,7 @@ const std::vector<star::Token>& star::Scanner::ScanTokens()
         m_Start = m_Current;
         ScanToken();
     }
-    m_Tokens.emplace_back(TokenType::ST_EOF, "", nullptr,
+    m_Tokens.emplace_back(TokenType::ST_EOF, "",
         m_Line, m_SourceLinebreaks[m_Line - 1], m_Filepath);
     return m_Tokens;
 }

@@ -17,11 +17,10 @@ static const std::unordered_map<std::type_index, Printer> printers{
     { typeid(double),      make_printer<double>() },
 };
 
-star::Token::Token(TokenType type, std::string lexeme, std::any value, 
+star::Token::Token(TokenType type, std::string lexeme, 
     size_t line, size_t column, std::string source) :
     m_Type{type},
     m_Lexeme{lexeme},
-    m_Literal{value},
     m_Line{line},
     m_Column{column},
     m_SourceFile{source}
@@ -33,27 +32,7 @@ std::string star::Token::ToString() const
 {
     std::stringstream output;
     output << magic_enum::enum_name(this->m_Type).data();
-    output << " " << m_Lexeme << " ";
-    if(m_Literal.has_value())
-    {
-        const std::type_index& typeElement = m_Literal.type();
-        if (auto it = printers.find(typeElement); it != printers.end())
-        {
-            it->second(output, m_Literal);
-        } 
-        else
-        {
-            output << "null";
-        }
-    }
-    output << " at: " << m_SourceFile << ", l." << m_Line;
-    /*
-    else
-    {
-        output << "[no literal]";
-    }
-    */
-
+    output << " " << m_Lexeme << " at: " << m_SourceFile << ", l." << m_Line;
     std::string strToken = output.str();
     return strToken;
 }

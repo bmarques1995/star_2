@@ -149,17 +149,14 @@ std::shared_ptr<star::Expr> star::Parser::Unary()
 }
 std::shared_ptr<star::Expr> star::Parser::Primary()
 {
-    if(Match(TokenType::ST_FALSE))
-        return std::make_shared<Literal>(false);
-    if(Match(TokenType::ST_TRUE))
-        return std::make_shared<Literal>(true);
-    if(Match(TokenType::NIL))
-        return std::make_shared<Literal>(nullptr);
-
-    if(Match(TokenType::NUMBER, TokenType::STRING))
-    {
-        return std::make_shared<Literal>(Previous().m_Literal);
-    }
+    if(Match(
+        TokenType::ST_FALSE,
+        TokenType::ST_TRUE,
+        TokenType::NIL,
+        TokenType::NUMBER,
+        TokenType::STRING
+    ))
+        return std::make_shared<Literal>(Previous().m_Type, Previous().m_Lexeme);
 
     if(Match(TokenType::LEFT_PAREN))
     {

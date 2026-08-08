@@ -9,19 +9,19 @@ namespace star
     class STAR_API Interpreter : public ExprVisitor
     {
     public:
-        std::any VisitBinaryExpr(std::shared_ptr<Binary> expr) override;
-        std::any VisitGroupingExpr(std::shared_ptr<Grouping> expr) override;
-        std::any VisitLiteralExpr(std::shared_ptr<Literal> expr) override;
-        std::any VisitUnaryExpr(std::shared_ptr<Unary> expr) override;
+        token_lexeme_pair VisitBinaryExpr(std::shared_ptr<Binary> expr) override;
+        token_lexeme_pair VisitGroupingExpr(std::shared_ptr<Grouping> expr) override;
+        token_lexeme_pair VisitLiteralExpr(std::shared_ptr<Literal> expr) override;
+        token_lexeme_pair VisitUnaryExpr(std::shared_ptr<Unary> expr) override;
         Interpreter();
         void Interpret(std::shared_ptr<Expr> expr);
 
     private:
-        void CheckNumberOperand(const Token& oper, const std::any& operand);
-        void CheckNumberOperands(const Token& oper, const std::any& left, const std::any& right);
-        bool IsTruthy(const std::any& object);
-        bool IsEqual(const std::any& a, const std::any& b);
-        std::string Stringify(const std::any& object);
-        std::any Evaluate(std::shared_ptr<Expr> expr);
+        void CheckNumberOperand(const Token& oper, const token_lexeme_pair& operand);
+        void CheckNumberOperands(const Token& oper, const token_lexeme_pair& left, const token_lexeme_pair& right);
+        bool IsTruthy(const token_lexeme_pair& object);
+        bool IsEqual(const token_lexeme_pair& a, const token_lexeme_pair& b);
+        std::string Stringify(const token_lexeme_pair& object);
+        token_lexeme_pair Evaluate(std::shared_ptr<Expr> expr);
     };
 }

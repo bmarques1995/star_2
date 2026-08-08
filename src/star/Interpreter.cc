@@ -1,57 +1,61 @@
 #include "Interpreter.hh"
 #include "RuntimeError.hh"
+#include "Token.hh"
+#include "TokenType.hh"
+#include "Visitor.hh"
 
 star::Interpreter::Interpreter() {}
 
-std::any star::Interpreter::VisitLiteralExpr(std::shared_ptr<Literal> expr){
-  return expr->m_Value;
+star::token_lexeme_pair star::Interpreter::VisitLiteralExpr(std::shared_ptr<Literal> expr)
+{
+  return {expr->m_TokenType, expr->m_Lexeme};
 }
 
-std::any star::Interpreter::VisitUnaryExpr(std::shared_ptr<Unary> expr){
-  std::any right = Evaluate(expr->m_Right);
+star::token_lexeme_pair star::Interpreter::VisitUnaryExpr(std::shared_ptr<Unary> expr){
+  token_lexeme_pair right = Evaluate(expr->m_Right);
 
   switch(expr->m_Operator.GetType()){
     case TokenType::BANG:
-      return !IsTruthy(right);
+      return {(!IsTruthy(right)) ? TokenType::ST_TRUE : TokenType::ST_FALSE, ""};
     case TokenType::MINUS:
       CheckNumberOperand(expr->m_Operator, right);
-      return -std::any_cast<double>(right);
+      return {right.first, ("-" + right.second)};
     default:
-      return {};
+      return {TokenType::ST_EMPTY, ""};
   }
 }
 
-bool star::Interpreter::IsTruthy(const std::any& object){
-    if(object.type() == typeid(nullptr)) return false;
-    if(object.type() == typeid(bool)){
-        return std::any_cast<bool>(object);
-    }
+bool star::Interpreter::IsTruthy(const token_lexeme_pair& object){
+    if(object.first == TokenType::NIL) return false;
+    if(object.first == TokenType::ST_FALSE) return false;
+    if(object.first == TokenType::ST_TRUE) return true;
     return true;
 }
 
-void star::Interpreter::CheckNumberOperand(const Token& oper, const std::any& operand){
-    if(operand.type() == typeid(double)) return;
+void star::Interpreter::CheckNumberOperand(const Token& oper, const token_lexeme_pair& operand){
+    if(operand.first == TokenType::NUMBER) return;
     //if(operand.type() == typeid(int)) return;
     //if(operand.type() == typeid(float)) return;
     throw RuntimeError{oper, "Operand must be a number."};
 }
 
-void star::Interpreter::CheckNumberOperands(const Token& oper, const std::any& left, const std::any& right)
+void star::Interpreter::CheckNumberOperands(const Token& oper, const token_lexeme_pair& left, const token_lexeme_pair& right)
 {
-    if(left.type() == typeid(double) && right.type() == typeid(double)) return;
+    if(left.first == TokenType::NUMBER && right.first == TokenType::NUMBER) return;
     // verificar float e int
     throw RuntimeError{oper, "Operand must be a number."};
 }
 
-bool star::Interpreter::IsEqual(const std::any& a, const std::any& b){
-    if(a.type() == typeid(nullptr) && b.type() == typeid(nullptr)){
+bool star::Interpreter::IsEqual(const token_lexeme_pair& a, const token_lexeme_pair& b){
+    if(a.first == TokenType::NIL && b.first == TokenType::NIL){
         return true;
     }
 
-    if(a.type() == typeid(nullptr) || b.type() == typeid(nullptr)){
+    if(a.first == TokenType::NIL || b.first == TokenType::NIL){
         return false;
     }
 
+    /*
     if(a.type() == typeid(double) && b.type() == typeid(double)){
         return std::any_cast<double>(a) == std::any_cast<double>(b);
     }
@@ -63,14 +67,15 @@ bool star::Interpreter::IsEqual(const std::any& a, const std::any& b){
     if(a.type() == typeid(bool) && b.type() == typeid(bool)){
         return std::any_cast<bool>(a) == std::any_cast<bool>(b);
     }
-
+    */
     return false;
 }
 
-std::string star::Interpreter::Stringify(const std::any& object)
+std::string star::Interpreter::Stringify(const token_lexeme_pair& object)
 {
-    if(object.type() == typeid(nullptr)) return "nil";
+    if(object.first == TokenType::NIL) return "nil";
     
+    /*
     if(object.type() == typeid(double))
     {
         std::string text = std::to_string(std::any_cast<double>(object));
@@ -99,22 +104,23 @@ std::string star::Interpreter::Stringify(const std::any& object)
             return result;
         }
     }
-
+    */
     return "stringify: cannot reconize type";
 }
 
-std::any star::Interpreter::VisitGroupingExpr(std::shared_ptr<Grouping> expr)
+star::token_lexeme_pair star::Interpreter::VisitGroupingExpr(std::shared_ptr<Grouping> expr)
 {
     return Evaluate(expr->m_Expression);
 }
 
-std::any star::Interpreter::Evaluate(std::shared_ptr<Expr> expr)
+star::token_lexeme_pair star::Interpreter::Evaluate(std::shared_ptr<Expr> expr)
 {
     return expr->Accept(*this);
 }
 
-std::any star::Interpreter::VisitBinaryExpr(std::shared_ptr<Binary> expr)
+star::token_lexeme_pair star::Interpreter::VisitBinaryExpr(std::shared_ptr<Binary> expr)
 {
+    /*
     std::any left = Evaluate(expr->m_Left);
     std::any right = Evaluate(expr->m_Right);
 
@@ -157,13 +163,14 @@ std::any star::Interpreter::VisitBinaryExpr(std::shared_ptr<Binary> expr)
             CheckNumberOperands(expr->m_Operator, left, right);
             return !IsEqual(left, right);
         default:
-            return {};
-    }
+            return {TokenType::ST_EMPTY, ""};
+    }*/
+    return {TokenType::ST_EMPTY, ""};
 }
 
 void star::Interpreter::Interpret(std::shared_ptr<Expr> expr)
 {
-    std::any value = Evaluate(expr);
+    auto value = Evaluate(expr);
     std::cout << Stringify(value) << '\n';
 }
 

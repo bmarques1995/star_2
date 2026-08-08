@@ -16,11 +16,11 @@ namespace star
         GREATER, GREATER_EQUAL,
         LESS, LESS_EQUAL,
 
-        IDENTIFIER, STRING, NUMBER,
+        IDENTIFIER, STRING, NUMBER, BOOLEAN,
 
         AND, CLASS, ELSE, ST_FALSE, FUN, FOR, IF, NIL, OR,
         PRINT, RETURN, SUPER, THIS, ST_TRUE, VAR, WHILE,
 
-        ST_EOF
+        ST_EOF, ST_EMPTY
     };
 }

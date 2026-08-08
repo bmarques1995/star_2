@@ -22,14 +22,14 @@ namespace star
         friend class Parser;
         friend class ParserException;
     public:
-        Token(TokenType type, std::string lexeme, std::any value, size_t line, size_t column, std::string source);
+        Token(TokenType type, std::string lexeme, size_t line, size_t column, std::string source);
         std::string ToString() const;
         const TokenType GetType() const;
+        const std::string& GetLexeme() const;
     private:
         TokenType m_Type;
         std::string m_Lexeme;
         std::string m_SourceFile;
-        std::any m_Literal;
         size_t m_Line;
         size_t m_Column;
 
