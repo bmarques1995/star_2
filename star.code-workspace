@@ -1,0 +1,21 @@
+{
+    "folders": [
+        {
+            "path": "./"
+        }
+    ],
+    "settings": {
+        "editor.tabSize": 4,
+    },
+    "extensions": {
+        "recommendations": [
+            "llvm-vs-code-extensions.lldb-dap",
+            "llvm-vs-code-extensions.vscode-clangd",
+            "ms-vscode.cpptools",
+            "ms-vscode.cmake-tools",
+            "ms-vscode.cpptools-extension-pack",
+            "ms-vscode.cmake-tools-extension-pack",
+            "ms-vscode.cpptools-themes"
+        ]
+    }
+}

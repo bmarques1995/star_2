@@ -7,6 +7,7 @@
 #include <filesystem>
 #include "Scanner.hh"
 #include "Parser.hh"
+#include "Interpreter.hh"
 
 namespace fs = std::filesystem;
 
@@ -61,6 +62,8 @@ void star::Star::Run(const std::string& source, const std::string& filePath)
         std::vector<Token> tokens = scanner.ScanTokens();
         Parser parser(tokens);
         std::shared_ptr<star::Expr> expression = parser.Parse();
+        Interpreter interpreter;
+        interpreter.Interpret(expression);
     }
     catch(const star::ScriptException& e)
     {

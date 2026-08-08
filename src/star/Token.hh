@@ -24,6 +24,7 @@ namespace star
     public:
         Token(TokenType type, std::string lexeme, std::any value, size_t line, size_t column, std::string source);
         std::string ToString() const;
+        const TokenType GetType() const;
     private:
         TokenType m_Type;
         std::string m_Lexeme;

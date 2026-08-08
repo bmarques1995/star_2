@@ -63,3 +63,8 @@ std::ostream& operator<<(std::ostream& out, const star::Token& token)
     out << token.ToString();
     return out;
 }
+
+const star::TokenType star::Token::GetType() const
+{
+    return m_Type;
+}
