@@ -25,9 +25,11 @@ namespace star
         size_t m_Start;
         size_t m_Current;
         size_t m_Line;
-        
+        std::vector<size_t> m_LineBreaks;
+
         std::string m_Source;
         std::vector<Token> m_Tokens;
+        std::string m_Filepath;
         static const std::unordered_map<std::string, TokenType> s_Keywords;
     
         bool IsAlpha(char c);
@@ -38,7 +40,6 @@ namespace star
         char Advance();
 
         void AddToken(TokenType type);
-        void AddToken(TokenType type, std::any literal);
 
         char Peek();
 
@@ -58,10 +59,11 @@ namespace star
 
         void InitCurrentProcessingString(std::string_view* currentText);
     public:
-        Scanner(const std::string& source);
+        Scanner(const std::string& source, const std::string& filepath = "::repl");
         bool IsAtEnd();
         const std::vector<Token>& ScanTokens();
 
+    private:
         RegexProcessor m_LCProcessor;
         RegexProcessor m_MLCProcessor;
         RegexProcessor m_IdentProcessor;

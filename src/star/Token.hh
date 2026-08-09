@@ -19,21 +19,16 @@ namespace star
     class STAR_API Token
     {
     public:
-        Token(TokenType type, std::string lexeme, std::any value, size_t line);
-#ifdef STAR_DEBUG
+        Token(TokenType type, std::string lexeme, size_t line, size_t column, std::string filepath);
         std::string ToString() const;
-#endif
+
     private:
         TokenType m_Type;
         std::string m_Lexeme;
-        std::any m_Literal;
+        std::string m_Filepath;
         size_t m_Line;
-#ifdef STAR_DEBUG
-        static const std::unordered_map<std::type_index, Printer> s_Printers;
-#endif
+        size_t m_Column;
     };
 }
 
-#ifdef STAR_DEBUG
 STAR_API std::ostream& operator<<(std::ostream& out, const star::Token& token);
-#endif

@@ -2,59 +2,21 @@
 #include <magic_enum/magic_enum.hpp>
 #include <sstream>
 
-#ifdef STAR_DEBUG
-
-template<typename T>
-Printer make_printer()
-{
-    return [](std::ostream& os, const std::any& a) {
-        os << std::any_cast<const T&>(a);
-    };
-}
-
-static const std::unordered_map<std::type_index, Printer> printers{
-    { typeid(std::string), make_printer<std::string>() },
-    { typeid(int),         make_printer<int>() },
-    { typeid(double),      make_printer<double>() },
-};
-
-#endif
-
-star::Token::Token(TokenType type, std::string lexeme, std::any value, size_t line) :
+star::Token::Token(TokenType type, std::string lexeme, size_t line, size_t column, std::string filepath) :
     m_Type{type},
     m_Lexeme{lexeme},
-    m_Literal{value},
-    m_Line{line}
+    m_Line{line},
+    m_Column{column},
+    m_Filepath{filepath}
 {
-
 }
 
-#ifdef STAR_DEBUG
 std::string star::Token::ToString() const
 {
     std::stringstream output;
     output << magic_enum::enum_name(this->m_Type).data();
-    output << " " << m_Lexeme << " ";
-    if(m_Literal.has_value())
-    {
-        const std::type_index& typeElement = m_Literal.type();
-        if (auto it = printers.find(typeElement); it != printers.end())
-        {
-            it->second(output, m_Literal);
-        } 
-        else
-        {
-            output << "null";
-        }
-    }
-    
-    /*
-    else
-    {
-        output << "[no literal]";
-    }
-    */
-
+    output << " " << m_Lexeme << " at: " << 
+    m_Filepath << ":" << m_Line << ":" << m_Column;
     std::string strToken = output.str();
     return strToken;
 }
@@ -64,4 +26,3 @@ std::ostream& operator<<(std::ostream& out, const star::Token& token)
     out << token.ToString();
     return out;
 }
-#endif
