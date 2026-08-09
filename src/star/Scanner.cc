@@ -256,23 +256,15 @@ bool star::Scanner::ProcessFloat()
 
 void star::Scanner::Number()
 {
-#if 0
-    while(IsDigit(Peek()) || (Peek() == '.'))
-        Advance();
-    if(Peek() == '.' && IsDigit(PeekNext()))
-    {
-        Advance();
-        while(IsDigit(Peek()))
-            Advance();
-    }
-#endif
     char c = m_Source.at(m_Start);
+    TokenType type = TokenType::NUMBER;
     if((c == '.') && IsDigit(Peek()))
     {
         if(!ProcessFloat())
         {
             throw ScannerException("Invalid float literal", m_Line);
         }
+        type = TokenType::FLOAT_NUMBER;
     }
     if(c == '0' && (Peek() == 'x' || Peek() == 'X'))
     {
@@ -290,10 +282,12 @@ void star::Scanner::Number()
         {
             throw ScannerException("Invalid number literal", m_Line);
         }
+        if(isFloat)
+            type = TokenType::FLOAT_NUMBER;
     }
 
     std::string text{m_Source.substr(m_Start, m_Current - m_Start)};
-    AddToken(TokenType::NUMBER, text);
+    AddToken(type, text);
 }
 
 void star::Scanner::Identifier()
