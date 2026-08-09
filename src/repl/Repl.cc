@@ -1,4 +1,5 @@
 #include "Repl.hh"
+#include "BaseException.hh"
 #include <Console.hh>
 #include <string>
 #include <vector>
@@ -6,7 +7,6 @@
 #include <fstream>
 #include <filesystem>
 #include <Scanner.hh>
-#include <Debug.hh>
 
 namespace fs = std::filesystem;
 
@@ -36,7 +36,6 @@ void star::Star::RunFile(const std::string& filePath)
 
     std::string content(buffer.begin(), buffer.end());
     Run(content, filePath);
-    if(Debug::HadError()){ std::exit(65); }
 }
 
 void star::Star::RunPrompt()
@@ -49,7 +48,6 @@ void star::Star::RunPrompt()
         if(!std::getline(std::cin, line) || (line == "exit"))
             break;
         Run(line);
-        if(Debug::HadError()){ std::exit(65); }
         star::TraceConsole() << "\n" << replPrefix;
     }
 }
@@ -57,7 +55,16 @@ void star::Star::RunPrompt()
 void star::Star::Run(const std::string& source, const std::string& filepath)
 {
     Scanner scanner(source, filepath);
-    std::vector<Token> tokens = scanner.ScanTokens();
+    std::vector<Token> tokens;
+    try
+    {
+        tokens = scanner.ScanTokens();
+    }
+    catch(ScriptException e)
+    {
+        star::ErrorConsole() << e.what();
+        std::exit(65);
+    }
     for(auto& t: tokens)
     {
         star::TraceConsole() << t.ToString();
