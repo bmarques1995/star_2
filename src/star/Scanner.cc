@@ -208,6 +208,8 @@ char star::Scanner::ProcessEscapedChar(char evaluated)
         {'$', '$'},
         {'{', '{'},
         {'}', '}'},
+        {'\"', '\"'},
+        {'`', '`'},
     };
     auto it = escapeMap.find(evaluated);
     if(it != escapeMap.end())
@@ -228,7 +230,7 @@ void star::Scanner::String()
             c = ProcessEscapedChar(Peek());
         }
         if(c == '\n')
-            m_Line++;
+            throw ScannerException("You can't break lines on a string, use '\\n' instead.");
         processedString.push_back(c);
         Advance();
         c = Peek();

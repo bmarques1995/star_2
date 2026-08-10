@@ -19,13 +19,6 @@ namespace star
         EXPECT_NO_THROW(scanner.ScanTokens());
     }
 
-    TEST(scanner, correct_multiline_string)
-    {
-        std::string input = "var lang = \"something\nat two lines\";";
-        Scanner scanner(input);
-        EXPECT_NO_THROW(scanner.ScanTokens());
-    }
-
     TEST(scanner, non_closed_multiline_comment)
     {
         std::string input = R"(/* This is a non-closed multiline comment
@@ -156,6 +149,22 @@ var x = 10;)";
         std::string input = R"(var escaped_str = "this is an escaped pattern \{\}\e";)";
         Scanner scanner(input);
         EXPECT_THROW(scanner.ScanTokens(), ScannerException);
+    }
+
+    TEST(scanner, test_string_breakline)
+    {
+        std::string input = R"(var escaped_str = "this is an escaped pattern 
+        \{\}\e";)";
+        Scanner scanner(input);
+        EXPECT_THROW(scanner.ScanTokens(), ScannerException);
+    }
+
+    TEST(scanner, test_escape_dbl_quote)
+    {
+        std::string input = R"(var escaped_str = "this is a dbl quote \" test";)";
+        Scanner scanner(input);
+        auto tokens = scanner.ScanTokens();
+        EXPECT_EQ(tokens[3].GetLexeme(), "this is a dbl quote \" test");
     }
 
     TEST(scanner, base_exception_test)
