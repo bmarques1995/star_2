@@ -40,14 +40,16 @@ namespace star
             double
         >;
     
-        Value(TokenType type, std::string_view lexeme); 
-    
+        Value(TokenType type, std::string_view lexeme);
+        ~Value() = default;
+
+        bool IsInitialized() const;
     private:   
 
         void ParseFloatNumber(std::string_view lexeme);
         void ParseNumber(std::string_view lexeme);
         void ParseString(std::string_view lexeme);
-        void ParseChar(std::string_view lexeme);
+        //void ParseChar(std::string_view lexeme);
 
         void InferInteger(std::string_view lexeme);
 

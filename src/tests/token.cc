@@ -1,5 +1,4 @@
 #include "TokenType.hh"
-#ifdef STAR_DEBUG
 
 #include <gtest/gtest.h>
 #include <string>
@@ -55,5 +54,3 @@ namespace star
         EXPECT_EQ(token.GetLexeme(), "D3DName");
     }
 }
-
-#endif

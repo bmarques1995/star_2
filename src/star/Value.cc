@@ -24,6 +24,11 @@ star::Value::Value(TokenType type, std::string_view lexeme)
     }
 }
 
+bool star::Value::IsInitialized() const
+{
+    return !std::holds_alternative<std::monostate>(m_Value);
+}
+
 void star::Value::ParseFloatNumber(std::string_view lexeme)
 {
     auto typeAssignment = lexeme.find("f");
@@ -53,10 +58,12 @@ void star::Value::ParseString(std::string_view lexeme)
     m_Value = finalValue;
 }
 
+/*
 void star::Value::ParseChar(std::string_view lexeme)
 {
 
 }
+*/
 
 void star::Value::InferInteger(std::string_view lexeme)
 {
@@ -107,8 +114,7 @@ void star::Value::AssignTypedFloat(std::string_view lexeme, size_t typeOffset)
         switch (it->second) 
         {
             case FloatType::F32: m_Value = std::stof(radical.data()); break;
-            case FloatType::F64: m_Value = std::stod(radical.data()); break;
-            default: break;
+            case FloatType::F64: default: m_Value = std::stod(radical.data()); break;
         }
     }
 }
@@ -138,8 +144,20 @@ void star::Value::AssignTypedInt(std::string_view lexeme, size_t typeOffset)
 
     if(limit_it != intLimits.end())
     {
-        int64_t value = std::stoll(radical.data());
-        if((value < limit_it->second.first) && (value > limit_it->second.second))
+        int64_t value;
+        
+        try
+        {
+            value = std::stoll(radical.data());
+        }
+        catch(std::out_of_range e)
+        {
+            std::stringstream ss;
+            ss << "Supported range for language is {" << INT64_MIN << "," << INT64_MAX << "} for signed integers"; 
+            throw OutOfRangeException(ss.str());
+        }
+
+        if((value < limit_it->second.first) || (value > limit_it->second.second))
         {
             std::stringstream ss;
             ss << "Supported range for " << typeAssignment << " is {" << limit_it->second.first << "," << limit_it->second.second << "}"; 
@@ -150,8 +168,7 @@ void star::Value::AssignTypedInt(std::string_view lexeme, size_t typeOffset)
             case IntegerType::I8: m_Value = static_cast<int8_t>(value); break;
             case IntegerType::I16: m_Value = static_cast<int16_t>(value); break;
             case IntegerType::I32: m_Value = static_cast<int32_t>(value); break;
-            case IntegerType::I64: m_Value = value; break;
-            default: break;
+            case IntegerType::I64: default: m_Value = value; break;
         }
     }
 }
@@ -181,7 +198,19 @@ void star::Value::AssignTypedUint(std::string_view lexeme, size_t typeOffset)
 
     if(limit_it != uintLimits.end())
     {
-        uint64_t value = std::stoull(radical.data());
+        uint64_t value;
+        
+        try
+        {
+            value = std::stoull(radical.data());
+        }
+        catch(std::out_of_range e)
+        {
+            std::stringstream ss;
+            ss << "Supported range for language is {0," << UINT64_MAX << "} for unsigned integers"; 
+            throw OutOfRangeException(ss.str());
+        }
+
         if(value > limit_it->second)
         {
             std::stringstream ss;
@@ -193,8 +222,7 @@ void star::Value::AssignTypedUint(std::string_view lexeme, size_t typeOffset)
             case IntegerType::U8: m_Value = static_cast<uint8_t>(value); break;
             case IntegerType::U16: m_Value = static_cast<uint16_t>(value); break;
             case IntegerType::U32: m_Value = static_cast<uint32_t>(value); break;
-            case IntegerType::U64: m_Value = value; break;
-            default: break;
+            case IntegerType::U64: default: m_Value = value; break;
         }
     }
 }
