@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <string_view>
 #include <algorithm>
+#include <unordered_map>
 
 using match_range = std::pair<size_t, size_t>;
 
@@ -128,9 +129,11 @@ char star::Scanner::Advance()
     return m_Source[m_Current++];
 }
 
-void star::Scanner::AddToken(TokenType type)
+void star::Scanner::AddToken(TokenType type, const std::string& lexeme)
 {
     std::string text{m_Source.substr(m_Start, m_Current - m_Start)};
+    if(lexeme != "")
+        text = lexeme;
     size_t column = m_Start - m_LineBreaks[m_Line - 1];
     m_Tokens.emplace_back(type, text, m_Line, column, m_Filepath);
 }
@@ -193,13 +196,40 @@ void star::Scanner::ProcessMultilineComment()
     m_Line += newLineIncidences;
 }
 
+char star::Scanner::ProcessEscapedChar(char evaluated)
+{
+    static const std::unordered_map<char, char> escapeMap =
+    {
+        {'\\', '\\'},
+        {'n', '\n'},
+        {'r', '\r'},
+        {'t', '\t'},
+        {'%', '%'},
+        {'$', '$'},
+        {'{', '{'},
+        {'}', '}'},
+    };
+    auto it = escapeMap.find(evaluated);
+    if(it != escapeMap.end())
+        return it->second;
+    else
+        throw ScannerException("The only valid escape sequences are: '\\\\', '\\n', '\\r', '\\t', '\\%', '\\$', '\\{' and '\\}'");
+}
+
 void star::Scanner::String()
 {
     char c = Peek();
+    std::vector<char> processedString;
     while(c != '\"' && !IsAtEnd())
     {
+        if(c == '\\')
+        {
+            Advance();
+            c = ProcessEscapedChar(Peek());
+        }
         if(c == '\n')
             m_Line++;
+        processedString.push_back(c);
         Advance();
         c = Peek();
     }
@@ -211,8 +241,8 @@ void star::Scanner::String()
 
     Advance();
 
-    std::string value{m_Source.substr(m_Start + 1, m_Current - m_Start - 2)};
-    AddToken(TokenType::STRING);
+    std::string value{processedString.begin(), processedString.end()};
+    AddToken(TokenType::STRING, value);
 }
 
 bool star::Scanner::ProcessInteger()

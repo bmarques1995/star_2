@@ -39,7 +39,7 @@ namespace star
         void ScanToken();
         char Advance();
 
-        void AddToken(TokenType type);
+        void AddToken(TokenType type, const std::string& lexeme = "");
 
         char Peek();
 
@@ -52,6 +52,8 @@ namespace star
         bool ProcessInteger();
         bool ProcessHex();
         bool ProcessFloat();
+
+        char ProcessEscapedChar(char evaluated);
 
         void String();
         void Number();

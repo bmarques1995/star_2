@@ -143,6 +143,21 @@ var x = 10;)";
         EXPECT_EQ(tokens[2].GetTokenType(), TokenType::NUM_SIGN);
     }
 
+    TEST(scanner, test_valid_escaped_chars)
+    {
+        std::string input = R"(var escaped_str = "this is an escaped pattern \{\}";)";
+        Scanner scanner(input);
+        auto tokens = scanner.ScanTokens();
+        EXPECT_EQ(tokens[3].GetLexeme(), R"(this is an escaped pattern {})");
+    }
+
+    TEST(scanner, test_invalid_escaped_chars)
+    {
+        std::string input = R"(var escaped_str = "this is an escaped pattern \{\}\e";)";
+        Scanner scanner(input);
+        EXPECT_THROW(scanner.ScanTokens(), ScannerException);
+    }
+
     TEST(scanner, base_exception_test)
     {
         EXPECT_THROW(throw star::ScannerException("element"), star::ScannerException);
