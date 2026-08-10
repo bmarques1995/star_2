@@ -1,3 +1,4 @@
+#include "TokenType.hh"
 #ifdef STAR_DEBUG
 
 #include <gtest/gtest.h>
@@ -45,6 +46,13 @@ namespace star
         actualOutput << token;
         std::string expectedOutput = "IDENTIFIER D3DName at: ::repl:1:1";
         EXPECT_EQ(actualOutput.str(), expectedOutput);
+    }
+
+    TEST(token, info_retriever)
+    {
+        Token token(TokenType::IDENTIFIER, "D3DName", 1, 1, "::repl");
+        EXPECT_EQ(token.GetTokenType(), TokenType::IDENTIFIER);
+        EXPECT_EQ(token.GetLexeme(), "D3DName");
     }
 }
 

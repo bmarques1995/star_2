@@ -4,15 +4,8 @@
 #include "TokenType.hh"
 #include <string>
 #include <iostream>
-#include <any>
-#include <functional>
 #include <string>
-#include <typeindex>
-#include <unordered_map>
 
-#ifdef STAR_DEBUG
-using Printer = std::function<void(std::ostream&, const std::any&)>;
-#endif
 
 namespace star
 {
@@ -21,6 +14,8 @@ namespace star
     public:
         Token(TokenType type, std::string lexeme, size_t line, size_t column, std::string filepath);
         std::string ToString() const;
+        const TokenType GetTokenType() const;
+        const std::string& GetLexeme() const;
 
     private:
         TokenType m_Type;

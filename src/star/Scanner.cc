@@ -77,6 +77,7 @@ void star::Scanner::ScanToken()
         case '{': AddToken(TokenType::LEFT_BRACE); break;
         case '}': AddToken(TokenType::RIGHT_BRACE); break;
         case ',': AddToken(TokenType::COMMA); break;
+        case '#': AddToken(TokenType::NUM_SIGN); break;
         case '.':
             if(IsDigit(Peek()))
             {

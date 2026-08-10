@@ -130,9 +130,17 @@ var x = 10;)";
 
     TEST(scanner, test_invalid_symbol)
     {
-        std::string input = R"(#)";
+        std::string input = R"($)";
         Scanner scanner(input);
         EXPECT_THROW(scanner.ScanTokens(), star::ScannerException);
+    }
+
+    TEST(scanner, test_type_attribution)
+    {
+        std::string input = R"(var x#u32 = 17u32;)";
+        Scanner scanner(input);
+        auto tokens = scanner.ScanTokens();
+        EXPECT_EQ(tokens[2].GetTokenType(), TokenType::NUM_SIGN);
     }
 
     TEST(scanner, base_exception_test)

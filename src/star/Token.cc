@@ -1,4 +1,5 @@
 #include "Token.hh"
+#include "TokenType.hh"
 #include <magic_enum/magic_enum.hpp>
 #include <sstream>
 
@@ -25,4 +26,14 @@ std::ostream& operator<<(std::ostream& out, const star::Token& token)
 {
     out << token.ToString();
     return out;
+}
+
+const star::TokenType star::Token::GetTokenType() const
+{
+    return m_Type;
+}
+
+const std::string& star::Token::GetLexeme() const
+{
+    return m_Lexeme;
 }
