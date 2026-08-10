@@ -159,6 +159,15 @@ var x = 10;)";
         EXPECT_THROW(scanner.ScanTokens(), ScannerException);
     }
 
+    TEST(scanner, test_template_string)
+    {
+        std::string input = R"(`This is a template string, you can send an expression ${here}$`)";
+        Scanner scanner(input);
+        auto tokens = scanner.ScanTokens();
+        EXPECT_EQ(tokens[3].GetTokenType(),TokenType::IDENTIFIER);
+        EXPECT_EQ(tokens[3].GetLexeme(),"here");
+    }
+
     TEST(scanner, test_escape_dbl_quote)
     {
         std::string input = R"(var escaped_str = "this is a dbl quote \" test";)";

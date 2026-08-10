@@ -38,10 +38,13 @@ namespace star
         bool Match(char expected);
         void ScanToken();
         char Advance();
+        void MultiAdvance(size_t offset);
+        void AdvanceAndCommit(size_t offset);
+        void CommitAdvance();
 
         void AddToken(TokenType type, const std::string& lexeme = "");
 
-        char Peek();
+        char Peek(size_t offset = 0);
 
         void ProcessSlash(char c);
         void ProcessDefault(char c);
@@ -55,6 +58,7 @@ namespace star
 
         char ProcessEscapedChar(char evaluated);
 
+        void TemplateString();
         void String();
         void Number();
         void Identifier();
@@ -62,7 +66,7 @@ namespace star
         void InitCurrentProcessingString(std::string_view* currentText);
     public:
         Scanner(const std::string& source, const std::string& filepath = "::repl");
-        bool IsAtEnd();
+        bool IsAtEnd(size_t offset = 0);
         const std::vector<Token>& ScanTokens();
 
     private:

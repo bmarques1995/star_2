@@ -2,7 +2,6 @@
 #include "Token.hh"
 #include "TokenType.hh"
 #include <cstddef>
-#include <cstdint>
 #include <string_view>
 #include <algorithm>
 #include <unordered_map>
@@ -118,6 +117,9 @@ void star::Scanner::ScanToken()
         case '"':
             String();
             break;
+        case '`':
+            TemplateString();
+            break;
         default:
             ProcessDefault(c);
             break;
@@ -129,6 +131,24 @@ char star::Scanner::Advance()
     return m_Source[m_Current++];
 }
 
+void star::Scanner::MultiAdvance(size_t offset)
+{
+    m_Current += offset;
+}
+
+void star::Scanner::AdvanceAndCommit(size_t offset)
+{
+    MultiAdvance(offset);
+    CommitAdvance();
+}
+
+void star::Scanner::CommitAdvance()
+{
+    if(m_Current >= m_Source.length())
+        m_Start = m_Source.length() - 1;
+    m_Start = m_Current;
+}
+
 void star::Scanner::AddToken(TokenType type, const std::string& lexeme)
 {
     std::string text{m_Source.substr(m_Start, m_Current - m_Start)};
@@ -138,11 +158,11 @@ void star::Scanner::AddToken(TokenType type, const std::string& lexeme)
     m_Tokens.emplace_back(type, text, m_Line, column, m_Filepath);
 }
 
-char star::Scanner::Peek()
+char star::Scanner::Peek(size_t offset)
 {
-    if(IsAtEnd())
+    if(IsAtEnd(offset))
         return '\0';
-    return m_Source.at(m_Current);
+    return m_Source.at(m_Current + offset);
 }
 
 void star::Scanner::ProcessSlash(char c)
@@ -216,6 +236,57 @@ char star::Scanner::ProcessEscapedChar(char evaluated)
         return it->second;
     else
         throw ScannerException("The only valid escape sequences are: '\\\\', '\\n', '\\r', '\\t', '\\%', '\\$', '\\{' and '\\}'");
+}
+
+void star::Scanner::TemplateString()
+{
+    char c = Peek();
+    std::vector<char> processedString;
+    AddToken(TokenType::TEMPLATE_STRING);
+    CommitAdvance();
+    while(c != '`' && !IsAtEnd())
+    {
+        if(c == '\\')
+        {
+            Advance();
+            c = ProcessEscapedChar(Peek());
+        }
+        if(c == '$' && Peek(1) == '{')
+        {
+            if(processedString.size() > 0)
+            {
+                std::string innerValue{processedString.begin(), processedString.end()};
+                AddToken(TokenType::TEMPLATE_SUBSTRING, innerValue);
+                processedString.clear();
+            }
+            AdvanceAndCommit(2);
+            AddToken(TokenType::STR_EXPR_START);
+            while(!((Peek() == '}') && (Peek(1) == '$')))
+            {
+                CommitAdvance();
+                ScanToken();
+            }
+            AdvanceAndCommit(2);            
+            AddToken(TokenType::STR_EXPR_END);
+            c = Peek();
+        }
+        else
+        {
+            if(c == '\n')
+                throw ScannerException("You can't break lines on a string, use '\\n' instead.");
+        
+            processedString.push_back(c);
+            Advance();
+            c = Peek();
+        }
+    }
+    AdvanceAndCommit(1);
+    if(processedString.size() > 0)
+    {
+        std::string value{processedString.begin(), processedString.end()};
+        AddToken(TokenType::TEMPLATE_SUBSTRING, value);
+    }
+    AddToken(TokenType::TEMPLATE_STRING_END);
 }
 
 void star::Scanner::String()
@@ -354,18 +425,20 @@ star::Scanner::Scanner(const std::string& source, const std::string& filepath) :
     for(size_t i = 0; i < m_Source.length(); i++)
         if(m_Source.at(i) == '\n')
             m_LineBreaks.push_back(i);
+    m_LineBreaks.push_back(source.length());
+    m_Source += "\n";
 }
 
-bool star::Scanner::IsAtEnd()
+bool star::Scanner::IsAtEnd(size_t offset)
 {
-    return m_Current >= static_cast<uint32_t>(m_Source.length( ));
+    return m_Current >= (m_Source.length() + offset);
 }
 
 const std::vector<star::Token>& star::Scanner::ScanTokens()
 {
     while(!IsAtEnd())
     {
-        m_Start = m_Current;
+        CommitAdvance();
         ScanToken();
     }
 
