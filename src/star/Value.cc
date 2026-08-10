@@ -79,9 +79,9 @@ void star::Value::InferInteger(std::string_view lexeme)
             m_Value = intTry;
         return;
     }
-    catch(std::out_of_range e)
+    catch(const std::out_of_range& e)
     {
-        if(lexeme.find("-") != SIZE_MAX)
+        if(lexeme.find("-") != std::string_view::npos)
             throw OutOfRangeException("Minimum value is -9223372036854775808");
     }
 
@@ -150,7 +150,7 @@ void star::Value::AssignTypedInt(std::string_view lexeme, size_t typeOffset)
         {
             value = std::stoll(radical.data());
         }
-        catch(std::out_of_range e)
+        catch(const std::out_of_range& e)
         {
             std::stringstream ss;
             ss << "Supported range for language is {" << INT64_MIN << "," << INT64_MAX << "} for signed integers"; 
@@ -204,7 +204,7 @@ void star::Value::AssignTypedUint(std::string_view lexeme, size_t typeOffset)
         {
             value = std::stoull(radical.data());
         }
-        catch(std::out_of_range e)
+        catch(const std::out_of_range& e)
         {
             std::stringstream ss;
             ss << "Supported range for language is {0," << UINT64_MAX << "} for unsigned integers"; 
