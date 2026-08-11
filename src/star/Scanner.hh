@@ -69,6 +69,9 @@ namespace star
         bool IsAtEnd(size_t offset = 0);
         const std::vector<Token>& ScanTokens();
 
+        static const std::unordered_map<char, char> s_EscapeMap;
+        static const std::unordered_map<char, char> s_ReverseEscapeMap;
+
     private:
         RegexProcessor m_LCProcessor;
         RegexProcessor m_MLCProcessor;

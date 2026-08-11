@@ -43,9 +43,9 @@ namespace star
         Value(TokenType type, std::string_view lexeme);
         ~Value() = default;
 
+        const std::string ToString() const;
         bool IsInitialized() const;
-    private:   
-
+    private:
         void ParseFloatNumber(std::string_view lexeme);
         void ParseNumber(std::string_view lexeme);
         void ParseString(std::string_view lexeme);
@@ -59,3 +59,5 @@ namespace star
         Storage m_Value;
     };
 }
+
+STAR_API std::ostream& operator<<(std::ostream& out, const star::Value& value);

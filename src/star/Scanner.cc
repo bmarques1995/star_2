@@ -34,6 +34,34 @@ const std::unordered_map<std::string, star::TokenType> star::Scanner::s_Keywords
     {"while",  TokenType::WHILE}
 };
 
+const std::unordered_map<char, char> s_EscapeMap =
+{
+    {'\\', '\\'},
+    {'n', '\n'},
+    {'r', '\r'},
+    {'t', '\t'},
+    {'%', '%'},
+    {'$', '$'},
+    {'{', '{'},
+    {'}', '}'},
+    {'\"', '\"'},
+    {'`', '`'},
+};
+
+const std::unordered_map<char, char> s_ReverseEscapeMap =
+{
+    {'\\', '\\'},
+    {'\n', 'n'},
+    {'\r', 'r'},
+    {'\t', 't'},
+    {'%', '%'},
+    {'$', '$'},
+    {'{', '{'},
+    {'}', '}'},
+    {'\"', '\"'},
+    {'`', '`'},
+};
+
 namespace star_definitions
 {
     const std::string s_OperatorPost = R"((?=[\+\-\*\/\%=;\!\<\>\&\|\(\) \t\r\n]|\z))";
@@ -220,21 +248,8 @@ void star::Scanner::ProcessMultilineComment()
 
 char star::Scanner::ProcessEscapedChar(char evaluated)
 {
-    static const std::unordered_map<char, char> escapeMap =
-    {
-        {'\\', '\\'},
-        {'n', '\n'},
-        {'r', '\r'},
-        {'t', '\t'},
-        {'%', '%'},
-        {'$', '$'},
-        {'{', '{'},
-        {'}', '}'},
-        {'\"', '\"'},
-        {'`', '`'},
-    };
-    auto it = escapeMap.find(evaluated);
-    if(it != escapeMap.end())
+    auto it = s_EscapeMap.find(evaluated);
+    if(it != s_EscapeMap.end())
         return it->second;
     else
         throw ScannerException("The only valid escape sequences are: '\\\\', '\\n', '\\r', '\\t', '\\%', '\\$', '\\{' and '\\}'");

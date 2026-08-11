@@ -5,6 +5,36 @@
 #include <stdexcept>
 #include <string_view>
 #include <unordered_map>
+#include "Scanner.hh"
+
+namespace star
+{
+    namespace helpers
+    {
+        std::string StringifyString(const std::string& value)
+        {
+            std::string result;
+            result.reserve(value.size() + 2);
+
+            result += '"';
+
+            for (char c : value)
+            {
+                auto it = Scanner::s_ReverseEscapeMap.find(c);
+                if(it != Scanner::s_ReverseEscapeMap.end())
+                {
+                    result += '\\'; 
+                    result += it->second;
+                }
+                else
+                    result += c;
+            }
+
+            result += '"';
+            return result;
+        }
+    }
+}
 
 star::OutOfRangeException::OutOfRangeException(const std::string& reason)
 {
@@ -225,4 +255,50 @@ void star::Value::AssignTypedUint(std::string_view lexeme, size_t typeOffset)
             case IntegerType::U64: default: m_Value = value; break;
         }
     }
+}
+
+const std::string star::Value::ToString() const
+{
+    return std::visit(
+        [this](const auto& value) -> std::string
+        {
+            using T = std::decay_t<decltype(value)>;
+
+            if constexpr (std::is_same_v<T, std::monostate>)
+            {
+                return "null";
+            }
+            else if constexpr (std::is_same_v<T, bool>)
+            {
+                return value ? "true" : "false";
+            }
+            else if constexpr (std::is_same_v<T, char8_t>)
+            {
+                return std::string(1, static_cast<char>(value));
+            }
+            else if constexpr (std::is_same_v<T, std::string>)
+            {
+                return helpers::StringifyString(value);
+            }
+            else if constexpr (std::is_same_v<T, int8_t>)
+            {
+                return std::to_string(static_cast<int>(value));
+            }
+            else if constexpr (std::is_same_v<T, uint8_t>)
+            {
+                return std::to_string(static_cast<unsigned int>(value));
+            }
+            else
+            {
+                return std::to_string(value);
+            }
+        },
+        m_Value
+    );
+}
+
+std::ostream& operator<<(std::ostream& out, const star::Value& value)
+{
+    out << value.ToString();
+    return out;
 }
