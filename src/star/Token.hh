@@ -11,6 +11,7 @@ namespace star
 {
     class STAR_API Token
     {
+        friend class Parser;
     public:
         Token(TokenType type, std::string lexeme, size_t line, size_t column, std::string filepath);
         std::string ToString() const;

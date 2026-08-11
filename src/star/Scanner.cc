@@ -78,6 +78,8 @@ void star::Scanner::ScanToken()
         case '}': AddToken(TokenType::RIGHT_BRACE); break;
         case ',': AddToken(TokenType::COMMA); break;
         case '#': AddToken(TokenType::NUM_SIGN); break;
+        case '?': AddToken(TokenType::COLON); break;
+        case ':': AddToken(TokenType::QUESTION); break;
         case '.':
             if(IsDigit(Peek()))
             {
@@ -242,7 +244,7 @@ void star::Scanner::TemplateString()
 {
     char c = Peek();
     std::vector<char> processedString;
-    AddToken(TokenType::TEMPLATE_STRING);
+    AddToken(TokenType::TEMPLATE_STRING_START);
     CommitAdvance();
     while(c != '`' && !IsAtEnd())
     {

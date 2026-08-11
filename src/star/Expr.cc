@@ -6,17 +6,17 @@ star::Grouping::Grouping(std::shared_ptr<Expr> expression) :
 {
 }
 
-std::any star::Grouping::Accept(star::ExprVisitor& visitor)
+star::Value star::Grouping::Accept(star::ExprVisitor& visitor)
 {
     return visitor.VisitGroupingExpr(shared_from_this());
 }
 
-star::Literal::Literal(std::any value) :
+star::Literal::Literal(Value value) :
     m_Value{std::move(value)}
 {
 }
 
-std::any star::Literal::Accept(star::ExprVisitor& visitor)
+star::Value star::Literal::Accept(star::ExprVisitor& visitor)
 {
     return visitor.VisitLiteralExpr(shared_from_this());
 }
@@ -26,7 +26,7 @@ star::TemplateLiteral::TemplateLiteral(const std::vector<TemplateShard>& shards)
 {
 }
 
-std::any star::TemplateLiteral::Accept(star::ExprVisitor& visitor)
+star::Value star::TemplateLiteral::Accept(star::ExprVisitor& visitor)
 {
     return visitor.VisitTemplateLiteralExpr(shared_from_this());
 }
@@ -36,7 +36,7 @@ star::Unary::Unary(Token oper, std::shared_ptr<Expr> right) :
 {
 }
 
-std::any star::Unary::Accept(star::ExprVisitor& visitor)
+star::Value star::Unary::Accept(star::ExprVisitor& visitor)
 {
     return visitor.VisitUnaryExpr(shared_from_this());
 }
@@ -46,7 +46,7 @@ star::Binary::Binary(std::shared_ptr<Expr> left, Token oper, std::shared_ptr<Exp
 {
 }
 
-std::any star::Binary::Accept(star::ExprVisitor& visitor)
+star::Value star::Binary::Accept(star::ExprVisitor& visitor)
 {
     return visitor.VisitBinaryExpr(shared_from_this());
 }
@@ -58,7 +58,7 @@ star::Ternary::Ternary(std::shared_ptr<Expr> condition, std::shared_ptr<Expr> tr
 {
 }
 
-std::any star::Ternary::Accept(star::ExprVisitor& visitor)
+star::Value star::Ternary::Accept(star::ExprVisitor& visitor)
 {
     return visitor.VisitTernaryExpr(shared_from_this());
 }

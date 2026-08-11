@@ -15,16 +15,16 @@ namespace star
 
         Grouping(std::shared_ptr<Expr> expression);
         ~Grouping() = default;
-        std::any Accept(ExprVisitor& visitor) override;
+        Value Accept(ExprVisitor& visitor) override;
     };
 
     struct STAR_API Literal final : public Expr, public std::enable_shared_from_this<Literal>
     {
-        std::any m_Value;
+        Value m_Value;
 
-        Literal(std::any value);
+        Literal(Value value);
         ~Literal() = default;
-        std::any Accept(ExprVisitor& visitor) override;
+        Value Accept(ExprVisitor& visitor) override;
     };
 
     using TemplateShard =
@@ -39,7 +39,7 @@ namespace star
 
         TemplateLiteral(const std::vector<TemplateShard>& shards);
         ~TemplateLiteral() = default;
-        std::any Accept(ExprVisitor& visitor) override;
+        Value Accept(ExprVisitor& visitor) override;
     };
 
     struct STAR_API Unary final : public Expr, public std::enable_shared_from_this<Unary>
@@ -49,7 +49,7 @@ namespace star
 
         Unary(Token oper, std::shared_ptr<Expr> right);
         ~Unary() = default;
-        std::any Accept(ExprVisitor& visitor) override;
+        Value Accept(ExprVisitor& visitor) override;
     };
 
     struct STAR_API Binary final : public Expr, public std::enable_shared_from_this<Binary>
@@ -60,7 +60,7 @@ namespace star
 
         Binary(std::shared_ptr<Expr> left, Token oper, std::shared_ptr<Expr> right);
         ~Binary() = default;
-        std::any Accept(ExprVisitor& visitor) override;
+        Value Accept(ExprVisitor& visitor) override;
     };
 
     struct STAR_API Ternary final : public Expr, public std::enable_shared_from_this<Ternary>
@@ -71,6 +71,6 @@ namespace star
 
         Ternary(std::shared_ptr<Expr> condition, std::shared_ptr<Expr> trueSentence, std::shared_ptr<Expr> falseSentence);
         ~Ternary() = default;
-        std::any Accept(ExprVisitor& visitor) override;
+        Value Accept(ExprVisitor& visitor) override;
     };
 }
