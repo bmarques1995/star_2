@@ -1,4 +1,5 @@
 #include "Repl.hh"
+#include "AstPrinter.hh"
 #include "BaseException.hh"
 #include <Console.hh>
 #include <string>
@@ -7,6 +8,7 @@
 #include <fstream>
 #include <filesystem>
 #include <Scanner.hh>
+#include <Parser.hh>
 
 namespace fs = std::filesystem;
 
@@ -54,19 +56,22 @@ void star::Star::RunPrompt()
 
 void star::Star::Run(const std::string& source, const std::string& filepath)
 {
-    Scanner scanner(source, filepath);
-    std::vector<Token> tokens;
     try
     {
-        tokens = scanner.ScanTokens();
+        Scanner scanner(source, filepath);
+        std::vector<Token> tokens = scanner.ScanTokens();
+        Parser parser{tokens};
+        std::shared_ptr<Expr> expr = parser.Parse();
+
+        for(auto& t: tokens)
+        {
+            AstPrinter printer;
+            star::TraceConsole() << printer.Print(expr);
+        }
     }
     catch(ScriptException e)
     {
         star::ErrorConsole() << e.what();
         std::exit(65);
-    }
-    for(auto& t: tokens)
-    {
-        star::TraceConsole() << t.ToString();
     }
 }
