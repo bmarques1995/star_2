@@ -4,9 +4,19 @@
 #include <sstream>
 #define inner_assert(E)
 
+star::ParserException::ParserException(const std::string& message)
+{
+    m_Reason = "ParserException: " + message;
+}
+
 star::Parser::Parser(const std::vector<Token>& tokens) : tokens(tokens) 
 {
 
+}
+
+std::shared_ptr<star::Expr> star::Parser::Parse()
+{
+   return Expression(); 
 }
 
 std::shared_ptr<star::Expr> star::Parser::Expression()

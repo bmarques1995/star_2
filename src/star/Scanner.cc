@@ -34,7 +34,7 @@ const std::unordered_map<std::string, star::TokenType> star::Scanner::s_Keywords
     {"while",  TokenType::WHILE}
 };
 
-const std::unordered_map<char, char> s_EscapeMap =
+const std::unordered_map<char, char> star::Scanner::s_EscapeMap =
 {
     {'\\', '\\'},
     {'n', '\n'},
@@ -48,7 +48,7 @@ const std::unordered_map<char, char> s_EscapeMap =
     {'`', '`'},
 };
 
-const std::unordered_map<char, char> s_ReverseEscapeMap =
+const std::unordered_map<char, char> star::Scanner::s_ReverseEscapeMap =
 {
     {'\\', '\\'},
     {'\n', 'n'},
