@@ -178,6 +178,6 @@ var x = 10;)";
 
     TEST(scanner, base_exception_test)
     {
-        EXPECT_THROW(throw star::ScannerException("element"), star::ScannerException);
+        EXPECT_THROW(throw star::ScannerException("element", 1, 1, "::repl"), star::ScannerException);
     }
 }

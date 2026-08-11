@@ -2,16 +2,18 @@
 #include "Token.hh"
 #include "TokenType.hh"
 #include <cstddef>
+#include <sstream>
 #include <string_view>
 #include <algorithm>
 #include <unordered_map>
 
 using match_range = std::pair<size_t, size_t>;
 
-star::ScannerException::ScannerException(const std::string& reason, size_t line) : ScriptException()
+star::ScannerException::ScannerException(const std::string& reason, size_t line, size_t column, std::string filepath) : ScriptException()
 {
-    std::string lineInfo = line > 0 ? " at line: " + std::to_string(line) : "";
-    m_Reason = "ScannerException: " + reason + lineInfo;
+    std::stringstream lineInfo;
+    lineInfo << " at " << filepath << ":" << line << ":" << column;
+    m_Reason = "[Scanner]: " + reason + lineInfo.str();
 }
 
 const std::unordered_map<std::string, star::TokenType> star::Scanner::s_Keywords =
@@ -184,8 +186,7 @@ void star::Scanner::AddToken(TokenType type, const std::string& lexeme)
     std::string text{m_Source.substr(m_Start, m_Current - m_Start)};
     if(lexeme != "")
         text = lexeme;
-    size_t column = m_Start - m_LineBreaks[m_Line - 1];
-    m_Tokens.emplace_back(type, text, m_Line, column, m_Filepath);
+    m_Tokens.emplace_back(type, text, m_Line, GetCurrentColumn(), m_Filepath);
 }
 
 char star::Scanner::Peek(size_t offset)
@@ -221,7 +222,8 @@ void star::Scanner::ProcessDefault(char c)
     }
     else
     {
-        throw ScannerException(std::string("Unexpected character: ") + c, m_Line);
+        size_t column = m_Current - m_LineBreaks[m_Line - 1];
+        throw ScannerException(std::string("Unexpected character: ") + c, m_Line, column, m_Filepath);
     }
 }
 
@@ -252,7 +254,8 @@ char star::Scanner::ProcessEscapedChar(char evaluated)
     if(it != s_EscapeMap.end())
         return it->second;
     else
-        throw ScannerException("The only valid escape sequences are: '\\\\', '\\n', '\\r', '\\t', '\\%', '\\$', '\\{' and '\\}'");
+        throw ScannerException("The only valid escape sequences are: '\\\\', '\\n', '\\r', '\\t', '\\%', '\\$', '\\{' and '\\}'",
+            m_Line, GetCurrentColumn(), m_Filepath);
 }
 
 void star::Scanner::TemplateString()
@@ -290,7 +293,8 @@ void star::Scanner::TemplateString()
         else
         {
             if(c == '\n')
-                throw ScannerException("You can't break lines on a string, use '\\n' instead.");
+                throw ScannerException("You can't break lines on a string, use '\\n' instead.",
+                    m_Line, GetCurrentColumn(), m_Filepath);
         
             processedString.push_back(c);
             Advance();
@@ -318,7 +322,8 @@ void star::Scanner::String()
             c = ProcessEscapedChar(Peek());
         }
         if(c == '\n')
-            throw ScannerException("You can't break lines on a string, use '\\n' instead.");
+            throw ScannerException("You can't break lines on a string, use '\\n' instead.",
+                m_Line, GetCurrentColumn(), m_Filepath);
         processedString.push_back(c);
         Advance();
         c = Peek();
@@ -326,7 +331,8 @@ void star::Scanner::String()
 
     if(IsAtEnd())
     {
-        throw ScannerException("Unterminated string, ", m_Line);
+        throw ScannerException("Unterminated string, ",
+                m_Line, GetCurrentColumn(), m_Filepath);
     }
 
     Advance();
@@ -379,7 +385,8 @@ void star::Scanner::Number()
     {
         if(!ProcessFloat())
         {
-            throw ScannerException("Invalid float literal", m_Line);
+            throw ScannerException("Invalid float literal",
+                m_Line, GetCurrentColumn(), m_Filepath);
         }
         type = TokenType::FLOAT_NUMBER;
     }
@@ -387,7 +394,8 @@ void star::Scanner::Number()
     {
         if(!ProcessHex())
         {
-            throw ScannerException("Invalid hex literal", m_Line);
+            throw ScannerException("Invalid hex literal",
+                m_Line, GetCurrentColumn(), m_Filepath);
         }
     }
     else if(IsDigit(c))
@@ -397,7 +405,8 @@ void star::Scanner::Number()
 
         if(!isInteger && !isFloat)
         {
-            throw ScannerException("Invalid number literal", m_Line);
+            throw ScannerException("Invalid number literal",
+                m_Line, GetCurrentColumn(), m_Filepath);
         }
         if(isFloat)
             type = TokenType::FLOAT_NUMBER;
@@ -424,6 +433,11 @@ void star::Scanner::InitCurrentProcessingString(std::string_view* currentText)
     auto strIt = m_Source.begin();
     strIt += m_Start;
     *currentText = std::string_view(strIt, m_Source.end());
+}
+
+size_t star::Scanner::GetCurrentColumn()
+{
+    return m_Current - m_LineBreaks[m_Line - 1]; 
 }
 
 star::Scanner::Scanner(const std::string& source, const std::string& filepath) : 

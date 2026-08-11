@@ -6,7 +6,7 @@
 
 star::ParserException::ParserException(const std::string& message)
 {
-    m_Reason = "ParserException: " + message;
+    m_Reason = "[Parser]: " + message;
 }
 
 star::Parser::Parser(const std::vector<Token>& tokens) : tokens(tokens) 
@@ -99,7 +99,7 @@ std::shared_ptr<star::Expr> star::Parser::Primary()
     }
     
     std::stringstream ss;
-    ss << "[Parser] Expected expression" << Peek();
+    ss << "Expected expression " << Peek();
     throw ParserException(ss.str());
 }
 
@@ -158,7 +158,7 @@ std::shared_ptr<star::Expr> star::Parser::TemplateLiteral()
         {
             std::stringstream ss;
 
-            ss << "[Parser] Expected template substring or expression"
+            ss << "Expected template substring or expression "
                << Peek();
 
             throw ParserException(ss.str());

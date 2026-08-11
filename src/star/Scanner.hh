@@ -15,7 +15,7 @@ namespace star
     class STAR_API ScannerException : public ScriptException
     {
     public:
-        ScannerException(const std::string& reason, size_t line = 0);
+        ScannerException(const std::string& reason, size_t line, size_t column, std::string filepath);
         ~ScannerException() = default;
     };
 
@@ -64,6 +64,8 @@ namespace star
         void Identifier();
 
         void InitCurrentProcessingString(std::string_view* currentText);
+
+        size_t GetCurrentColumn();
     public:
         Scanner(const std::string& source, const std::string& filepath = "::repl");
         bool IsAtEnd(size_t offset = 0);
