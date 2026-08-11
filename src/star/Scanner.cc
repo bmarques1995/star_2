@@ -437,7 +437,7 @@ void star::Scanner::InitCurrentProcessingString(std::string_view* currentText)
 
 size_t star::Scanner::GetCurrentColumn()
 {
-    return m_Current - m_LineBreaks[m_Line - 1]; 
+    return m_Start - m_LineBreaks[m_Line - 1]; 
 }
 
 star::Scanner::Scanner(const std::string& source, const std::string& filepath) : 
