@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <string_view>
 #include <unordered_map>
+#include <variant>
 #include "Scanner.hh"
 
 namespace star
@@ -41,6 +42,11 @@ star::OutOfRangeException::OutOfRangeException(const std::string& reason)
     m_Reason = reason;
 }
 
+star::InvalidOperation::InvalidOperation(const std::string& reason)
+{
+    m_Reason = reason;
+}
+
 star::Value::Value(TokenType type, std::string_view lexeme)
 {
     switch (type)
@@ -54,13 +60,32 @@ star::Value::Value(TokenType type, std::string_view lexeme)
     }
 }
 
+star::Value::Value(const Storage& value):
+    m_Value{std::move(value)}
+{
+
+}
+
 bool star::Value::IsInitialized() const
 {
     return !std::holds_alternative<std::monostate>(m_Value);
 }
 
+bool star::Value::IsNumber() const
+{
+    return std::visit(
+        [](const auto& value)
+        {
+            using T = std::decay_t<decltype(value)>;
+            return std::is_arithmetic_v<T>;
+        },
+        m_Value
+    );
+}
+
 void star::Value::ParseFloatNumber(std::string_view lexeme)
 {
+    //npos
     auto typeAssignment = lexeme.find("f");
     if(typeAssignment == SIZE_MAX)
         m_Value = std::stod(lexeme.data());
@@ -297,7 +322,18 @@ const std::string star::Value::ToString() const
     );
 }
 
-std::ostream& operator<<(std::ostream& out, const star::Value& value)
+
+ star::Value::Storage& star::Value::GetLValue()
+{
+    return m_Value;
+}
+
+const star::Value::Storage& star::Value::GetRValue() const
+{
+    return m_Value;
+}
+
+std::ostream& star::operator<<(std::ostream& out, const star::Value& value)
 {
     out << value.ToString();
     return out;

@@ -9,11 +9,18 @@
 
 namespace star
 {
-    class OutOfRangeException : public ScriptException
+    class STAR_API OutOfRangeException : public ScriptException
     {
     public:
         OutOfRangeException(const std::string& reason);
         ~OutOfRangeException() = default;
+    };
+
+    class STAR_API InvalidOperation : public ScriptException
+    {
+    public:
+        InvalidOperation(const std::string& reason);
+        ~InvalidOperation() = default;
     };
 
     class STAR_API Value
@@ -39,12 +46,19 @@ namespace star
             float,
             double
         >;
-    
+
+        friend star::Value& operator-(star::Value& value);
+
         Value(TokenType type, std::string_view lexeme);
+        Value(const Storage& value);
         ~Value() = default;
 
         const std::string ToString() const;
+        Storage& GetLValue();
+        const Storage& GetRValue() const;
         bool IsInitialized() const;
+        bool IsNumber() const;
+
     private:
         void ParseFloatNumber(std::string_view lexeme);
         void ParseNumber(std::string_view lexeme);
@@ -58,6 +72,17 @@ namespace star
         void AssignTypedUint(std::string_view lexeme, size_t typeOffset);
         Storage m_Value;
     };
-}
 
-STAR_API std::ostream& operator<<(std::ostream& out, const star::Value& value);
+    STAR_API std::ostream& operator<<(std::ostream& out, const star::Value& value);
+    STAR_API star::Value& operator-(star::Value& value);
+    STAR_API star::Value& operator+(star::Value& value1, const star::Value& value2);
+    STAR_API star::Value& operator-(star::Value& value1, const star::Value& value2);
+    STAR_API star::Value& operator*(star::Value& value1, const star::Value& value2);
+    STAR_API star::Value& operator/(star::Value& value1, const star::Value& value2);
+    STAR_API star::Value& operator%(star::Value& value1, const star::Value& value2);
+    STAR_API bool operator==(const star::Value& value1, const star::Value& value2);
+    STAR_API bool operator<(const star::Value& value1, const star::Value& value2);
+    STAR_API bool operator<=(const star::Value& value1, const star::Value& value2);
+    STAR_API bool operator>(const star::Value& value1, const star::Value& value2);
+    STAR_API bool operator>=(const star::Value& value1, const star::Value& value2);
+}

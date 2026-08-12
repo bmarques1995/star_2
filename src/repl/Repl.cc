@@ -7,8 +7,9 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
-#include <Scanner.hh>
-#include <Parser.hh>
+#include "Scanner.hh"
+#include "Parser.hh"
+#include "Interpreter.hh"
 
 namespace fs = std::filesystem;
 
@@ -63,11 +64,10 @@ void star::Star::Run(const std::string& source, const std::string& filepath)
         Parser parser{tokens};
         std::shared_ptr<Expr> expr = parser.Parse();
 
-        for(auto& t: tokens)
-        {
-            AstPrinter printer;
-            star::TraceConsole() << printer.Print(expr);
-        }
+        AstPrinter printer;
+        printer.Print(expr);
+        Interpreter interpreter{};
+        interpreter.Interpret(expr);
     }
     catch(ScriptException e)
     {

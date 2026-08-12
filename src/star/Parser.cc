@@ -87,7 +87,7 @@ std::shared_ptr<star::Expr> star::Parser::Primary()
     if(Match(TokenType::NUMBER, TokenType::STRING, TokenType::FLOAT_NUMBER, 
         TokenType::ST_TRUE, TokenType::ST_FALSE))
     {
-        Value v{Peek().GetTokenType(), Peek().GetLexeme()};
+        Value v{Previous().GetTokenType(), Previous().GetLexeme()};
         return std::make_shared<star::Literal>(v);
     }
 
@@ -99,7 +99,7 @@ std::shared_ptr<star::Expr> star::Parser::Primary()
     }
     
     std::stringstream ss;
-    ss << "Expected expression " << Peek();
+    ss << "Expected expression " << Peek().ToString();
     throw ParserException(ss.str());
 }
 
@@ -159,7 +159,7 @@ std::shared_ptr<star::Expr> star::Parser::TemplateLiteral()
             std::stringstream ss;
 
             ss << "Expected template substring or expression "
-               << Peek();
+               << Peek().ToString();
 
             throw ParserException(ss.str());
         }
@@ -189,7 +189,7 @@ star::Token star::Parser::Consume(const TokenType& token, const std::string& mes
 {
     if(Check(token)) return Advance();
     std::stringstream ss;
-    ss << message << Peek();
+    ss << message << Peek().ToString();
     throw ParserException(ss.str());
 }
 
