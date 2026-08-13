@@ -1,8 +1,10 @@
 #include "Interpreter.hh"
+#include "Expr.hh"
 #include "Token.hh"
 #include "TokenType.hh"
 #include "Value.hh"
 #include "RuntimeError.hh"
+#include <variant>
 
 star::Interpreter::Interpreter() {}
 
@@ -22,22 +24,27 @@ star::Value star::Interpreter::VisitTemplateLiteralExpr(std::shared_ptr<Template
     auto tokens = expr->m_TemplateShards;
     for(auto it = expr->m_TemplateShards.begin(); it != expr->m_TemplateShards.end(); it++)
     {
-        using T1 = std::decay_t<decltype(*it)>;
-        if constexpr (std::is_same_v<T1, std::shared_ptr<Expr>>)
+        std::string temp = std::visit([](const auto& shard)->std::string
         {
-            Value native_v = Evaluate(std::get<std::shared_ptr<Expr>>(*it));
-            v += native_v.ToString();
-        }
-        else
-        {
-            std::string substr = std::get<std::string>(*it);
-            v += std::get<std::string>(*it);
-        }
+            using T1 = std::decay_t<decltype(shard)>;
+            if constexpr (std::is_same_v<T1, std::string>)
+            {
+                return shard;
+            }
+            else
+            {
+                Interpreter i;
+                return i.Interpret(shard);
+            }
+        },
+        *it);
+        v += temp;
     }
     return {TokenType::STRING, v};
 } 
 
-star::Value star::Interpreter::VisitUnaryExpr(std::shared_ptr<Unary> expr){
+star::Value star::Interpreter::VisitUnaryExpr(std::shared_ptr<Unary> expr)
+{
     Value right = Evaluate(expr->m_Right);
 
     switch(expr->m_Operator.GetTokenType())
@@ -89,10 +96,10 @@ star::Value star::Interpreter::VisitBinaryExpr(std::shared_ptr<Binary> expr)
             return left * right;
         case TokenType::SLASH:
             CheckNumberOperands(expr->m_Operator, left, right);
-            left / right;
+            return left / right;
         case TokenType::MOD:
             CheckNumberOperands(expr->m_Operator, left, right);
-            left % right;
+            return left % right;
         case TokenType::BANG_EQUAL:
             CheckNumberOperands(expr->m_Operator, left, right);
             return {!IsEqual(left, right) ? TokenType::ST_TRUE : TokenType::ST_FALSE, ""};

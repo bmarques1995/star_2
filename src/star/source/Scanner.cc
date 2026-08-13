@@ -66,7 +66,7 @@ const std::unordered_map<char, char> star::Scanner::s_ReverseEscapeMap =
 
 namespace star_definitions
 {
-    const std::string s_OperatorPost = R"((?=[\+\-\*\/\%=;\!\<\>\&\|\(\) \t\r\n]|\z))";
+    const std::string s_OperatorPost = R"((?=[\+\-\*\/\%=;\!\<\>\&\|\(\)\{\} \t\r\n]|\z))";
     //(?=[\+\-\*\/\%=;\!\<\>\&\| \t\r\n]|\z)
     const std::string s_CommentRegex = R"(\/\/[^\r\n]*)";
     const std::string s_MultilineCommentRegex = R"((?s)\/\*.*?(?:\*\/|$))";

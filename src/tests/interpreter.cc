@@ -42,4 +42,40 @@ namespace star
         std::string result = interpreter.Interpret(expr);
         EXPECT_EQ(result, "7");
     }
+
+    TEST(interpreter, linear_expression)
+    {
+        std::string input = "6 * 2 + 3";
+        Scanner scanner(input);
+        auto tokens = scanner.ScanTokens();
+        Parser parser{tokens};
+        auto expr = parser.Parse();
+        Interpreter interpreter{};
+        std::string result = interpreter.Interpret(expr);
+        EXPECT_EQ(result, "15");
+    }
+
+    TEST(interpreter, grouped_expression)
+    {
+        std::string input = "6 * (2 + 3)";
+        Scanner scanner(input);
+        auto tokens = scanner.ScanTokens();
+        Parser parser{tokens};
+        auto expr = parser.Parse();
+        Interpreter interpreter{};
+        std::string result = interpreter.Interpret(expr);
+        EXPECT_EQ(result, "30");
+    }
+
+    TEST(interpreter, template_string)
+    {
+        std::string input = R"(`This is a template string, to prove, use these expressions: ${1995/35}$ and ${143-13}$`)";
+        Scanner scanner(input);
+        auto tokens = scanner.ScanTokens();
+        Parser parser{tokens};
+        auto expr = parser.Parse();
+        Interpreter interpreter{};
+        std::string result = interpreter.Interpret(expr);
+        EXPECT_EQ(result, "This is a template string, to prove, use these expressions: 57 and 130");
+    }
 }

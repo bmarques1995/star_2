@@ -84,6 +84,8 @@ std::shared_ptr<star::Expr> star::Parser::Unary()
 
 std::shared_ptr<star::Expr> star::Parser::Primary()
 {
+    if(Match(TokenType::TEMPLATE_STRING_START))
+        return TemplateLiteral();
     if(Match(TokenType::NUMBER, TokenType::STRING, TokenType::FLOAT_NUMBER, 
         TokenType::ST_TRUE, TokenType::ST_FALSE))
     {
@@ -130,11 +132,6 @@ std::shared_ptr<star::Expr> star::Parser::Ternary()
 
 std::shared_ptr<star::Expr> star::Parser::TemplateLiteral()
 {
-    Consume(
-        TokenType::TEMPLATE_STRING_START,
-        "Expected template string."
-    );
-
     std::vector<TemplateShard> shards;
 
     while (!Check(TokenType::TEMPLATE_STRING_END))
