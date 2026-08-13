@@ -408,7 +408,7 @@ void star::Scanner::Number()
             throw ScannerException("Invalid number literal",
                 m_Line, GetCurrentColumn(), m_Filepath);
         }
-        if(isFloat)
+        if(!isInteger && isFloat)
             type = TokenType::FLOAT_NUMBER;
     }
 
