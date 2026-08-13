@@ -14,75 +14,75 @@ star::Parser::Parser(const std::vector<Token>& tokens) : tokens(tokens)
 
 }
 
-std::shared_ptr<star::Expr> star::Parser::Parse()
+std::shared_ptr<star::Expression::Expr> star::Parser::Parse()
 {
    return Expression(); 
 }
 
-std::shared_ptr<star::Expr> star::Parser::Expression()
+std::shared_ptr<star::Expression::Expr> star::Parser::Expression()
 {
     return Ternary();
 }
 
-std::shared_ptr<star::Expr> star::Parser::Equality()
+std::shared_ptr<star::Expression::Expr> star::Parser::Equality()
 {
-    std::shared_ptr<Expr> expr = Comparison();
+    std::shared_ptr<Expression::Expr> expr = Comparison();
     while(Match(TokenType::BANG_EQUAL, TokenType::EQUAL_EQUAL)){
         Token oper = Previous();
-        std::shared_ptr<Expr> right = Comparison();
-        expr = std::make_shared<Binary>(expr, oper, right);
+        std::shared_ptr<Expression::Expr> right = Comparison();
+        expr = std::make_shared<Expression::Binary>(expr, oper, right);
     }
     return expr;
 }
 
-std::shared_ptr<star::Expr> star::Parser::Comparison()
+std::shared_ptr<star::Expression::Expr> star::Parser::Comparison()
 {
-    std::shared_ptr<Expr> expr = Term();
+    std::shared_ptr<Expression::Expr> expr = Term();
     while(Match(TokenType::GREATER, TokenType::GREATER_EQUAL, TokenType::LESS, TokenType::LESS_EQUAL))
     {
         Token oper = Previous();
-        std::shared_ptr<Expr> right = Term();
-        expr = std::make_shared<Binary>(expr, oper, right);
+        std::shared_ptr<Expression::Expr> right = Term();
+        expr = std::make_shared<Expression::Binary>(expr, oper, right);
     }
     return expr;
 }
 
-std::shared_ptr<star::Expr> star::Parser::Term()
+std::shared_ptr<star::Expression::Expr> star::Parser::Term()
 {
-    std::shared_ptr<Expr> expr = Factor();
+    std::shared_ptr<Expression::Expr> expr = Factor();
     while(Match(TokenType::MINUS, TokenType::PLUS))
     {
         Token oper = Previous();
-        std::shared_ptr<Expr> right = Factor();
-        expr = std::make_shared<Binary>(expr, oper, right);
+        std::shared_ptr<Expression::Expr> right = Factor();
+        expr = std::make_shared<Expression::Binary>(expr, oper, right);
     }
     return expr;
 }
 
-std::shared_ptr<star::Expr> star::Parser::Factor()
+std::shared_ptr<star::Expression::Expr> star::Parser::Factor()
 {
-    std::shared_ptr<Expr> expr = Unary();
+    std::shared_ptr<Expression::Expr> expr = Unary();
     while(Match(TokenType::SLASH, TokenType::STAR, TokenType::MOD))
     {
         Token oper = Previous();
-        std::shared_ptr<Expr> right = Unary();
-        expr = std::make_shared<star::Binary>(expr, oper, right);
+        std::shared_ptr<Expression::Expr> right = Unary();
+        expr = std::make_shared<star::Expression::Binary>(expr, oper, right);
     }
     return expr;
 }
 
-std::shared_ptr<star::Expr> star::Parser::Unary()
+std::shared_ptr<star::Expression::Expr> star::Parser::Unary()
 {
     while(Match(TokenType::BANG, TokenType::MINUS))
     {
         Token oper = Previous();
-        std::shared_ptr<Expr> right = Unary();
-        return std::make_shared<star::Unary>(oper, right);
+        std::shared_ptr<Expression::Expr> right = Unary();
+        return std::make_shared<star::Expression::Unary>(oper, right);
     }
     return Primary();
 }
 
-std::shared_ptr<star::Expr> star::Parser::Primary()
+std::shared_ptr<star::Expression::Expr> star::Parser::Primary()
 {
     if(Match(TokenType::TEMPLATE_STRING_START))
         return TemplateLiteral();
@@ -90,14 +90,14 @@ std::shared_ptr<star::Expr> star::Parser::Primary()
         TokenType::ST_TRUE, TokenType::ST_FALSE))
     {
         Value v{Previous().GetTokenType(), Previous().GetLexeme()};
-        return std::make_shared<star::Literal>(v);
+        return std::make_shared<star::Expression::Literal>(v);
     }
 
     if(Match(TokenType::LEFT_PAREN))
     {
-        std::shared_ptr<Expr> expr = Expression();
+        std::shared_ptr<Expression::Expr> expr = Expression();
         Consume(TokenType::RIGHT_PAREN, "Expected ')' after expression.");
-        return std::make_shared<Grouping>(expr);
+        return std::make_shared<Expression::Grouping>(expr);
     }
     
     std::stringstream ss;
@@ -105,22 +105,22 @@ std::shared_ptr<star::Expr> star::Parser::Primary()
     throw ParserException(ss.str());
 }
 
-std::shared_ptr<star::Expr> star::Parser::Ternary()
+std::shared_ptr<star::Expression::Expr> star::Parser::Ternary()
 {
-    std::shared_ptr<Expr> expr = Equality();
+    std::shared_ptr<Expression::Expr> expr = Equality();
 
     if (Match(TokenType::QUESTION))
     {
-        std::shared_ptr<Expr> thenBranch = Expression();
+        std::shared_ptr<Expression::Expr> thenBranch = Expression();
 
         Consume(
             TokenType::COLON,
             "Expected ':' after then branch of conditional expression."
         );
 
-        std::shared_ptr<Expr> elseBranch = Expression();
+        std::shared_ptr<Expression::Expr> elseBranch = Expression();
 
-        expr = std::make_shared<star::Ternary>(
+        expr = std::make_shared<star::Expression::Ternary>(
             expr,
             thenBranch,
             elseBranch
@@ -130,9 +130,9 @@ std::shared_ptr<star::Expr> star::Parser::Ternary()
     return expr;
 }
 
-std::shared_ptr<star::Expr> star::Parser::TemplateLiteral()
+std::shared_ptr<star::Expression::Expr> star::Parser::TemplateLiteral()
 {
-    std::vector<TemplateShard> shards;
+    std::vector<Expression::TemplateShard> shards;
 
     while (!Check(TokenType::TEMPLATE_STRING_END))
     {
@@ -142,7 +142,7 @@ std::shared_ptr<star::Expr> star::Parser::TemplateLiteral()
         }
         else if (Match(TokenType::STR_EXPR_START))
         {
-            std::shared_ptr<Expr> expression = Expression();
+            std::shared_ptr<Expression::Expr> expression = Expression();
 
             Consume(
                 TokenType::STR_EXPR_END,
@@ -167,7 +167,7 @@ std::shared_ptr<star::Expr> star::Parser::TemplateLiteral()
         "Expected '`' after template string."
     );
 
-    return std::make_shared<star::TemplateLiteral>(shards);
+    return std::make_shared<star::Expression::TemplateLiteral>(shards);
 }
 
 template<class...T>

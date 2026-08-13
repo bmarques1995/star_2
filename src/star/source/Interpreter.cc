@@ -8,17 +8,17 @@
 
 star::Interpreter::Interpreter() {}
 
-star::Value star::Interpreter::VisitGroupingExpr(std::shared_ptr<Grouping> expr)
+star::Value star::Interpreter::VisitGroupingExpr(std::shared_ptr<Expression::Grouping> expr)
 {
     return Evaluate(expr->m_Expression);
 }
 
-star::Value star::Interpreter::VisitLiteralExpr(std::shared_ptr<Literal> expr)
+star::Value star::Interpreter::VisitLiteralExpr(std::shared_ptr<Expression::Literal> expr)
 {
     return expr->m_Value;
 }
 
-star::Value star::Interpreter::VisitTemplateLiteralExpr(std::shared_ptr<TemplateLiteral> expr)
+star::Value star::Interpreter::VisitTemplateLiteralExpr(std::shared_ptr<Expression::TemplateLiteral> expr)
 {
     std::string v{""};
     auto tokens = expr->m_TemplateShards;
@@ -43,7 +43,7 @@ star::Value star::Interpreter::VisitTemplateLiteralExpr(std::shared_ptr<Template
     return {TokenType::STRING, v};
 } 
 
-star::Value star::Interpreter::VisitUnaryExpr(std::shared_ptr<Unary> expr)
+star::Value star::Interpreter::VisitUnaryExpr(std::shared_ptr<Expression::Unary> expr)
 {
     Value right = Evaluate(expr->m_Right);
 
@@ -59,7 +59,7 @@ star::Value star::Interpreter::VisitUnaryExpr(std::shared_ptr<Unary> expr)
     }
 }
 
-star::Value star::Interpreter::VisitBinaryExpr(std::shared_ptr<Binary> expr)
+star::Value star::Interpreter::VisitBinaryExpr(std::shared_ptr<Expression::Binary> expr)
 {
     Value left = Evaluate(expr->m_Left);
     Value right = Evaluate(expr->m_Right);
@@ -111,7 +111,7 @@ star::Value star::Interpreter::VisitBinaryExpr(std::shared_ptr<Binary> expr)
     }
 }
 
-star::Value star::Interpreter::VisitTernaryExpr(std::shared_ptr<Ternary> expr)
+star::Value star::Interpreter::VisitTernaryExpr(std::shared_ptr<Expression::Ternary> expr)
 {
     return std::visit([this, expr](const auto& shard)-> Value
         {
@@ -166,13 +166,13 @@ std::string star::Interpreter::Stringify(const Value& object)
     return object.ToString();
 }
 
-star::Value star::Interpreter::Evaluate(std::shared_ptr<Expr> expr)
+star::Value star::Interpreter::Evaluate(std::shared_ptr<Expression::Expr> expr)
 {
     return expr->Accept(*this);
 }
 
 
-std::string star::Interpreter::Interpret(std::shared_ptr<Expr> expr)
+std::string star::Interpreter::Interpret(std::shared_ptr<Expression::Expr> expr)
 {
     Value value = Evaluate(expr);
     return Stringify(value);

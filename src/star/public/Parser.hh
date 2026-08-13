@@ -34,19 +34,19 @@ namespace star
         Token Advance();
         Token Consume(const TokenType&, const std::string&);
 
-        std::shared_ptr<Expr> Expression();
-        std::shared_ptr<Expr> Equality();
-        std::shared_ptr<Expr> Comparison();
-        std::shared_ptr<Expr> Term();
-        std::shared_ptr<Expr> Factor();
-        std::shared_ptr<Expr> Unary();
-        std::shared_ptr<Expr> Primary();
-        std::shared_ptr<Expr> Ternary();
-        std::shared_ptr<Expr> TemplateLiteral();
+        std::shared_ptr<Expression::Expr> Expression();
+        std::shared_ptr<Expression::Expr> Equality();
+        std::shared_ptr<Expression::Expr> Comparison();
+        std::shared_ptr<Expression::Expr> Term();
+        std::shared_ptr<Expression::Expr> Factor();
+        std::shared_ptr<Expression::Expr> Unary();
+        std::shared_ptr<Expression::Expr> Primary();
+        std::shared_ptr<Expression::Expr> Ternary();
+        std::shared_ptr<Expression::Expr> TemplateLiteral();
 
     public:
         Parser(const std::vector<Token>&);
         ~Parser() = default;
-        std::shared_ptr<Expr> Parse();
+        std::shared_ptr<Expression::Expr> Parse();
     };
 }

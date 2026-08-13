@@ -5,41 +5,41 @@
 #include <sstream>
 #define inner_assert(E) // REMOVER DEPOIS
 
-std::string star::AstPrinter::Print(std::shared_ptr<Expr> expr)
+std::string star::AstPrinter::Print(std::shared_ptr<Expression::Expr> expr)
 {
     return expr->Accept(*this).ToString();
 }
 
-star::Value star::AstPrinter::VisitBinaryExpr(std::shared_ptr<Binary> expr)
+star::Value star::AstPrinter::VisitBinaryExpr(std::shared_ptr<Expression::Binary> expr)
 {
     return Value{TokenType::STRING,
         Parenthesize(expr->m_Operator.GetLexeme(), expr->m_Left, expr->m_Right)};
 }
 
-star::Value star::AstPrinter::VisitGroupingExpr(std::shared_ptr<Grouping> expr)
+star::Value star::AstPrinter::VisitGroupingExpr(std::shared_ptr<Expression::Grouping> expr)
 {
     return Value{TokenType::STRING,
         Parenthesize("group", expr->m_Expression)};
 }
 
-star::Value star::AstPrinter::VisitLiteralExpr(std::shared_ptr<Literal> expr)
+star::Value star::AstPrinter::VisitLiteralExpr(std::shared_ptr<Expression::Literal> expr)
 {
     return expr->m_Value;
 }
 
-star::Value star::AstPrinter::VisitUnaryExpr(std::shared_ptr<Unary> expr)
+star::Value star::AstPrinter::VisitUnaryExpr(std::shared_ptr<Expression::Unary> expr)
 {
   return Value{TokenType::STRING, 
     Parenthesize(expr->m_Operator.GetLexeme(), expr->m_Right)};
 }
 
-star::Value star::AstPrinter::VisitTemplateLiteralExpr(std::shared_ptr<TemplateLiteral> expr)
+star::Value star::AstPrinter::VisitTemplateLiteralExpr(std::shared_ptr<Expression::TemplateLiteral> expr)
 {
     return Value{TokenType::STRING, 
         Parenthesize("template string", expr)};
 }
 
-star::Value star::AstPrinter::VisitTernaryExpr(std::shared_ptr<Ternary> expr)
+star::Value star::AstPrinter::VisitTernaryExpr(std::shared_ptr<Expression::Ternary> expr)
 {
     return Value{TokenType::STRING, 
         Parenthesize("ternary", expr)};

@@ -9,68 +9,71 @@
 
 namespace star
 {
-    struct STAR_API Grouping final : public Expr, public std::enable_shared_from_this<Grouping>
+    namespace Expression
     {
-        std::shared_ptr<Expr> m_Expression;
+        struct STAR_API Grouping final : public Expr, public std::enable_shared_from_this<Grouping>
+        {
+            std::shared_ptr<Expr> m_Expression;
 
-        Grouping(std::shared_ptr<Expr> expression);
-        ~Grouping() = default;
-        Value Accept(ExprVisitor& visitor) override;
-    };
+            Grouping(std::shared_ptr<Expr> expression);
+            ~Grouping() = default;
+            Value Accept(ExprVisitor& visitor) override;
+        };
 
-    struct STAR_API Literal final : public Expr, public std::enable_shared_from_this<Literal>
-    {
-        Value m_Value;
+        struct STAR_API Literal final : public Expr, public std::enable_shared_from_this<Literal>
+        {
+            Value m_Value;
 
-        Literal(Value value);
-        ~Literal() = default;
-        Value Accept(ExprVisitor& visitor) override;
-    };
+            Literal(Value value);
+            ~Literal() = default;
+            Value Accept(ExprVisitor& visitor) override;
+        };
 
-    using TemplateShard =
-    std::variant<
-        std::string,
-        std::shared_ptr<Expr>
-    >;
+        using TemplateShard =
+        std::variant<
+            std::string,
+            std::shared_ptr<Expr>
+        >;
 
-    struct STAR_API TemplateLiteral final : public Expr, public std::enable_shared_from_this<TemplateLiteral>
-    {
-        std::vector<TemplateShard> m_TemplateShards;
+        struct STAR_API TemplateLiteral final : public Expr, public std::enable_shared_from_this<TemplateLiteral>
+        {
+            std::vector<TemplateShard> m_TemplateShards;
 
-        TemplateLiteral(const std::vector<TemplateShard>& shards);
-        ~TemplateLiteral() = default;
-        Value Accept(ExprVisitor& visitor) override;
-    };
+            TemplateLiteral(const std::vector<TemplateShard>& shards);
+            ~TemplateLiteral() = default;
+            Value Accept(ExprVisitor& visitor) override;
+        };
 
-    struct STAR_API Unary final : public Expr, public std::enable_shared_from_this<Unary>
-    {
-        Token m_Operator;
-        std::shared_ptr<Expr> m_Right;
+        struct STAR_API Unary final : public Expr, public std::enable_shared_from_this<Unary>
+        {
+            Token m_Operator;
+            std::shared_ptr<Expr> m_Right;
 
-        Unary(Token oper, std::shared_ptr<Expr> right);
-        ~Unary() = default;
-        Value Accept(ExprVisitor& visitor) override;
-    };
+            Unary(Token oper, std::shared_ptr<Expr> right);
+            ~Unary() = default;
+            Value Accept(ExprVisitor& visitor) override;
+        };
 
-    struct STAR_API Binary final : public Expr, public std::enable_shared_from_this<Binary>
-    {
-        std::shared_ptr<Expr> m_Left;
-        Token m_Operator;
-        std::shared_ptr<Expr> m_Right;
+        struct STAR_API Binary final : public Expr, public std::enable_shared_from_this<Binary>
+        {
+            std::shared_ptr<Expr> m_Left;
+            Token m_Operator;
+            std::shared_ptr<Expr> m_Right;
 
-        Binary(std::shared_ptr<Expr> left, Token oper, std::shared_ptr<Expr> right);
-        ~Binary() = default;
-        Value Accept(ExprVisitor& visitor) override;
-    };
+            Binary(std::shared_ptr<Expr> left, Token oper, std::shared_ptr<Expr> right);
+            ~Binary() = default;
+            Value Accept(ExprVisitor& visitor) override;
+        };
 
-    struct STAR_API Ternary final : public Expr, public std::enable_shared_from_this<Ternary>
-    {
-        std::shared_ptr<Expr> m_Condition;
-        std::shared_ptr<Expr> m_TrueSentence;
-        std::shared_ptr<Expr> m_FalseSentence;
+        struct STAR_API Ternary final : public Expr, public std::enable_shared_from_this<Ternary>
+        {
+            std::shared_ptr<Expr> m_Condition;
+            std::shared_ptr<Expr> m_TrueSentence;
+            std::shared_ptr<Expr> m_FalseSentence;
 
-        Ternary(std::shared_ptr<Expr> condition, std::shared_ptr<Expr> trueSentence, std::shared_ptr<Expr> falseSentence);
-        ~Ternary() = default;
-        Value Accept(ExprVisitor& visitor) override;
-    };
+            Ternary(std::shared_ptr<Expr> condition, std::shared_ptr<Expr> trueSentence, std::shared_ptr<Expr> falseSentence);
+            ~Ternary() = default;
+            Value Accept(ExprVisitor& visitor) override;
+        };
+    }
 }

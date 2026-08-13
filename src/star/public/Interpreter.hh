@@ -5,18 +5,18 @@
 
 namespace star
 {
-	class Interpreter : public ExprVisitor 
+	class Interpreter : public Expression::ExprVisitor 
 	{
 	public:
-		Value VisitGroupingExpr(std::shared_ptr<Grouping> expr) override;
-		Value VisitLiteralExpr(std::shared_ptr<Literal> expr) override;
-		Value VisitTemplateLiteralExpr(std::shared_ptr<TemplateLiteral> expr) override;
-		Value VisitUnaryExpr(std::shared_ptr<Unary> expr) override;
-		Value VisitBinaryExpr(std::shared_ptr<Binary> expr) override;
-		Value VisitTernaryExpr(std::shared_ptr<Ternary> expr) override;
+		Value VisitGroupingExpr(std::shared_ptr<Expression::Grouping> expr) override;
+		Value VisitLiteralExpr(std::shared_ptr<Expression::Literal> expr) override;
+		Value VisitTemplateLiteralExpr(std::shared_ptr<Expression::TemplateLiteral> expr) override;
+		Value VisitUnaryExpr(std::shared_ptr<Expression::Unary> expr) override;
+		Value VisitBinaryExpr(std::shared_ptr<Expression::Binary> expr) override;
+		Value VisitTernaryExpr(std::shared_ptr<Expression::Ternary> expr) override;
 		Interpreter();
-		std::string Interpret(std::shared_ptr<Expr> expr);
-		
+		std::string Interpret(std::shared_ptr<Expression::Expr> expr);
+
 
 	private:
 		void CheckNumberOperand(const Token& oper, const Value& operand);
@@ -24,7 +24,7 @@ namespace star
 		bool IsTruthy(const Value& object);
 		bool IsEqual(const Value& a, const Value& b);
 		std::string Stringify(const Value& object);
-		Value Evaluate(std::shared_ptr<Expr> expr);
+		Value Evaluate(std::shared_ptr<Expression::Expr> expr);
 	};
 
 }
