@@ -105,7 +105,7 @@ star::Value star::Interpreter::VisitBinaryExpr(std::shared_ptr<Binary> expr)
             return {!IsEqual(left, right) ? TokenType::ST_TRUE : TokenType::ST_FALSE, ""};
         case TokenType::EQUAL_EQUAL:
             CheckNumberOperands(expr->m_Operator, left, right);
-            return {!IsEqual(left, right) ? TokenType::ST_TRUE : TokenType::ST_FALSE, ""};
+            return {IsEqual(left, right) ? TokenType::ST_TRUE : TokenType::ST_FALSE, ""};
         default:
             return {TokenType::NIL, ""};
     }
@@ -113,29 +113,35 @@ star::Value star::Interpreter::VisitBinaryExpr(std::shared_ptr<Binary> expr)
 
 star::Value star::Interpreter::VisitTernaryExpr(std::shared_ptr<Ternary> expr)
 {
-    bool condition;
-    try
-    {
-        condition = std::get<bool>(Evaluate(expr->m_Condition).GetRValue());
-    }
-    catch(const std::bad_variant_access& e)
-    {
-        throw InvalidOperation("The condition on a Ternary must be a boolean");
-    } 
-    return condition ? Evaluate(expr->m_TrueSentence) : Evaluate(expr->m_FalseSentence);
+    return std::visit([this, expr](const auto& shard)-> Value
+        {
+            using T = std::decay_t<decltype(shard)>;
+            bool condition;
+            if constexpr (std::is_same_v<T, bool>)
+            {
+                condition = shard;
+            }
+            else
+            {
+                throw InvalidOperation("The condition on a Ternary must be a boolean");
+            } 
+            return condition ? Evaluate(expr->m_TrueSentence) : Evaluate(expr->m_FalseSentence);
+        },
+        Evaluate(expr->m_Condition).GetRValue());
 }
 
 bool star::Interpreter::IsTruthy(const Value& object)
 {
-    using T = std::decay_t<decltype(object)>;
-
-    if constexpr (std::is_same_v<T, std::monostate>) return false;
-    if constexpr (std::is_same_v<T, bool>)
-    {   
-        return std::get<bool>(object.GetRValue());
-    }
-    
-    return true;
+    return std::visit([](const auto& shard)-> bool
+        {
+            using T = std::decay_t<decltype(shard)>;
+            if constexpr (std::is_same_v<T, std::monostate>) return false;
+            if constexpr (std::is_same_v<T, bool>)
+                return shard;
+            else 
+                return true;
+        },
+        object.GetRValue());
 }
 
 void star::Interpreter::CheckNumberOperand(const Token& oper, const Value& operand)

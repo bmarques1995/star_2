@@ -62,7 +62,7 @@ std::shared_ptr<star::Expr> star::Parser::Term()
 std::shared_ptr<star::Expr> star::Parser::Factor()
 {
     std::shared_ptr<Expr> expr = Unary();
-    while(Match(TokenType::SLASH, TokenType::STAR))
+    while(Match(TokenType::SLASH, TokenType::STAR, TokenType::MOD))
     {
         Token oper = Previous();
         std::shared_ptr<Expr> right = Unary();

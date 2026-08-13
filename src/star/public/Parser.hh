@@ -46,6 +46,7 @@ namespace star
 
     public:
         Parser(const std::vector<Token>&);
+        ~Parser() = default;
         std::shared_ptr<Expr> Parse();
     };
 }
