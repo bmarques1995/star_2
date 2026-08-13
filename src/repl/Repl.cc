@@ -67,7 +67,7 @@ void star::Star::Run(const std::string& source, const std::string& filepath)
         AstPrinter printer;
         printer.Print(expr);
         Interpreter interpreter{};
-        interpreter.Interpret(expr);
+        star::TraceConsole() << interpreter.Interpret(expr) << "\n";
     }
     catch(ScriptException e)
     {

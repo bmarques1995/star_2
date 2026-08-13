@@ -303,7 +303,7 @@ const std::string star::Value::ToString() const
             }
             else if constexpr (std::is_same_v<T, std::string>)
             {
-                return helpers::StringifyString(value);
+                return value;
             }
             else if constexpr (std::is_same_v<T, int8_t>)
             {
@@ -322,8 +322,31 @@ const std::string star::Value::ToString() const
     );
 }
 
+const std::string star::Value::StringifyString() const
+{
+    return std::visit(
+        [](const auto& value) -> std::string
+        {
+            using T = std::decay_t<decltype(value)>;
 
- star::Value::Storage& star::Value::GetLValue()
+            if constexpr (std::is_same_v<T, std::monostate>)
+            {
+                return "null";
+            }
+            else if constexpr (std::is_same_v<T, std::string>)
+            {
+                return helpers::StringifyString(value);
+            }
+            else
+            {
+                return std::to_string(value);
+            }
+        },
+        m_Value
+    );
+}
+
+star::Value::Storage& star::Value::GetLValue()
 {
     return m_Value;
 }

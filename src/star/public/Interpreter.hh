@@ -15,7 +15,7 @@ namespace star
 		Value VisitBinaryExpr(std::shared_ptr<Binary> expr) override;
 		Value VisitTernaryExpr(std::shared_ptr<Ternary> expr) override;
 		Interpreter();
-		void Interpret(std::shared_ptr<Expr> expr);
+		std::string Interpret(std::shared_ptr<Expr> expr);
 
 	private:
 		void CheckNumberOperand(const Token& oper, const Value& operand);

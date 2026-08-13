@@ -54,6 +54,7 @@ namespace star
         ~Value() = default;
 
         const std::string ToString() const;
+        const std::string StringifyString() const;
         Storage& GetLValue();
         const Storage& GetRValue() const;
         bool IsInitialized() const;

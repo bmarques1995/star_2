@@ -159,8 +159,8 @@ star::Value star::Interpreter::Evaluate(std::shared_ptr<Expr> expr)
 }
 
 
-void star::Interpreter::Interpret(std::shared_ptr<Expr> expr)
+std::string star::Interpreter::Interpret(std::shared_ptr<Expr> expr)
 {
     Value value = Evaluate(expr);
-    std::cout << Stringify(value) << '\n';
+    return Stringify(value);
 }
