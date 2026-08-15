@@ -6,6 +6,7 @@
 #include "StarMacro.hh"
 #include "Token.hh"
 #include "Visitor.hh"
+#include "Stmt.hh"
 
 namespace star
 {
@@ -44,9 +45,13 @@ namespace star
         std::shared_ptr<Expression::Expr> Ternary();
         std::shared_ptr<Expression::Expr> TemplateLiteral();
 
+        std::shared_ptr<Statement::Stmt> Statement();
+        std::shared_ptr<Statement::Stmt> PrintStatement();
+        std::shared_ptr<Statement::Stmt> ExpressionStatement();
+
     public:
         Parser(const std::vector<Token>&);
         ~Parser() = default;
-        std::shared_ptr<Expression::Expr> Parse();
+        std::vector<std::shared_ptr<Statement::Stmt>> Parse();
     };
 }

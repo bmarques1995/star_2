@@ -1,6 +1,8 @@
 #include "Parser.hh"
 #include "Expr.hh"
 #include "TokenType.hh"
+#include "Visitor.hh"
+#include <memory>
 #include <sstream>
 #define inner_assert(E)
 
@@ -14,9 +16,14 @@ star::Parser::Parser(const std::vector<Token>& tokens) : tokens(tokens)
 
 }
 
-std::shared_ptr<star::Expression::Expr> star::Parser::Parse()
+std::vector<std::shared_ptr<star::Statement::Stmt>> star::Parser::Parse()
 {
-   return Expression(); 
+    std::vector<std::shared_ptr<star::Statement::Stmt>> statements;
+    while (!IsAtEnd())
+    {
+        statements.push_back(Statement());
+    }
+    return statements;
 }
 
 std::shared_ptr<star::Expression::Expr> star::Parser::Expression()
@@ -168,6 +175,26 @@ std::shared_ptr<star::Expression::Expr> star::Parser::TemplateLiteral()
     );
 
     return std::make_shared<star::Expression::TemplateLiteral>(shards);
+}
+
+std::shared_ptr<star::Statement::Stmt> star::Parser::Statement()
+{
+    if(Match(TokenType::PRINT)) return PrintStatement();
+    else return ExpressionStatement();
+}
+
+std::shared_ptr<star::Statement::Stmt> star::Parser::PrintStatement()
+{
+    std::shared_ptr<Expression::Expr> value = Expression();
+    Consume(TokenType::SEMICOLON, "Expected ; after value.");
+    return std::make_shared<Statement::Print>(value);
+}
+
+std::shared_ptr<star::Statement::Stmt> star::Parser::ExpressionStatement()
+{
+    std::shared_ptr<Expression::Expr> expr = Expression();
+    Consume(TokenType::SEMICOLON, "Expected ; after value.");
+    return std::make_shared<Statement::Expression>(expr);
 }
 
 template<class...T>

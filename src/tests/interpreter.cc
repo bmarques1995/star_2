@@ -15,7 +15,7 @@ namespace star
         Parser parser{tokens};
         auto expr = parser.Parse();
         Interpreter interpreter{};
-        std::string result = interpreter.Interpret(expr);
+        std::string result = interpreter.Interpret(expr).ToString();
         EXPECT_EQ(result, "Hello String");
     }
 
@@ -27,7 +27,7 @@ namespace star
         Parser parser{tokens};
         auto expr = parser.Parse();
         Interpreter interpreter{};
-        std::string result = interpreter.Interpret(expr);
+        std::string result = interpreter.Interpret(expr).ToString();
         EXPECT_EQ(result, "12");
     }
 
@@ -39,7 +39,7 @@ namespace star
         Parser parser{tokens};
         auto expr = parser.Parse();
         Interpreter interpreter{};
-        std::string result = interpreter.Interpret(expr);
+        std::string result = interpreter.Interpret(expr).ToString();
         EXPECT_EQ(result, "7");
     }
 
@@ -51,7 +51,7 @@ namespace star
         Parser parser{tokens};
         auto expr = parser.Parse();
         Interpreter interpreter{};
-        std::string result = interpreter.Interpret(expr);
+        std::string result = interpreter.Interpret(expr).ToString();
         EXPECT_EQ(result, "7");
     }
 
@@ -63,7 +63,7 @@ namespace star
         Parser parser{tokens};
         auto expr = parser.Parse();
         Interpreter interpreter{};
-        std::string result = interpreter.Interpret(expr);
+        std::string result = interpreter.Interpret(expr).ToString();
         EXPECT_EQ(result, "12");
     }
 
@@ -75,7 +75,7 @@ namespace star
         Parser parser{tokens};
         auto expr = parser.Parse();
         Interpreter interpreter{};
-        std::string result = interpreter.Interpret(expr);
+        std::string result = interpreter.Interpret(expr).ToString();
         EXPECT_EQ(result, "15");
     }
 
@@ -87,7 +87,7 @@ namespace star
         Parser parser{tokens};
         auto expr = parser.Parse();
         Interpreter interpreter{};
-        std::string result = interpreter.Interpret(expr);
+        std::string result = interpreter.Interpret(expr).ToString();
         EXPECT_EQ(result, "30");
     }
 
@@ -99,7 +99,7 @@ namespace star
         Parser parser{tokens};
         auto expr = parser.Parse();
         Interpreter interpreter{};
-        std::string result = interpreter.Interpret(expr);
+        std::string result = interpreter.Interpret(expr).ToString();
         EXPECT_EQ(result, "false");
     }
 
@@ -111,7 +111,7 @@ namespace star
         Parser parser{tokens};
         auto expr = parser.Parse();
         Interpreter interpreter{};
-        std::string result = interpreter.Interpret(expr);
+        std::string result = interpreter.Interpret(expr).ToString();
         EXPECT_EQ(result, "true");
     }
 
@@ -123,7 +123,7 @@ namespace star
         Parser parser{tokens};
         auto expr = parser.Parse();
         Interpreter interpreter{};
-        std::string result = interpreter.Interpret(expr);
+        std::string result = interpreter.Interpret(expr).ToString();
         EXPECT_EQ(result, "-5");
     }
 
@@ -135,7 +135,7 @@ namespace star
         Parser parser{tokens};
         auto expr = parser.Parse();
         Interpreter interpreter{};
-        std::string result = interpreter.Interpret(expr);
+        std::string result = interpreter.Interpret(expr).ToString();
         EXPECT_EQ(result, "This is a template string, to prove, use these expressions: 57 and 130");
     }
 
@@ -147,7 +147,7 @@ namespace star
         Parser parser{tokens};
         auto expr = parser.Parse();
         Interpreter interpreter{};
-        std::string result = interpreter.Interpret(expr);
+        std::string result = interpreter.Interpret(expr).ToString();
         EXPECT_EQ(result, "true");
     }
 
@@ -159,7 +159,7 @@ namespace star
         Parser parser{tokens};
         auto expr = parser.Parse();
         Interpreter interpreter{};
-        std::string result = interpreter.Interpret(expr);
+        std::string result = interpreter.Interpret(expr).ToString();
         EXPECT_EQ(result, "true");
     }
 
@@ -171,7 +171,7 @@ namespace star
         Parser parser{tokens};
         auto expr = parser.Parse();
         Interpreter interpreter{};
-        std::string result = interpreter.Interpret(expr);
+        std::string result = interpreter.Interpret(expr).ToString();
         EXPECT_EQ(result, "false");
     }
 
@@ -183,19 +183,19 @@ namespace star
         Parser parser{tokens};
         auto expr = parser.Parse();
         Interpreter interpreter{};
-        std::string result = interpreter.Interpret(expr);
+        std::string result = interpreter.Interpret(expr).ToString();
         EXPECT_EQ(result, "false");
     }
 
     TEST(interpreter, mod_tests)
     {
-        std::string input = R"(3%2)";
+        std::string input = R"(print(3%2))";
         Scanner scanner(input);
         auto tokens = scanner.ScanTokens();
         Parser parser{tokens};
         auto expr = parser.Parse();
         Interpreter interpreter{};
-        std::string result = interpreter.Interpret(expr);
+        std::string result = interpreter.Interpret(expr).ToString();
         EXPECT_EQ(result, "1");
     }
 }

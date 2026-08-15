@@ -30,4 +30,21 @@ namespace star
             virtual Value Accept(ExprVisitor& visitor) = 0;
         };
     }
+    namespace Statement
+    {
+        struct Expression;
+        struct Print;
+
+        struct StmtVisitor
+        {
+            virtual Value VisitExpressionStmt(std::shared_ptr<Expression> stmt) = 0;
+            virtual Value VisitPrintStmt(std::shared_ptr<Print> stmt) = 0;
+            virtual ~StmtVisitor() = default;
+        };
+
+        struct Stmt
+        {
+            virtual Value Accept(StmtVisitor& visitor) = 0;
+        };
+    }
 }

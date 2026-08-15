@@ -4,6 +4,7 @@
 #include "TokenType.hh"
 #include "Value.hh"
 #include "RuntimeError.hh"
+#include <sstream>
 #include <variant>
 
 star::Interpreter::Interpreter() {}
@@ -24,7 +25,7 @@ star::Value star::Interpreter::VisitTemplateLiteralExpr(std::shared_ptr<Expressi
     auto tokens = expr->m_TemplateShards;
     for(auto it = expr->m_TemplateShards.begin(); it != expr->m_TemplateShards.end(); it++)
     {
-        std::string temp = std::visit([](const auto& shard)->std::string
+        std::string temp = std::visit([this](const auto& shard)->std::string
         {
             using T1 = std::decay_t<decltype(shard)>;
             if constexpr (std::is_same_v<T1, std::string>)
@@ -34,7 +35,7 @@ star::Value star::Interpreter::VisitTemplateLiteralExpr(std::shared_ptr<Expressi
             else
             {
                 Interpreter i;
-                return i.Interpret(shard);
+                return Stringify(i.Interpret(shard));
             }
         },
         *it);
@@ -171,9 +172,39 @@ star::Value star::Interpreter::Evaluate(std::shared_ptr<Expression::Expr> expr)
     return expr->Accept(*this);
 }
 
-
-std::string star::Interpreter::Interpret(std::shared_ptr<Expression::Expr> expr)
+void star::Interpreter::Write(const std::string& text) const
 {
-    Value value = Evaluate(expr);
-    return Stringify(value);
+
+}
+
+star::Value star::Interpreter::Interpret(std::shared_ptr<Expression::Expr> expr)
+{
+    return Evaluate(expr);
+}
+
+star::Value star::Interpreter::Interpret(std::vector<std::shared_ptr<Statement::Stmt>>& statements)
+{
+    std::stringstream ss;
+    for(auto stmt: statements)
+        ss << ExecuteStmt(stmt) << "\n";
+    std::string result = ss.str();
+    return {TokenType::NIL, ""};
+}
+
+star::Value star::Interpreter::ExecuteStmt(std::shared_ptr<Statement::Stmt> statement)
+{
+    return statement->Accept(*this);
+}
+
+star::Value star::Interpreter::VisitExpressionStmt(std::shared_ptr<Statement::Expression> stmt)
+{
+    Value v = Evaluate(stmt->m_Expression);
+    return {TokenType::NIL, ""};
+}
+
+star::Value star::Interpreter::VisitPrintStmt(std::shared_ptr<Statement::Print> stmt)
+{
+    Value v = Evaluate(stmt->m_Expression);
+    Write(Stringify(v));
+    return {TokenType::NIL, ""};
 }

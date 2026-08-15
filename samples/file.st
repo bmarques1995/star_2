@@ -3,7 +3,7 @@
 Multi line
 comment
 */
-6u32 * (2u32 + 2u32);
+print(6u32 * (2u32 + 2u32));
 /*
 var lang = "Star";
 var Lang2 = "Star C++";

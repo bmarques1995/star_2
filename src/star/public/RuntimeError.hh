@@ -1,11 +1,12 @@
 #pragma once
 
 #include "BaseException.hh"
+#include "StarMacro.hh"
 #include "Token.hh"
 
 namespace star
 {
-    class RuntimeError : public ScriptException
+    class STAR_API RuntimeError : public ScriptException
     {
     public:
         const Token& token;
