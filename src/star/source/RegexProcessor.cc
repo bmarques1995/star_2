@@ -68,12 +68,14 @@ void star::RegexProcessor::GetLastError(int code)
     PCRE2_UCHAR buffer[256];
 
     // Convert numerical code to human-readable string
-    int rc = pcre2_get_error_message(code, buffer, sizeof(buffer));
-    
-    if (rc >= 0) {
-        printf("PCRE2 Error (%d): %s\n", code, buffer);
-    } else {
-        printf("Failed to look up error code %d (Error: %d)\n", code, rc);
+    if(code != -1)
+    {
+        int rc = pcre2_get_error_message(code, buffer, sizeof(buffer));
+        if (rc >= 0)
+            printf("PCRE2 Error (%d): %s\n", code, buffer);
+        else
+            printf("Failed to look up error code %d (Error: %d)\n", code, rc);
+        
     }
 }
 

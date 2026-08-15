@@ -50,7 +50,7 @@ void star::Star::RunPrompt()
         if(!std::getline(std::cin, line) || (line == "exit"))
             break;
         Run(line);
-        star::TraceConsole() << "\n" << replPrefix;
+        star::TraceConsole() << replPrefix;
     }
 }
 
