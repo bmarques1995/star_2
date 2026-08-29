@@ -8,6 +8,8 @@ find_package(pcre2 CONFIG REQUIRED)
 set(TARGET_NAME star)
 add_library(${TARGET_NAME} ${STAR_SRC_FILES} ${STAR_PBL_HDR_FILES} ${STAR_PVT_HDR_FILES})
 set_cxx_project_standards(${TARGET_NAME} 20 FALSE)
+set_artifacts_dir(${TARGET_NAME} ${ARTIFACT_PREFIX})
+set_msvc_target_utf8(${TARGET_NAME})
 target_include_directories(${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/public>
                                           PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/private>)
 target_link_libraries(${TARGET_NAME} PRIVATE magic_enum::magic_enum

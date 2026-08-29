@@ -14,11 +14,27 @@ macro(enable_coverage target)
     endif()
 endmacro()
 
-if(VCPKG_PREFIX_PATH)
-    list(APPEND CMAKE_PREFIX_PATH "${VCPKG_PREFIX_PATH}")
+if(VCPKG_PREFIX_PATH AND VCPKG_TARGET_TRIPLET)
+    set(CMAKE_PREFIX_PATH "${VCPKG_PREFIX_PATH}")
 endif()
 
 include(FetchContent)
+
+set(ARTIFACT_PREFIX ${PROJECT_BINARY_DIR})
+if(WIN32)
+    set(ARTIFACT_PREFIX ${CMAKE_INSTALL_PREFIX})
+endif()
+
+if(USES_VCPKG)
+    set(VCPKG_CURRENT_PREFIX ${VCPKG_PREFIX_PATH}/${VCPKG_TARGET_TRIPLET})
+    list(APPEND CMAKE_PREFIX_PATH ${VCPKG_CURRENT_PREFIX})
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+		set(VCPKG_CURRENT_PREFIX ${VCPKG_CURRENT_PREFIX}/debug)
+    endif()
+    if(WIN32)
+        set(ARTIFACT_PREFIX ${VCPKG_CURRENT_PREFIX})
+    endif()
+endif()
 
 # 2. Declare the download location and version details
 FetchContent_Declare(
