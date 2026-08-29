@@ -2,12 +2,20 @@
     "version": 3,
     "configurePresets": [
         {
-            "name": "vcpkg-linux-config",
+            "name": "vcpkg-base",
             "hidden": true,
             "cacheVariables": {
-                "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic",
-                "VCPKG_PREFIX_PATH": "${sourceDir}/out/build/${presetName}/vcpkg_installed/x64-linux-dynamic",
+                "USES_VCPKG": true,
+                "VCPKG_PREFIX_PATH": "${sourceDir}/out/build/${presetName}/vcpkg_installed",
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+            }
+        },
+        {
+            "name": "vcpkg-linux-config",
+            "hidden": true,
+            "inherits": "vcpkg-base",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic"
             }
         },
         {
@@ -64,8 +72,61 @@
         },
         {
             "name": "linux-vcpkg-release",
-            "displayName": "Linux Release",
+            "displayName": "Linux Release with vcpkg",
             "inherits": ["linux-release", "vcpkg-linux-config"]
+        },
+        {
+            "name": "vcpkg-windows-config",
+            "hidden": true,
+            "inherits": "vcpkg-base",
+            "cacheVariables": {
+                "VCPKG_TARGET_TRIPLET": "x64-windows"
+            },
+            "environment": {
+                "VCPKG_ROOT": "$env{VCPKG_OWN_ROOT}"
+            }
+        },
+        {
+            "name": "windows-base",
+            "hidden": true,
+            "generator": "Ninja",
+            "inherits": "global-config",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang-cl",
+                "CMAKE_CXX_COMPILER": "clang-cl"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name": "windows-debug",
+            "displayName": "Windows Debug",
+            "inherits": "windows-base",
+            
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "windows-vcpkg-debug",
+            "displayName": "Windows Debug with vcpkg",
+            "inherits": ["windows-debug", "vcpkg-windows-config"]
+        },
+        {
+            "name": "windows-release",
+            "displayName": "Windows Release",
+            "inherits": "windows-base",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "windows-vcpkg-release",
+            "displayName": "Windows Release with vcpkg",
+            "inherits": ["windows-release", "vcpkg-windows-config"]
         }
     ]
 }

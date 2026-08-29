@@ -4,6 +4,8 @@ file(GLOB_RECURSE STAR_CLI_HDR_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIG
 set(TARGET_NAME star_cli)
 add_library(${TARGET_NAME} ${STAR_CLI_SRC_FILES} ${STAR_CLI_HDR_FILES})
 set_cxx_project_standards(${TARGET_NAME} 20 FALSE)
+set_artifacts_dir(${TARGET_NAME} ${ARTIFACT_PREFIX})
+set_msvc_target_utf8(${TARGET_NAME})
 target_include_directories(${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 target_link_libraries(${TARGET_NAME} PRIVATE star)
 
