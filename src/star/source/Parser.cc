@@ -91,6 +91,8 @@ std::shared_ptr<star::Expression::Expr> star::Parser::Unary()
 
 std::shared_ptr<star::Expression::Expr> star::Parser::Primary()
 {
+    if(Match(TokenType::IDENTIFIER))
+        return std::make_shared<star::Expression::Variable>(Previous());
     if(Match(TokenType::TEMPLATE_STRING_START))
         return TemplateLiteral();
     if(Match(TokenType::NUMBER, TokenType::STRING, TokenType::FLOAT_NUMBER, 
@@ -195,6 +197,33 @@ std::shared_ptr<star::Statement::Stmt> star::Parser::ExpressionStatement()
     std::shared_ptr<Expression::Expr> expr = Expression();
     Consume(TokenType::SEMICOLON, "Expected ; after value.");
     return std::make_shared<Statement::Expression>(expr);
+}
+
+std::shared_ptr<star::Statement::Stmt> star::Parser::Declaration()
+{
+    try
+    {
+        if(Match(TokenType::VAR)) return VarDeclaration();
+		else return Statement();
+    }
+    catch (const std::exception& e)
+    {
+        Synchronize();
+        return nullptr;
+    }
+}
+
+std::shared_ptr<star::Statement::Stmt> star::Parser::VarDeclaration()
+{
+    Token name = Consume(TokenType::IDENTIFIER, "Expected variable name.");
+
+	std::shared_ptr<Expression::Expr> init = nullptr;
+	if(Match(TokenType::EQUAL))
+	{
+		init = Expression();
+	}
+	Consume(TokenType::SEMICOLON, "Expected ; after variable declaration.");
+	return std::make_shared<Statement::Variable>(name, init);
 }
 
 template<class...T>

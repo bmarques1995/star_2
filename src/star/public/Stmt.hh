@@ -2,6 +2,7 @@
 
 #include "StarMacro.hh"
 #include "Visitor.hh"
+#include "Token.hh"
 #include <memory>
 
 namespace star
@@ -22,6 +23,15 @@ namespace star
             std::shared_ptr<star::Expression::Expr> m_Expression;
 
             Print(std::shared_ptr<star::Expression::Expr> expression);
+            Value Accept(StmtVisitor& visitor) override;
+        };
+
+        struct STAR_API Variable : public Stmt, public std::enable_shared_from_this<Variable>
+        {
+            Token m_Name;
+            std::shared_ptr<star::Expression::Expr> m_Init;
+
+            Variable(Token name, std::shared_ptr<star::Expression::Expr> init);
             Value Accept(StmtVisitor& visitor) override;
         };
     }

@@ -62,3 +62,14 @@ star::Value star::Expression::Ternary::Accept(star::Expression::ExprVisitor& vis
 {
     return visitor.VisitTernaryExpr(shared_from_this());
 }
+
+star::Expression::Variable::Variable(Token name) :
+	m_Name{std::move(name)}
+{
+}
+
+star::Value star::Expression::Variable::Accept(ExprVisitor& visitor)
+{
+    return visitor.VisitVariableExpr(shared_from_this());
+}
+}

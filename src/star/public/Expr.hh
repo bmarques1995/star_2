@@ -75,5 +75,14 @@ namespace star
             ~Ternary() = default;
             Value Accept(ExprVisitor& visitor) override;
         };
+
+        struct STAR_API Variable final : public Expr, public std::enable_shared_from_this<Variable>
+        {
+            Token m_Name;
+
+            Variable(Token name);
+            ~Variable() = default;
+            Value Accept(ExprVisitor& visitor) override;
+        };
     }
 }

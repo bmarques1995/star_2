@@ -48,6 +48,8 @@ namespace star
         std::shared_ptr<Statement::Stmt> Statement();
         std::shared_ptr<Statement::Stmt> PrintStatement();
         std::shared_ptr<Statement::Stmt> ExpressionStatement();
+        std::shared_ptr<Statement::Stmt> Declaration();
+        std::shared_ptr<Statement::Stmt> VarDeclaration();
 
     public:
         Parser(const std::vector<Token>&);

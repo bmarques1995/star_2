@@ -21,3 +21,13 @@ star::Value star::Statement::Print::Accept(StmtVisitor& visitor)
 {
     return visitor.VisitPrintStmt(shared_from_this());
 }
+
+star::Statement::Variable::Variable(Token name, std::shared_ptr<star::Expression::Expr> init) :
+	m_Name(name), m_Init(init)
+{
+}
+
+star::Value star::Statement::Variable::Accept(StmtVisitor& visitor)
+{
+    return visitor.VisitVariableStmt(shared_from_this());
+}
