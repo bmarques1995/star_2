@@ -1,0 +1,15 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "default",
+      "project": "CMakeLists.txt",
+      "projectTarget": "star_repl.exe (vcpkg_installed\\x64-windows\\debug\\bin\\star_repl.exe)",
+      "name": "star_repl.exe (vcpkg_installed\\x64-windows\\debug\\bin\\star_repl.exe)",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "args": [ "samples/file.st" ]
+    }
+  ]
+}
