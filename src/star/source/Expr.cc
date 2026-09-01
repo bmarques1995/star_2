@@ -72,4 +72,3 @@ star::Value star::Expression::Variable::Accept(ExprVisitor& visitor)
 {
     return visitor.VisitVariableExpr(shared_from_this());
 }
-}

@@ -47,6 +47,24 @@ star::InvalidOperation::InvalidOperation(const std::string& reason)
     m_Reason = reason;
 }
 
+const std::unordered_map<size_t, star::VariableType> star::Value::castedType = 
+{
+	{0, VariableType::Null},
+	{1, VariableType::Boolean},
+	{2, VariableType::Character},
+	{3, VariableType::String},
+	{4, VariableType::Integer8},
+	{5, VariableType::Integer16},
+	{6, VariableType::Integer32},
+	{7, VariableType::Integer64},
+	{8, VariableType::Unsigned8},
+	{9, VariableType::Unsigned16},
+	{10, VariableType::Unsigned32},
+	{11, VariableType::Unsigned64},
+	{12, VariableType::Float32},
+	{13, VariableType::Float64}
+};
+
 star::Value::Value(TokenType type, std::string_view lexeme)
 {
     switch (type)
@@ -58,12 +76,21 @@ star::Value::Value(TokenType type, std::string_view lexeme)
         case TokenType::ST_TRUE: m_Value = true; break;
         default: break;
     }
+
+	m_Type = VariableType::Dynamic;
 }
 
 star::Value::Value(const Storage& value):
-    m_Value{std::move(value)}
+    m_Value{ std::move(value) }, m_Type{VariableType::Dynamic}
 {
 
+}
+
+star::Value::Value(const Storage& value, bool lockType) :
+    m_Value{ std::move(value) }
+{
+    if(lockType)
+	    LockType();
 }
 
 bool star::Value::IsInitialized() const
@@ -81,6 +108,11 @@ bool star::Value::IsNumber() const
         },
         m_Value
     );
+}
+
+star::VariableType star::Value::GetType() const
+{
+    return m_Type;
 }
 
 void star::Value::ParseFloatNumber(std::string_view lexeme)
@@ -119,6 +151,12 @@ void star::Value::ParseChar(std::string_view lexeme)
 
 }
 */
+
+void star::Value::LockType()
+{
+	auto it = castedType.find(m_Value.index());
+	m_Type = it != castedType.end() ? it->second : VariableType::Dynamic;
+}
 
 void star::Value::InferInteger(std::string_view lexeme)
 {

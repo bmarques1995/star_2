@@ -7,7 +7,10 @@
 #include <sstream>
 #include <variant>
 
-star::Interpreter::Interpreter() {}
+star::Interpreter::Interpreter()
+{
+	m_GlobalEnv.reset(new Environment());
+}
 
 star::Value star::Interpreter::VisitGroupingExpr(std::shared_ptr<Expression::Grouping> expr)
 {
@@ -131,6 +134,16 @@ star::Value star::Interpreter::VisitTernaryExpr(std::shared_ptr<Expression::Tern
         Evaluate(expr->m_Condition).GetRValue());
 }
 
+star::Value star::Interpreter::VisitVariableExpr(std::shared_ptr<Expression::Variable> expr)
+{
+    Value value = m_GlobalEnv->Get(expr->m_Name);
+    if (value.GetType() == VariableType::Null)
+    {
+        throw RuntimeError(expr->m_Name, "Variable not initialized.");
+    }
+    return m_GlobalEnv->Get(expr->m_Name);
+}
+
 bool star::Interpreter::IsTruthy(const Value& object)
 {
     return std::visit([](const auto& shard)-> bool
@@ -207,4 +220,14 @@ star::Value star::Interpreter::VisitPrintStmt(std::shared_ptr<Statement::Print> 
     Value v = Evaluate(stmt->m_Expression);
     Write(Stringify(v));
     return {TokenType::NIL, ""};
+}
+
+star::Value star::Interpreter::VisitVariableStmt(std::shared_ptr<Statement::Variable> stmt)
+{
+    if (stmt->m_Init != nullptr) {
+        Value value = Evaluate(stmt->m_Init);
+        m_GlobalEnv->Define(stmt->m_Name, std::move(value));
+    }
+    
+    return { TokenType::NIL, "" };
 }

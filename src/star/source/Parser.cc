@@ -21,7 +21,7 @@ std::vector<std::shared_ptr<star::Statement::Stmt>> star::Parser::Parse()
     std::vector<std::shared_ptr<star::Statement::Stmt>> statements;
     while (!IsAtEnd())
     {
-        statements.push_back(Statement());
+        statements.push_back(Declaration());
     }
     return statements;
 }

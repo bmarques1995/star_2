@@ -6,84 +6,119 @@
 #include <variant>
 #include <cstdint>
 #include <string>
+#include <unordered_map>
 
 namespace star
 {
-    class STAR_API OutOfRangeException : public ScriptException
-    {
-    public:
-        OutOfRangeException(const std::string& reason);
-        ~OutOfRangeException() = default;
-    };
+	enum class VariableType
+	{
+		Null,
+		Boolean,
 
-    class STAR_API InvalidOperation : public ScriptException
-    {
-    public:
-        InvalidOperation(const std::string& reason);
-        ~InvalidOperation() = default;
-    };
+		Character,
+		String,
 
-    class STAR_API Value
-    {
-    public:
-        using Storage = std::variant<
-            std::monostate,
-            bool,
+		Integer8,
+		Integer16,
+		Integer32,
+		Integer64,
 
-            char8_t,
-            std::string,
+		Unsigned8,
+		Unsigned16,
+		Unsigned32,
+		Unsigned64,
 
-            int8_t,
-            int16_t,
-            int32_t,
-            int64_t,
+		Float32,
+		Float64,
 
-            uint8_t,
-            uint16_t,
-            uint32_t,
-            uint64_t,
+		Dynamic
+	};
 
-            float,
-            double
-        >;
+	class STAR_API OutOfRangeException : public ScriptException
+	{
+		friend class Environment;
+	public:
+		OutOfRangeException(const std::string& reason);
+		~OutOfRangeException() = default;
+	};
 
-        friend star::Value& operator-(star::Value& value);
+	class STAR_API InvalidOperation : public ScriptException
+	{
+	public:
+		InvalidOperation(const std::string& reason);
+		~InvalidOperation() = default;
+	};
 
-        Value(TokenType type, std::string_view lexeme);
-        Value(const Storage& value);
-        ~Value() = default;
+	class STAR_API Value
+	{
+	public:
+		using Storage = std::variant<
+			std::monostate,
+			bool,
 
-        const std::string ToString() const;
-        const std::string StringifyString() const;
-        Storage& GetLValue();
-        const Storage& GetRValue() const;
-        bool IsInitialized() const;
-        bool IsNumber() const;
+			char8_t,
+			std::string,
 
-    private:
-        void ParseFloatNumber(std::string_view lexeme);
-        void ParseNumber(std::string_view lexeme);
-        void ParseString(std::string_view lexeme);
-        //void ParseChar(std::string_view lexeme);
+			int8_t,
+			int16_t,
+			int32_t,
+			int64_t,
 
-        void InferInteger(std::string_view lexeme);
+			uint8_t,
+			uint16_t,
+			uint32_t,
+			uint64_t,
 
-        void AssignTypedFloat(std::string_view lexeme, size_t typeOffset);
-        void AssignTypedInt(std::string_view lexeme, size_t typeOffset);
-        void AssignTypedUint(std::string_view lexeme, size_t typeOffset);
-        Storage m_Value;
-    };
+			float,
+			double
+		>;
 
-    STAR_API std::ostream& operator<<(std::ostream& out, const star::Value& value);
-    STAR_API star::Value& operator-(star::Value& value);
-    STAR_API star::Value& operator+(star::Value& value1, const star::Value& value2);
-    STAR_API star::Value& operator-(star::Value& value1, const star::Value& value2);
-    STAR_API star::Value& operator*(star::Value& value1, const star::Value& value2);
-    STAR_API star::Value& operator/(star::Value& value1, const star::Value& value2);
-    STAR_API star::Value& operator%(star::Value& value1, const star::Value& value2);
-    STAR_API bool operator==(const star::Value& value1, const star::Value& value2);
-    STAR_API bool operator<(const star::Value& value1, const star::Value& value2);
-    STAR_API bool operator<=(const star::Value& value1, const star::Value& value2);
-    STAR_API bool operator>(const star::Value& value1, const star::Value& value2);
-    STAR_API bool operator>=(const star::Value& value1, const star::Value& value2);
+		friend star::Value& operator-(star::Value& value);
+
+		Value(TokenType type, std::string_view lexeme);
+		Value(const Storage& value);
+		Value(const Storage& value, bool lockType);
+		~Value() = default;
+
+		const std::string ToString() const;
+		const std::string StringifyString() const;
+		Storage& GetLValue();
+		const Storage& GetRValue() const;
+		bool IsInitialized() const;
+		bool IsNumber() const;
+
+		VariableType GetType() const;
+
+	private:
+		void ParseFloatNumber(std::string_view lexeme);
+		void ParseNumber(std::string_view lexeme);
+		void ParseString(std::string_view lexeme);
+		//void ParseChar(std::string_view lexeme);
+
+
+		void LockType();
+
+		void InferInteger(std::string_view lexeme);
+
+		void AssignTypedFloat(std::string_view lexeme, size_t typeOffset);
+		void AssignTypedInt(std::string_view lexeme, size_t typeOffset);
+		void AssignTypedUint(std::string_view lexeme, size_t typeOffset);
+		
+		Storage m_Value;
+		VariableType m_Type;
+		static const std::unordered_map<size_t, VariableType> castedType;
+	};
+
+	STAR_API std::ostream& operator<<(std::ostream& out, const star::Value& value);
+	STAR_API star::Value& operator-(star::Value& value);
+	STAR_API star::Value& operator+(star::Value& value1, const star::Value& value2);
+	STAR_API star::Value& operator-(star::Value& value1, const star::Value& value2);
+	STAR_API star::Value& operator*(star::Value& value1, const star::Value& value2);
+	STAR_API star::Value& operator/(star::Value& value1, const star::Value& value2);
+	STAR_API star::Value& operator%(star::Value& value1, const star::Value& value2);
+	STAR_API bool operator==(const star::Value& value1, const star::Value& value2);
+	STAR_API bool operator<(const star::Value& value1, const star::Value& value2);
+	STAR_API bool operator<=(const star::Value& value1, const star::Value& value2);
+	STAR_API bool operator>(const star::Value& value1, const star::Value& value2);
+	STAR_API bool operator>=(const star::Value& value1, const star::Value& value2);
 }
