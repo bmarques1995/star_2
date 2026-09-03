@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "CLInterpreter.hh"
 
 namespace star {
 
@@ -10,7 +11,7 @@ namespace star {
         static void RunPrompt();
     private:
         static void Run(const std::string& source, const std::string& filepath = "::repl");
-
+        static CLInterpreter s_Interpreter;
     };
 
 }

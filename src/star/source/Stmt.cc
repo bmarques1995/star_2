@@ -23,14 +23,20 @@ star::Value star::Statement::Print::Accept(StmtVisitor& visitor)
 }
 
 star::Statement::Variable::Variable(Token name, std::shared_ptr<star::Expression::Expr> init, VariableType expectedType) :
-	m_Name(name), m_Init(init), m_ExpectedType(expectedType)
+	m_Name(name), m_Init(init), m_ExpectedType(expectedType), m_LockType(true)
 {
 }
+
+star::Statement::Variable::Variable(Token name, std::shared_ptr<star::Expression::Expr> init, bool lockType) :
+    m_Name(name), m_Init(init), m_ExpectedType(VariableType::Dynamic), m_LockType(lockType)
+{}
 
 star::Value star::Statement::Variable::Accept(StmtVisitor& visitor)
 {
     return visitor.VisitVariableStmt(shared_from_this());
 }
+
+
 
 const star::VariableType star::Statement::Variable::ExpectedType() const
 {

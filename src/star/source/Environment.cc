@@ -26,7 +26,8 @@ void star::Environment::Reassign(const Token& name, Value value)
 	m_Values.insert_or_assign(name.GetLexeme(), std::move(value));
 }
 
-star::Value star::Environment::Get(const Token& name) {
+star::Value star::Environment::Get(const Token& name) 
+{
 	auto elem = m_Values.find(name.GetLexeme());
 	if (elem != m_Values.end()) {
 		return elem->second;

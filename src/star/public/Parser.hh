@@ -49,7 +49,7 @@ namespace star
         std::shared_ptr<Statement::Stmt> PrintStatement();
         std::shared_ptr<Statement::Stmt> ExpressionStatement();
         std::shared_ptr<Statement::Stmt> Declaration();
-        std::shared_ptr<Statement::Stmt> VarDeclaration();
+        std::shared_ptr<Statement::Stmt> VarDeclaration(bool lockType = false);
 
     public:
         Parser(const std::vector<Token>&);

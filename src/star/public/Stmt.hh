@@ -32,8 +32,11 @@ namespace star
             std::shared_ptr<star::Expression::Expr> m_Init;
 
             VariableType m_ExpectedType;
+            bool m_LockType;
 
             Variable(Token name, std::shared_ptr<star::Expression::Expr> init, VariableType expectedType);
+			Variable(Token name, std::shared_ptr<star::Expression::Expr> init, bool lockType);
+
             Value Accept(StmtVisitor& visitor) override;
             const VariableType ExpectedType() const;
         };
