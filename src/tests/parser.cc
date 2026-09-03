@@ -24,6 +24,7 @@ namespace star
             {TokenType::STR_EXPR_START, "", 1, 7, "::repl"},
             {TokenType::NUMBER, "78", 1, 10, "::repl"},
             {TokenType::TEMPLATE_STRING_END, "", 1, 1, "::repl"},
+            {TokenType::ST_EOF, "", 2, 1, "::repl"}
         };
         Parser parser{tokens};
         EXPECT_THROW(parser.Parse(), ParserException);

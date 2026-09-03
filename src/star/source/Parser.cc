@@ -143,7 +143,7 @@ std::shared_ptr<star::Expression::Expr> star::Parser::TemplateLiteral()
 {
     std::vector<Expression::TemplateShard> shards;
 
-    while (!Check(TokenType::TEMPLATE_STRING_END))
+    while (!Check(TokenType::TEMPLATE_STRING_END) && !IsAtEnd())
     {
         if (Match(TokenType::TEMPLATE_SUBSTRING))
         {
@@ -170,6 +170,11 @@ std::shared_ptr<star::Expression::Expr> star::Parser::TemplateLiteral()
             throw ParserException(ss.str());
         }
     }
+
+	if (IsAtEnd())
+	{
+		throw ParserException("Unterminated template string.");
+	}
 
     Consume(
         TokenType::TEMPLATE_STRING_END,
@@ -205,6 +210,11 @@ std::shared_ptr<star::Statement::Stmt> star::Parser::Declaration()
     {
         if(Match(TokenType::VAR)) return VarDeclaration();
 		else return Statement();
+    }
+    catch (const ParserException& e)
+    {
+        Synchronize();
+        throw e;
     }
     catch (const std::exception& e)
     {

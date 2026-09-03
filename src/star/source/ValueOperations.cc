@@ -47,7 +47,7 @@ star::Value& star::operator-(star::Value& value1,
     return value1;
 }
 
-STAR_API star::Value& star::operator*(star::Value& value1, const star::Value& value2)
+star::Value& star::operator*(star::Value& value1, const star::Value& value2)
 {
     std::visit(
         [](auto& lhs, const auto& rhs) -> void
@@ -61,7 +61,7 @@ STAR_API star::Value& star::operator*(star::Value& value1, const star::Value& va
     );
     return value1;
 }
-STAR_API star::Value& star::operator/(star::Value& value1, const star::Value& value2)
+star::Value& star::operator/(star::Value& value1, const star::Value& value2)
 {
     std::visit(
         [](auto& lhs, const auto& rhs) -> void
@@ -76,7 +76,7 @@ STAR_API star::Value& star::operator/(star::Value& value1, const star::Value& va
     return value1;
 }
 
-STAR_API star::Value& star::operator%(star::Value& value1, const star::Value& value2)
+star::Value& star::operator%(star::Value& value1, const star::Value& value2)
 {
     std::visit(
         [](auto& lhs, const auto& rhs) -> void

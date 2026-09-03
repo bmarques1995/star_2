@@ -109,16 +109,16 @@ namespace star
 		static const std::unordered_map<size_t, VariableType> castedType;
 	};
 
-	STAR_API std::ostream& operator<<(std::ostream& out, const star::Value& value);
-	STAR_API star::Value& operator-(star::Value& value);
-	STAR_API star::Value& operator+(star::Value& value1, const star::Value& value2);
-	STAR_API star::Value& operator-(star::Value& value1, const star::Value& value2);
-	STAR_API star::Value& operator*(star::Value& value1, const star::Value& value2);
-	STAR_API star::Value& operator/(star::Value& value1, const star::Value& value2);
-	STAR_API star::Value& operator%(star::Value& value1, const star::Value& value2);
-	STAR_API bool operator==(const star::Value& value1, const star::Value& value2);
-	STAR_API bool operator<(const star::Value& value1, const star::Value& value2);
-	STAR_API bool operator<=(const star::Value& value1, const star::Value& value2);
-	STAR_API bool operator>(const star::Value& value1, const star::Value& value2);
-	STAR_API bool operator>=(const star::Value& value1, const star::Value& value2);
+	std::ostream& operator<<(std::ostream& out, const star::Value& value);
+	star::Value& operator-(star::Value& value);
+	star::Value& operator+(star::Value& value1, const star::Value& value2);
+	star::Value& operator-(star::Value& value1, const star::Value& value2);
+	star::Value& operator*(star::Value& value1, const star::Value& value2);
+	star::Value& operator/(star::Value& value1, const star::Value& value2);
+	star::Value& operator%(star::Value& value1, const star::Value& value2);
+	bool operator==(const star::Value& value1, const star::Value& value2);
+	bool operator<(const star::Value& value1, const star::Value& value2);
+	bool operator<=(const star::Value& value1, const star::Value& value2);
+	bool operator>(const star::Value& value1, const star::Value& value2);
+	bool operator>=(const star::Value& value1, const star::Value& value2);
 }
