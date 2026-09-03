@@ -19,6 +19,7 @@ star::ScannerException::ScannerException(const std::string& reason, size_t line,
 const std::unordered_map<std::string, star::TokenType> star::Scanner::s_Keywords =
 {
     {"and",    TokenType::AND},
+    {"auto",   TokenType::AUTO},
     {"class",  TokenType::CLASS},
     {"else",   TokenType::ELSE},
     {"false",  TokenType::ST_FALSE},
@@ -107,7 +108,7 @@ void star::Scanner::ScanToken()
         case '{': AddToken(TokenType::LEFT_BRACE); break;
         case '}': AddToken(TokenType::RIGHT_BRACE); break;
         case ',': AddToken(TokenType::COMMA); break;
-        case '#': AddToken(TokenType::NUM_SIGN); break;
+        case '#': AddToken(TokenType::HASHTAG); break;
         case '?': AddToken(TokenType::QUESTION); break;
         case ':': AddToken(TokenType::COLON); break;
         case '.':

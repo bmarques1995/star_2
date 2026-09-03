@@ -51,6 +51,7 @@ namespace star
 
 	class STAR_API Value
 	{
+		friend class Interpreter;
 	public:
 		using Storage = std::variant<
 			std::monostate,

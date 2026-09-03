@@ -133,7 +133,7 @@ var x = 10;)";
         std::string input = R"(var x#u32 = 17u32;)";
         Scanner scanner(input);
         auto tokens = scanner.ScanTokens();
-        EXPECT_EQ(tokens[2].GetTokenType(), TokenType::NUM_SIGN);
+        EXPECT_EQ(tokens[2].GetTokenType(), TokenType::HASHTAG);
     }
 
     TEST(scanner, test_valid_escaped_chars)

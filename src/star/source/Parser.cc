@@ -6,6 +6,29 @@
 #include <sstream>
 #define inner_assert(E)
 
+const std::unordered_map<std::string, star::VariableType> star::Parser::s_TypeKeywords = 
+{
+    {"null", VariableType::Null},
+    {"bool", VariableType::Boolean},
+    
+    {"char", VariableType::Character},
+    {"string", VariableType::String},
+	
+    {"i8", VariableType::Integer8},
+    {"i16", VariableType::Integer16},
+    {"i32", VariableType::Integer32},
+    {"i64", VariableType::Integer64},
+
+    {"u8", VariableType::Unsigned8},
+	{"u16", VariableType::Unsigned16},
+	{"u32", VariableType::Unsigned32},
+	{"u64", VariableType::Unsigned64},
+
+    
+    {"f32", VariableType::Float32},
+	{"f64", VariableType::Float64} 
+};
+
 star::ParserException::ParserException(const std::string& message)
 {
     m_Reason = "[Parser]: " + message;
@@ -228,12 +251,21 @@ std::shared_ptr<star::Statement::Stmt> star::Parser::VarDeclaration()
     Token name = Consume(TokenType::IDENTIFIER, "Expected variable name.");
 
 	std::shared_ptr<Expression::Expr> init = nullptr;
+    VariableType type = VariableType::Dynamic;
+    if(Match(TokenType::HASHTAG))
+    {
+        Token typeToken = Consume(TokenType::IDENTIFIER, "Expected variable type.");
+        auto it = s_TypeKeywords.find(typeToken.GetLexeme());
+        if(it == s_TypeKeywords.end())
+            throw ParserException("Invalid variable type: " + typeToken.GetLexeme());
+        type = it->second;
+    }
 	if(Match(TokenType::EQUAL))
 	{
 		init = Expression();
 	}
 	Consume(TokenType::SEMICOLON, "Expected ; after variable declaration.");
-	return std::make_shared<Statement::Variable>(name, init);
+	return std::make_shared<Statement::Variable>(name, init, type);
 }
 
 template<class...T>

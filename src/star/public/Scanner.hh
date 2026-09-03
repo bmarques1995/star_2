@@ -8,6 +8,7 @@
 #include "Token.hh"
 #include "StarMacro.hh"
 #include "BaseException.hh"
+#include "Value.hh"
 
 namespace star
 {

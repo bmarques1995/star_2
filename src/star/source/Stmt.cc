@@ -22,12 +22,17 @@ star::Value star::Statement::Print::Accept(StmtVisitor& visitor)
     return visitor.VisitPrintStmt(shared_from_this());
 }
 
-star::Statement::Variable::Variable(Token name, std::shared_ptr<star::Expression::Expr> init) :
-	m_Name(name), m_Init(init)
+star::Statement::Variable::Variable(Token name, std::shared_ptr<star::Expression::Expr> init, VariableType expectedType) :
+	m_Name(name), m_Init(init), m_ExpectedType(expectedType)
 {
 }
 
 star::Value star::Statement::Variable::Accept(StmtVisitor& visitor)
 {
     return visitor.VisitVariableStmt(shared_from_this());
+}
+
+const star::VariableType star::Statement::Variable::ExpectedType() const
+{
+    return m_ExpectedType;
 }

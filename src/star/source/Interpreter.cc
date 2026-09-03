@@ -226,7 +226,15 @@ star::Value star::Interpreter::VisitVariableStmt(std::shared_ptr<Statement::Vari
 {
     if (stmt->m_Init != nullptr) {
         Value value = Evaluate(stmt->m_Init);
-        m_GlobalEnv->Define(stmt->m_Name, std::move(value));
+        if(stmt->ExpectedType() == VariableType::Dynamic)
+            m_GlobalEnv->Define(stmt->m_Name, std::move(value));
+        else
+        {
+            value.LockType();
+            if(stmt->ExpectedType() != value.GetType())
+                throw RuntimeError(stmt->m_Name, "Variable type mismatch.");
+			m_GlobalEnv->Define(stmt->m_Name, std::move(value));
+        }
     }
     
     return { TokenType::NIL, "" };
