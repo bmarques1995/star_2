@@ -52,6 +52,7 @@ namespace star
 	class STAR_API Value
 	{
 		friend class Interpreter;
+		friend class Environment;
 	public:
 		using Storage = std::variant<
 			std::monostate,
@@ -89,6 +90,7 @@ namespace star
 		bool IsNumber() const;
 
 		VariableType GetType() const;
+		VariableType GetAssignedType() const;
 
 	private:
 		void ParseFloatNumber(std::string_view lexeme);

@@ -84,5 +84,16 @@ namespace star
             ~Variable() = default;
             Value Accept(ExprVisitor& visitor) override;
         };
+
+        struct STAR_API Assignment final : public Expr, public std::enable_shared_from_this<Assignment>
+        {
+            Token m_Name;
+            std::shared_ptr<Expr> m_Value;
+
+            Assignment(Token name, std::shared_ptr<Expr> value);
+            ~Assignment() = default;
+
+            Value Accept(ExprVisitor& visitor) override;
+        };
     }
 }

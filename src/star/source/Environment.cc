@@ -19,9 +19,13 @@ void star::Environment::Reassign(const Token& name, Value value)
 	{
 		throw RuntimeError(name, "Cannot reassign undefined variable: '" + name.GetLexeme() + "'.");
 	}
-	if(it->second.GetType() != VariableType::Dynamic && it->second.GetType() != value.GetType())
+	if(it->second.GetType() != VariableType::Dynamic && it->second.GetType() != value.GetAssignedType())
 	{
 		throw RuntimeError(name, "Cannot reassign variable with different type: '" + name.GetLexeme() + "'.");
+	}
+	if(it->second.GetType() != VariableType::Dynamic && value.GetType() == VariableType::Dynamic)
+	{
+		value.LockType();
 	}
 	m_Values.insert_or_assign(name.GetLexeme(), std::move(value));
 }

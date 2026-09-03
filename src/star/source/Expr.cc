@@ -72,3 +72,13 @@ star::Value star::Expression::Variable::Accept(ExprVisitor& visitor)
 {
     return visitor.VisitVariableExpr(shared_from_this());
 }
+
+star::Expression::Assignment::Assignment(Token name, std::shared_ptr<Expr> value) :
+    m_Name{std::move(name)}, m_Value{std::move(value)}
+{
+}
+
+star::Value star::Expression::Assignment::Accept(ExprVisitor& visitor)
+{
+    return visitor.VisitAssignmentExpr(shared_from_this());
+}

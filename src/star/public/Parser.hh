@@ -44,6 +44,7 @@ namespace star
         std::shared_ptr<Expression::Expr> Primary();
         std::shared_ptr<Expression::Expr> Ternary();
         std::shared_ptr<Expression::Expr> TemplateLiteral();
+        std::shared_ptr<Expression::Expr> Assignment();
 
         std::shared_ptr<Statement::Stmt> Statement();
         std::shared_ptr<Statement::Stmt> PrintStatement();

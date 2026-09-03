@@ -144,6 +144,13 @@ star::Value star::Interpreter::VisitVariableExpr(std::shared_ptr<Expression::Var
     return m_GlobalEnv->Get(expr->m_Name);
 }
 
+star::Value star::Interpreter::VisitAssignmentExpr(std::shared_ptr<Expression::Assignment> expr)
+{
+    Value value = Evaluate(expr->m_Value);
+    m_GlobalEnv->Reassign(expr->m_Name, value);
+    return value;
+}
+
 bool star::Interpreter::IsTruthy(const Value& object)
 {
     return std::visit([](const auto& shard)-> bool

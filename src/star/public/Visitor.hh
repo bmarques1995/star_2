@@ -14,6 +14,7 @@ namespace star
         struct Binary;
         struct Ternary;
         struct Variable;
+        struct Assignment;
 
         struct ExprVisitor
         {
@@ -24,6 +25,7 @@ namespace star
             virtual Value VisitBinaryExpr(std::shared_ptr<Binary> expr) = 0;
             virtual Value VisitTernaryExpr(std::shared_ptr<Ternary> expr) = 0;
             virtual Value VisitVariableExpr(std::shared_ptr<Variable> expr) = 0;
+            virtual Value VisitAssignmentExpr(std::shared_ptr<Assignment> expr) = 0;
             virtual ~ExprVisitor() = default;
         };
 

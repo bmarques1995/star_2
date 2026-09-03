@@ -51,7 +51,7 @@ std::vector<std::shared_ptr<star::Statement::Stmt>> star::Parser::Parse()
 
 std::shared_ptr<star::Expression::Expr> star::Parser::Expression()
 {
-    return Ternary();
+    return Assignment();
 }
 
 std::shared_ptr<star::Expression::Expr> star::Parser::Equality()
@@ -205,6 +205,25 @@ std::shared_ptr<star::Expression::Expr> star::Parser::TemplateLiteral()
     );
 
     return std::make_shared<star::Expression::TemplateLiteral>(shards);
+}
+
+std::shared_ptr<star::Expression::Expr> star::Parser::Assignment()
+{
+    std::shared_ptr<Expression::Expr> expr = Ternary();
+    if (Match(TokenType::EQUAL))
+    {
+        Token equals = Previous();
+        std::shared_ptr<Expression::Expr> value = Assignment();
+        if (auto* variable = dynamic_cast<Expression::Variable*>(expr.get()))
+		{
+			return std::make_shared<Expression::Assignment>(
+				variable->m_Name,
+				value
+			);
+		}
+		throw ParserException("Invalid assignment target.");
+    }
+	return expr;
 }
 
 std::shared_ptr<star::Statement::Stmt> star::Parser::Statement()

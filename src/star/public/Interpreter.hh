@@ -22,6 +22,7 @@ namespace star
 		Value VisitBinaryExpr(std::shared_ptr<Expression::Binary> expr) override;
 		Value VisitTernaryExpr(std::shared_ptr<Expression::Ternary> expr) override;
 		Value VisitVariableExpr(std::shared_ptr<Expression::Variable> expr) override;
+		Value VisitAssignmentExpr(std::shared_ptr<Expression::Assignment> expr) override;
 		
 		Interpreter();
 		virtual ~Interpreter() = default;

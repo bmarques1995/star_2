@@ -115,6 +115,12 @@ star::VariableType star::Value::GetType() const
     return m_Type;
 }
 
+star::VariableType star::Value::GetAssignedType() const
+{
+    auto it = castedType.find(m_Value.index());
+    return it != castedType.end() ? it->second : VariableType::Dynamic;
+}
+
 void star::Value::ParseFloatNumber(std::string_view lexeme)
 {
     //npos
