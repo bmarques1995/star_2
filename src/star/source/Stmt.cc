@@ -23,8 +23,10 @@ star::Value star::Statement::Print::Accept(StmtVisitor& visitor)
 }
 
 star::Statement::Variable::Variable(Token name, std::shared_ptr<star::Expression::Expr> init, VariableType expectedType) :
-	m_Name(name), m_Init(init), m_ExpectedType(expectedType), m_LockType(true)
+	m_Name(name), m_Init(init), m_ExpectedType(expectedType)
 {
+    if (expectedType == VariableType::Dynamic) m_LockType = false;
+    else m_LockType = true;
 }
 
 star::Statement::Variable::Variable(Token name, std::shared_ptr<star::Expression::Expr> init, bool lockType) :
