@@ -40,5 +40,13 @@ namespace star
             Value Accept(StmtVisitor& visitor) override;
             const VariableType ExpectedType() const;
         };
+
+		struct STAR_API Block : public Stmt, public std::enable_shared_from_this<Block>
+		{
+			std::vector<std::shared_ptr<Stmt>> m_Statements;
+			
+            Block(std::vector<std::shared_ptr<Stmt>> statements);
+			Value Accept(StmtVisitor& visitor) override;
+		};
     }
 }

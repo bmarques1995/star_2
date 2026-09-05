@@ -7,6 +7,15 @@
             "name": "Star vcpkg",
             "program": "${workspaceFolder}/out/build/linux-vcpkg-debug/bin/star_repl",
             "console": "integratedTerminal",
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb-dap",
+            "request": "launch",
+            "name": "Star vcpkg sample",
+            "program": "${workspaceFolder}/out/build/linux-vcpkg-debug/bin/star_repl",
+            "console": "integratedTerminal",
             "args": [
                 "samples/file.st"
             ],

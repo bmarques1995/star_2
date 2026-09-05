@@ -229,6 +229,7 @@ std::shared_ptr<star::Expression::Expr> star::Parser::Assignment()
 std::shared_ptr<star::Statement::Stmt> star::Parser::Statement()
 {
     if(Match(TokenType::PRINT)) return PrintStatement();
+	if(Match(TokenType::LEFT_BRACE)) return std::make_shared<Statement::Block>(Block());
     else return ExpressionStatement();
 }
 
@@ -290,6 +291,17 @@ std::shared_ptr<star::Statement::Stmt> star::Parser::VarDeclaration(bool lockTyp
         return std::make_shared<Statement::Variable>(name, init, true);
 	}
 	return std::make_shared<Statement::Variable>(name, init, type);
+}
+
+std::vector<std::shared_ptr<star::Statement::Stmt>> star::Parser::Block()
+{
+    std::vector<std::shared_ptr<Statement::Stmt>> statements;
+	while (!Check(TokenType::RIGHT_BRACE) && !IsAtEnd())
+	{
+		statements.push_back(Declaration());
+	}
+	Consume(TokenType::RIGHT_BRACE, "Expected '}' after block.");
+    return statements;
 }
 
 template<class...T>

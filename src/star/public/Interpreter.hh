@@ -32,10 +32,12 @@ namespace star
 		Value Interpret(std::shared_ptr<Expression::Expr> expr);
 		Value Interpret(std::vector<std::shared_ptr<Statement::Stmt>>& statements);
 		Value ExecuteStmt(std::shared_ptr<Statement::Stmt> statement);
+		void ExecuteBlock(const std::vector<std::shared_ptr<Statement::Stmt>>& statements, std::shared_ptr<Environment> environment);
 
 		Value VisitExpressionStmt(std::shared_ptr<Statement::Expression> stmt) override;
         Value VisitPrintStmt(std::shared_ptr<Statement::Print> stmt) override;
 		Value VisitVariableStmt(std::shared_ptr<Statement::Variable> stmt) override;
+		Value VisitBlockStmt(std::shared_ptr<Statement::Block> stmt) override;
 	private:
 		void CheckNumberOperand(const Token& oper, const Value& operand);
 		void CheckNumberOperands(const Token& oper, const Value& left, const Value& right);
@@ -43,7 +45,8 @@ namespace star
 		bool IsEqual(const Value& a, const Value& b);
 		std::string Stringify(const Value& object);
 		Value Evaluate(std::shared_ptr<Expression::Expr> expr);
-		std::shared_ptr<Environment> m_GlobalEnv;
+		std::shared_ptr<Environment> m_CurrentEnv;
+		std::vector<std::shared_ptr<Environment>> m_Environments;
 	};
 
 }

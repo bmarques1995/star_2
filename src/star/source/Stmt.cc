@@ -44,3 +44,12 @@ const star::VariableType star::Statement::Variable::ExpectedType() const
 {
     return m_ExpectedType;
 }
+
+star::Statement::Block::Block(std::vector<std::shared_ptr<Stmt>> statements) :
+	m_Statements(statements)
+{}
+
+star::Value star::Statement::Block::Accept(StmtVisitor& visitor)
+{
+	return visitor.VisitBlockStmt(shared_from_this());
+}

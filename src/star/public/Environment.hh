@@ -12,9 +12,11 @@ namespace star
 	{
 	private:
 		std::unordered_map<std::string, Value> m_Values;
+		std::shared_ptr<Environment> m_Parent;
 
 	public:
 		Environment();
+		Environment(std::shared_ptr<Environment> parent);
 
 		void Define(const Token& name, Value value);
 		void Reassign(const Token& name, Value value);

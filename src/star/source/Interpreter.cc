@@ -9,7 +9,7 @@
 
 star::Interpreter::Interpreter()
 {
-	m_GlobalEnv.reset(new Environment());
+	m_CurrentEnv.reset(new Environment());
 }
 
 star::Value star::Interpreter::VisitGroupingExpr(std::shared_ptr<Expression::Grouping> expr)
@@ -136,18 +136,18 @@ star::Value star::Interpreter::VisitTernaryExpr(std::shared_ptr<Expression::Tern
 
 star::Value star::Interpreter::VisitVariableExpr(std::shared_ptr<Expression::Variable> expr)
 {
-    Value value = m_GlobalEnv->Get(expr->m_Name);
+    Value value = m_CurrentEnv->Get(expr->m_Name);
     if (value.GetType() == VariableType::Null)
     {
         throw RuntimeError(expr->m_Name, "Variable not initialized.");
     }
-    return m_GlobalEnv->Get(expr->m_Name);
+    return m_CurrentEnv->Get(expr->m_Name);
 }
 
 star::Value star::Interpreter::VisitAssignmentExpr(std::shared_ptr<Expression::Assignment> expr)
 {
     Value value = Evaluate(expr->m_Value);
-    m_GlobalEnv->Reassign(expr->m_Name, value);
+    m_CurrentEnv->Reassign(expr->m_Name, value);
     return value;
 }
 
@@ -216,6 +216,30 @@ star::Value star::Interpreter::ExecuteStmt(std::shared_ptr<Statement::Stmt> stat
     return statement->Accept(*this);
 }
 
+void star::Interpreter::ExecuteBlock
+(
+    const std::vector<std::shared_ptr<Statement::Stmt>>& statements, 
+    std::shared_ptr<Environment> environment
+)
+{
+	std::shared_ptr<Environment> previous = m_CurrentEnv;
+    m_CurrentEnv = environment;
+    try
+    {
+        for (auto stmt : statements)
+        {
+            ExecuteStmt(stmt);
+        }
+    }
+	catch(...)
+	{
+		m_CurrentEnv = previous;
+		throw;
+	}
+	
+	m_CurrentEnv = previous;
+}
+
 star::Value star::Interpreter::VisitExpressionStmt(std::shared_ptr<Statement::Expression> stmt)
 {
     Value v = Evaluate(stmt->m_Expression);
@@ -237,16 +261,22 @@ star::Value star::Interpreter::VisitVariableStmt(std::shared_ptr<Statement::Vari
         {
             if(stmt->m_LockType)
 				value.LockType();
-            m_GlobalEnv->Define(stmt->m_Name, std::move(value));
+            m_CurrentEnv->Define(stmt->m_Name, std::move(value));
         }
         else
         {
             value.LockType();
             if(stmt->ExpectedType() != value.GetType())
                 throw RuntimeError(stmt->m_Name, "Variable type mismatch.");
-			m_GlobalEnv->Define(stmt->m_Name, std::move(value));
+			m_CurrentEnv->Define(stmt->m_Name, std::move(value));
         }
     }
     
+    return { TokenType::NIL, "" };
+}
+
+star::Value star::Interpreter::VisitBlockStmt(std::shared_ptr<Statement::Block> stmt)
+{
+    ExecuteBlock(stmt->m_Statements, std::make_shared<Environment>(m_CurrentEnv));
     return { TokenType::NIL, "" };
 }
