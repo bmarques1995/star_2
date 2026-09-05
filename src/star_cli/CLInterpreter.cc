@@ -7,5 +7,5 @@ star::CLInterpreter::CLInterpreter()
 
 void star::CLInterpreter::Write(const std::string& text) const
 {
-    TraceConsole() << text << "\n";
+    NeutralConsole() << text << "\n";
 }

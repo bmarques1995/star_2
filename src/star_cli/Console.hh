@@ -22,4 +22,10 @@ namespace star
     public: 
         ErrorConsole& operator<<(const std::string& value);
     };
+
+	class STAR_CLI_API NeutralConsole
+	{
+	public:
+		NeutralConsole& operator<<(const std::string& value);
+	};
 }

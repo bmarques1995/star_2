@@ -19,4 +19,10 @@ star::ErrorConsole& star::ErrorConsole::operator<<(const std::string& value)
     std::cout << star::ColorToken::s_Red << value << star::ColorToken::s_EndColor;
     return *this;
 }
+
+star::NeutralConsole& star::NeutralConsole::operator<<(const std::string& value)
+{
+    std::cout << value;
+    return *this;
+}
         
