@@ -280,3 +280,14 @@ star::Value star::Interpreter::VisitBlockStmt(std::shared_ptr<Statement::Block> 
     ExecuteBlock(stmt->m_Statements, std::make_shared<Environment>(m_CurrentEnv));
     return { TokenType::NIL, "" };
 }
+
+star::Value star::Interpreter::VisitIfStmt(std::shared_ptr<Statement::If> stmt)
+{
+	Value condition = Evaluate(stmt->m_Condition);
+
+	if (IsTruthy(condition))
+        return ExecuteStmt(stmt->m_ThenBranch);
+    else if (stmt->m_ElseBranch != nullptr)
+		return ExecuteStmt(stmt->m_ElseBranch);
+    return { TokenType::NIL, "" };
+}

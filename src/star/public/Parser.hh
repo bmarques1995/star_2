@@ -52,6 +52,12 @@ namespace star
         std::shared_ptr<Statement::Stmt> Declaration();
         std::shared_ptr<Statement::Stmt> VarDeclaration(bool lockType = false);
 		std::vector<std::shared_ptr<Statement::Stmt>> Block();
+		std::shared_ptr<Statement::Stmt> IfStatement();
+		//std::shared_ptr<Statement::Stmt> WhileStatement();
+        //std::shared_ptr<Statement::Stmt> ForStatement();
+		//std::shared_ptr<Statement::Stmt> SwitchStatement();
+		//std::shared_ptr<Statement::Stmt> TryStatement();
+		//std::shared_ptr<Statement::Stmt> CatchClause();
 
     public:
         Parser(const std::vector<Token>&);

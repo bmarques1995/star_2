@@ -53,3 +53,13 @@ star::Value star::Statement::Block::Accept(StmtVisitor& visitor)
 {
 	return visitor.VisitBlockStmt(shared_from_this());
 }
+
+star::Statement::If::If(std::shared_ptr<star::Expression::Expr> condition, std::shared_ptr<Stmt> thenBranch, std::shared_ptr<Stmt> elseBranch) :
+	m_Condition(condition), m_ThenBranch(thenBranch), m_ElseBranch(elseBranch)
+{
+}
+
+star::Value star::Statement::If::Accept(StmtVisitor& visitor)
+{
+    return visitor.VisitIfStmt(shared_from_this());
+}

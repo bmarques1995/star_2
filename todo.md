@@ -15,3 +15,6 @@ As I will use fmt, I can use the extra tokens
 - `PRINT_FMT_END`,`%@`
 
 As long as `PRINT_FMT_START` suceeds a `STR_EXPR_END`, mandatorily
+
+## Add exit as statement
+

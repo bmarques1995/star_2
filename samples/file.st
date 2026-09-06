@@ -11,4 +11,22 @@ print(lang);
 	print(lang);
 }
 
+auto x = 8u32;
+
+if(x == 10u32)
+{
+    print("x é 10");
+}
+else
+{
+	if(x < 10u32)
+	{
+		print("x é menor que 10");
+	}
+	else
+	{
+		print("x é maior que 10");
+	}
+}
+
 print(lang);

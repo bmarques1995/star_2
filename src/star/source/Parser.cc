@@ -229,6 +229,7 @@ std::shared_ptr<star::Expression::Expr> star::Parser::Assignment()
 std::shared_ptr<star::Statement::Stmt> star::Parser::Statement()
 {
     if(Match(TokenType::PRINT)) return PrintStatement();
+    if(Match(TokenType::IF)) return IfStatement();
 	if(Match(TokenType::LEFT_BRACE)) return std::make_shared<Statement::Block>(Block());
     else return ExpressionStatement();
 }
@@ -302,6 +303,20 @@ std::vector<std::shared_ptr<star::Statement::Stmt>> star::Parser::Block()
 	}
 	Consume(TokenType::RIGHT_BRACE, "Expected '}' after block.");
     return statements;
+}
+
+std::shared_ptr<star::Statement::Stmt> star::Parser::IfStatement()
+{
+    Consume(TokenType::LEFT_PAREN, "Expected '(' after 'if'.");
+	std::shared_ptr<Expression::Expr> condition = Expression();
+	Consume(TokenType::RIGHT_PAREN, "Expected ')' after condition.");
+	std::shared_ptr<Statement::Stmt> thenBranch = Statement();
+	std::shared_ptr<Statement::Stmt> elseBranch = nullptr;
+	if (Match(TokenType::ELSE))
+	{
+		elseBranch = Statement();
+	}
+	return std::make_shared<Statement::If>(condition, thenBranch, elseBranch);
 }
 
 template<class...T>

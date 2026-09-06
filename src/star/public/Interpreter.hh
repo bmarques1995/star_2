@@ -38,6 +38,7 @@ namespace star
         Value VisitPrintStmt(std::shared_ptr<Statement::Print> stmt) override;
 		Value VisitVariableStmt(std::shared_ptr<Statement::Variable> stmt) override;
 		Value VisitBlockStmt(std::shared_ptr<Statement::Block> stmt) override;
+		Value VisitIfStmt(std::shared_ptr<Statement::If> stmt) override;
 	private:
 		void CheckNumberOperand(const Token& oper, const Value& operand);
 		void CheckNumberOperands(const Token& oper, const Value& left, const Value& right);
