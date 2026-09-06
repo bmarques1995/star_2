@@ -8,6 +8,7 @@
 #include <filesystem>
 #include "Scanner.hh"
 #include "Parser.hh"
+#include "Version.hh"
 
 
 namespace fs = std::filesystem;
@@ -45,8 +46,8 @@ void star::Star::RunPrompt()
 {
     std::string line;
     static const char* replPrefix = "star> ";
-    star::NeutralConsole() << "[star version: " << "in development" << "]" << "\n";
-    star::NeutralConsole() << "[" << GetCompilerNameAndVersion() << "]" << "\n\n";
+    star::NeutralConsole() << "[star version: " << Version::GetVersion() << "]" << "\n";
+    star::NeutralConsole() << "[" << Version::GetCompilerNameAndVersion() << "]" << "\n\n";
     star::TraceConsole() << replPrefix;
     for(;;)
     {
@@ -72,26 +73,4 @@ void star::Star::Run(const std::string& source, const std::string& filepath)
         star::ErrorConsole() << e.what();
         std::exit(65);
     }
-}
-
-std::string star::Star::GetCompilerNameAndVersion()
-{
-    std::stringstream ss;
-#if defined(_MSC_VER)
-    uint32_t major = _MSC_FULL_VER / 10'000'000;
-    uint32_t minor = (_MSC_FULL_VER % 10'000'000) / 100'000;
-    uint32_t build = (_MSC_FULL_VER % 100'000);
-    ss << "Compiler: MSVC (cl) " << major << "." << minor << "." << build;
-#elif defined(__clang__)
-    ss << "Compiler: clang++ " << __clang_major__ << "." << __clang_minor__ << "." << __clang_patchlevel__;
-#elif defined(__GNUC__)
-    ss << "Compiler: g++ "
-        << __GNUC__ << "."
-        << __GNUC_MINOR__ << "."
-        << __GNUC_PATCHLEVEL__;
-#else
-    ss << "Compiler: Unknown / Generic Compiler\n";
-#endif
-    std::string compilerName = ss.str();
-    return compilerName;
 }
