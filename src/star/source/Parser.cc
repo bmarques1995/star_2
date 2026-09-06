@@ -29,6 +29,15 @@ const std::unordered_map<std::string, star::VariableType> star::Parser::s_TypeKe
 	{"f64", VariableType::Float64} 
 };
 
+const std::unordered_map<star::TokenType, star::TokenType> star::Parser::s_BinaryOperators =
+{
+    {TokenType::REC_PLUS, TokenType::PLUS},
+    {TokenType::REC_MINUS, TokenType::MINUS},
+	{TokenType::REC_STAR, TokenType::STAR},
+	{TokenType::REC_MOD, TokenType::MOD},
+	{TokenType::REC_SLASH, TokenType::SLASH}
+};
+
 star::ParserException::ParserException(const std::string& message)
 {
     m_Reason = "[Parser]: " + message;
@@ -209,7 +218,7 @@ std::shared_ptr<star::Expression::Expr> star::Parser::TemplateLiteral()
 
 std::shared_ptr<star::Expression::Expr> star::Parser::Assignment()
 {
-    std::shared_ptr<Expression::Expr> expr = Ternary();
+    /*std::shared_ptr<Expression::Expr> expr = Ternary();
     if (Match(TokenType::EQUAL))
     {
         Token equals = Previous();
@@ -223,7 +232,39 @@ std::shared_ptr<star::Expression::Expr> star::Parser::Assignment()
 		}
 		throw ParserException("Invalid assignment target.");
     }
-	return expr;
+	return expr;*/
+    std::shared_ptr<Expression::Expr> expr = Ternary();
+
+    if (Match(TokenType::EQUAL, TokenType::REC_PLUS, TokenType::REC_MINUS,
+        TokenType::REC_STAR, TokenType::REC_SLASH, TokenType::REC_MOD)) {
+
+        Token oper = Previous();
+        std::shared_ptr<Expression::Expr> value = Assignment();
+
+        if (auto* variable = dynamic_cast<Expression::Variable*>(expr.get()))
+        {
+            Token name = variable->m_Name;
+
+            if (oper.m_Type != TokenType::EQUAL) {
+                auto it = s_BinaryOperators.find(oper.m_Type);
+                TokenType binaryType = it == s_BinaryOperators.end() ? TokenType::EQUAL : it->second;
+                value = std::make_shared<Expression::Binary>(
+					std::make_shared<Expression::Variable>(name),
+					Token(binaryType, oper.m_Lexeme, oper.m_Line, oper.m_Column, oper.m_Filepath),
+					value
+				);
+            }
+
+            return std::make_shared<Expression::Assignment>(
+				variable->m_Name,
+				value
+			);
+        }
+
+        throw ParserException("Invalid assignment target.");
+    }
+
+    return expr;
 }
 
 std::shared_ptr<star::Expression::Expr> star::Parser::LogicalOr()

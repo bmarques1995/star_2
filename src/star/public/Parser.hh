@@ -66,5 +66,6 @@ namespace star
         ~Parser() = default;
         std::vector<std::shared_ptr<Statement::Stmt>> Parse();
         static const std::unordered_map<std::string, VariableType> s_TypeKeywords;
+        static const std::unordered_map<TokenType, TokenType> s_BinaryOperators;
     };
 }

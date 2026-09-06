@@ -36,5 +36,5 @@ auto x3 = 0u32;
 while(x3 < 4u32)
 {
 	print(x3);
-	x3 = x3 + 1;
+	x3 += 1;
 }
