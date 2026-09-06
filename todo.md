@@ -16,5 +16,6 @@ As I will use fmt, I can use the extra tokens
 
 As long as `PRINT_FMT_START` suceeds a `STR_EXPR_END`, mandatorily
 
-## Add exit as statement
+## Add exit as builtin function
 
+## Fix arrow not moving on REPL at linux and freebsd
