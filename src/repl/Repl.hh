@@ -11,6 +11,7 @@ namespace star {
         static void RunPrompt();
     private:
         static void Run(const std::string& source, const std::string& filepath = "::repl");
+        static std::string GetCompilerNameAndVersion();
         static CLInterpreter s_Interpreter;
     };
 

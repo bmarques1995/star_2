@@ -4,6 +4,7 @@
 #include "Visitor.hh"
 #include "Token.hh"
 #include <memory>
+#include <vector>
 
 namespace star
 {
