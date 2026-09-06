@@ -82,3 +82,14 @@ star::Value star::Expression::Assignment::Accept(ExprVisitor& visitor)
 {
     return visitor.VisitAssignmentExpr(shared_from_this());
 }
+
+star::Expression::Logical::Logical(std::shared_ptr<Expr> left, Token oper, std::shared_ptr<Expr> right) :
+	m_Left{std::move(left)}, m_Operator{std::move(oper)}, m_Right{std::move(right)}
+{
+
+}
+
+star::Value star::Expression::Logical::Accept(ExprVisitor& visitor)
+{
+	return visitor.VisitLogicalExpr(shared_from_this());
+}

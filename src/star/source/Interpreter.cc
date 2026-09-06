@@ -151,6 +151,18 @@ star::Value star::Interpreter::VisitAssignmentExpr(std::shared_ptr<Expression::A
     return value;
 }
 
+star::Value star::Interpreter::VisitLogicalExpr(std::shared_ptr<Expression::Logical> expr)
+{
+    Value left = Evaluate(expr->m_Left);
+    if (expr->m_Operator.GetTokenType() == TokenType::OR) {
+        if (IsTruthy(left)) return left;
+    }
+    else {
+        if (!IsTruthy(left)) return left;
+    }
+    return Evaluate(expr->m_Right);
+}
+
 bool star::Interpreter::IsTruthy(const Value& object)
 {
     return std::visit([](const auto& shard)-> bool

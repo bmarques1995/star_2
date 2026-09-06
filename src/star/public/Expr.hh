@@ -95,5 +95,15 @@ namespace star
 
             Value Accept(ExprVisitor& visitor) override;
         };
+
+		struct STAR_API Logical final : public Expr, public std::enable_shared_from_this<Logical>
+		{
+			std::shared_ptr<Expr> m_Left;
+			Token m_Operator;
+			std::shared_ptr<Expr> m_Right;
+			Logical(std::shared_ptr<Expr> left, Token oper, std::shared_ptr<Expr> right);
+			~Logical() = default;
+			Value Accept(ExprVisitor& visitor) override;
+		};
     }
 }

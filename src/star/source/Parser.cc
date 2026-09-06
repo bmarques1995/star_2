@@ -139,7 +139,7 @@ std::shared_ptr<star::Expression::Expr> star::Parser::Primary()
 
 std::shared_ptr<star::Expression::Expr> star::Parser::Ternary()
 {
-    std::shared_ptr<Expression::Expr> expr = Equality();
+    std::shared_ptr<Expression::Expr> expr = LogicalOr();
 
     if (Match(TokenType::QUESTION))
     {
@@ -224,6 +224,29 @@ std::shared_ptr<star::Expression::Expr> star::Parser::Assignment()
 		throw ParserException("Invalid assignment target.");
     }
 	return expr;
+}
+
+std::shared_ptr<star::Expression::Expr> star::Parser::LogicalOr()
+{
+    std::shared_ptr<Expression::Expr> expr = LogicalAnd();
+    while (Match(TokenType::OR))
+    {
+        Token oper = Previous();
+        std::shared_ptr<star::Expression::Expr> right = LogicalAnd();
+        expr = std::make_shared<star::Expression::Logical>(expr, std::move(oper), right);
+    }
+    return expr;
+}
+
+std::shared_ptr<star::Expression::Expr> star::Parser::LogicalAnd()
+{
+    std::shared_ptr<Expression::Expr> expr = Equality();
+    while (Match(TokenType::AND)) {
+        Token oper = Previous();
+        std::shared_ptr<Expression::Expr> right = Equality();
+        expr = std::make_shared<star::Expression::Logical>(expr, std::move(oper), right);
+    }
+    return expr;
 }
 
 std::shared_ptr<star::Statement::Stmt> star::Parser::Statement()
