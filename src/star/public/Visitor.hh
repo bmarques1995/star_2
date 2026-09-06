@@ -43,6 +43,7 @@ namespace star
         struct Variable;
         struct Block;
         struct If;
+        struct While;
         //struct Switch;
 
         struct StmtVisitor
@@ -51,7 +52,8 @@ namespace star
             virtual Value VisitPrintStmt(std::shared_ptr<Print> stmt) = 0;
             virtual Value VisitVariableStmt(std::shared_ptr<Variable> stmt) = 0;
             virtual Value VisitBlockStmt(std::shared_ptr<Block> stmt) = 0;
-			virtual Value VisitIfStmt(std::shared_ptr<If> stmt) = 0;
+            virtual Value VisitIfStmt(std::shared_ptr<If> stmt) = 0;
+            virtual Value VisitWhileStmt(std::shared_ptr<While> stmt) = 0;
             virtual ~StmtVisitor() = default;
         };
 

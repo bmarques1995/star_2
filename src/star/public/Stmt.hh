@@ -59,5 +59,14 @@ namespace star
 			If(std::shared_ptr<star::Expression::Expr> condition, std::shared_ptr<Stmt> thenBranch, std::shared_ptr<Stmt> elseBranch);
 			Value Accept(StmtVisitor& visitor) override;
 		};
+
+        struct STAR_API While : public Stmt, public std::enable_shared_from_this<While>
+        {
+            std::shared_ptr<star::Expression::Expr> m_Condition;
+            std::shared_ptr<Stmt> m_Body;
+
+            While(std::shared_ptr<star::Expression::Expr> condition, std::shared_ptr<Stmt> body);
+            Value Accept(StmtVisitor& visitor) override;
+        };
     }
 }

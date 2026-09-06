@@ -29,6 +29,7 @@ void star::Environment::Reassign(const Token& name, Value value)
 			m_Parent->Reassign(name, value);
 		else
 			throw RuntimeError(name, "Cannot reassign undefined variable: '" + name.GetLexeme() + "'.");
+		return;
 	}
 	if(it->second.GetType() != VariableType::Dynamic && it->second.GetType() != value.GetAssignedType())
 	{

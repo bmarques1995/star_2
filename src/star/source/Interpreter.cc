@@ -303,3 +303,14 @@ star::Value star::Interpreter::VisitIfStmt(std::shared_ptr<Statement::If> stmt)
 		return ExecuteStmt(stmt->m_ElseBranch);
     return { TokenType::NIL, "" };
 }
+
+star::Value star::Interpreter::VisitWhileStmt(std::shared_ptr<Statement::While> stmt)
+{
+	Value condition = Evaluate(stmt->m_Condition);
+	while (IsTruthy(condition))
+	{
+		ExecuteStmt(stmt->m_Body);
+		condition = Evaluate(stmt->m_Condition);
+	}
+    return { TokenType::NIL, "" };
+}

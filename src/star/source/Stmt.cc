@@ -63,3 +63,13 @@ star::Value star::Statement::If::Accept(StmtVisitor& visitor)
 {
     return visitor.VisitIfStmt(shared_from_this());
 }
+
+star::Statement::While::While(std::shared_ptr<star::Expression::Expr> condition, std::shared_ptr<Stmt> body) :
+	m_Condition(condition), m_Body(body)
+{
+}
+
+star::Value star::Statement::While::Accept(StmtVisitor& visitor)
+{
+	return visitor.VisitWhileStmt(shared_from_this());
+}
