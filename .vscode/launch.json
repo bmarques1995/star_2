@@ -5,7 +5,7 @@
             "type": "lldb-dap",
             "request": "launch",
             "name": "Star vcpkg",
-            "program": "${workspaceFolder}/out/build/linux-vcpkg-debug/bin/star_repl",
+            "program": "${workspaceFolder}/out/build/linux-vcpkg-debug/bin/star",
             "console": "integratedTerminal",
             "args": [],
             "cwd": "${workspaceFolder}"
@@ -14,7 +14,7 @@
             "type": "lldb-dap",
             "request": "launch",
             "name": "Star vcpkg sample",
-            "program": "${workspaceFolder}/out/build/linux-vcpkg-debug/bin/star_repl",
+            "program": "${workspaceFolder}/out/build/linux-vcpkg-debug/bin/star",
             "console": "integratedTerminal",
             "args": [
                 "samples/file.st"
