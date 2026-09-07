@@ -46,7 +46,7 @@ namespace star
 		void CheckNumberOperands(const Token& oper, const Value& left, const Value& right);
 		bool IsTruthy(const Value& object);
 		bool IsEqual(const Value& a, const Value& b);
-		std::string Stringify(const Value& object);
+		std::string Stringify(const Value& object, const std::string& format);
 		Value Evaluate(std::shared_ptr<Expression::Expr> expr);
 		std::shared_ptr<Environment> m_CurrentEnv;
 		std::vector<std::shared_ptr<Environment>> m_Environments;

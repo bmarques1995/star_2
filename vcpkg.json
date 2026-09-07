@@ -1,13 +1,16 @@
 {
-  "dependencies": [
-    {
-        "name": "magic-enum"
-    },
-    {
-        "name": "pcre2"
-    },
-    {
-        "name": "gtest"
-    }
-  ]
+    "dependencies": [
+        {
+            "name": "magic-enum"
+        },
+        {
+            "name": "pcre2"
+        },
+        {
+            "name": "fmt"
+        },
+        {
+            "name": "gtest"
+        }
+    ]
 }

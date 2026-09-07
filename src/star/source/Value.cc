@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <variant>
 #include "Scanner.hh"
+#include <fmt/format.h>
 
 namespace star
 {
@@ -326,10 +327,12 @@ void star::Value::AssignTypedUint(std::string_view lexeme, size_t typeOffset)
     }
 }
 
-const std::string star::Value::ToString() const
+const std::string star::Value::ToString(const std::string& format) const
 {
+	std::string effectiveFormat = format.empty() ? "{}" : "{" + format + "}";
+
     return std::visit(
-        [this](const auto& value) -> std::string
+        [this, effectiveFormat](const auto& value) -> std::string
         {
             using T = std::decay_t<decltype(value)>;
 
@@ -357,6 +360,14 @@ const std::string star::Value::ToString() const
             {
                 return std::to_string(static_cast<unsigned int>(value));
             }
+			else if constexpr (std::is_same_v<T, float>)
+			{
+				return fmt::format(fmt::runtime(effectiveFormat), value);
+			}
+			else if constexpr (std::is_same_v<T, double>)
+			{
+				return fmt::format(fmt::runtime(effectiveFormat), value);
+			}
             else
             {
                 return std::to_string(value);

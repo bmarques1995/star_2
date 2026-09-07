@@ -6,6 +6,7 @@
 #include "StarMacro.hh"
 #include <variant>
 #include <vector>
+#include <utility>
 
 namespace star
 {
@@ -32,7 +33,7 @@ namespace star
         using TemplateShard =
         std::variant<
             std::string,
-            std::shared_ptr<Expr>
+            std::pair<std::shared_ptr<Expr>, std::string>
         >;
 
         struct STAR_API TemplateLiteral final : public Expr, public std::enable_shared_from_this<TemplateLiteral>

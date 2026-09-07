@@ -38,7 +38,7 @@ star::Value star::Interpreter::VisitTemplateLiteralExpr(std::shared_ptr<Expressi
             else
             {
                 Interpreter i;
-                return Stringify(i.Interpret(shard));
+                return Stringify(i.Interpret(shard.first), shard.second);
             }
         },
         *it);
@@ -194,9 +194,9 @@ bool star::Interpreter::IsEqual(const Value& a, const Value& b)
     return a == b;
 }
 
-std::string star::Interpreter::Stringify(const Value& object)
+std::string star::Interpreter::Stringify(const Value& object, const std::string& format)
 {
-    return object.ToString();
+    return object.ToString(format);
 }
 
 star::Value star::Interpreter::Evaluate(std::shared_ptr<Expression::Expr> expr)
@@ -261,7 +261,7 @@ star::Value star::Interpreter::VisitExpressionStmt(std::shared_ptr<Statement::Ex
 star::Value star::Interpreter::VisitPrintStmt(std::shared_ptr<Statement::Print> stmt)
 {
     Value v = Evaluate(stmt->m_Expression);
-    Write(Stringify(v));
+    Write(Stringify(v, ""));
     return {TokenType::NIL, ""};
 }
 

@@ -183,20 +183,35 @@ std::shared_ptr<star::Expression::Expr> star::Parser::TemplateLiteral()
         }
         else if (Match(TokenType::STR_EXPR_START))
         {
-            std::shared_ptr<Expression::Expr> expression = Expression();
+			std::shared_ptr<Expression::Expr> expression = Expression();
+            std::string fmt = "";
 
             Consume(
                 TokenType::STR_EXPR_END,
                 "Expected '}$' after template expression."
             );
 
-            shards.emplace_back(std::move(expression));
+			if (Match(TokenType::TEMPLATE_FMT_START))
+			{
+
+                fmt = Consume(
+                    TokenType::TEMPLATE_FMT,
+                    "Expected template format specifier."
+                ).GetLexeme();
+
+                Consume(
+                    TokenType::TEMPLATE_FMT_END,
+                    "Expected '}@' after template format specifier."
+                );
+			}
+
+            shards.emplace_back(std::make_pair(std::move(expression), fmt));
         }
         else
         {
             std::stringstream ss;
 
-            ss << "Expected template substring or expression "
+            ss << "Expected template substring or expression, with optional format specifier right after an expression."
                << Peek().ToString();
 
             throw ParserException(ss.str());

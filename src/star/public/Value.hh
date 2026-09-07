@@ -82,7 +82,7 @@ namespace star
 		Value(const Storage& value, bool lockType);
 		~Value() = default;
 
-		const std::string ToString() const;
+		const std::string ToString(const std::string& format = "") const;
 		const std::string StringifyString() const;
 		Storage& GetLValue();
 		const Storage& GetRValue() const;

@@ -44,6 +44,7 @@ const std::unordered_map<char, char> star::Scanner::s_EscapeMap =
     {'r', '\r'},
     {'t', '\t'},
     {'%', '%'},
+    {'@', '@'},
     {'$', '$'},
     {'{', '{'},
     {'}', '}'},
@@ -289,6 +290,30 @@ void star::Scanner::TemplateString()
             }
             AdvanceAndCommit(2);            
             AddToken(TokenType::STR_EXPR_END);
+            c = Peek();
+        }
+        if(c == '@' && Peek(1) == '{')
+        {
+            if (processedString.size() > 0)
+            {
+                std::string innerValue{ processedString.begin(), processedString.end() };
+                AddToken(TokenType::TEMPLATE_SUBSTRING, innerValue);
+                processedString.clear();
+            }
+            AdvanceAndCommit(2);
+            AddToken(TokenType::TEMPLATE_FMT_START);
+			std::string fmtValue;
+			auto firstIt = m_Source.begin() + m_Start;
+			auto secondIt = firstIt;
+			while (!((Peek() == '}') && (Peek(1) == '@')))
+			{
+                AdvanceAndCommit(1);
+                secondIt++;
+			}
+			fmtValue = std::string(firstIt, secondIt);
+			AddToken(TokenType::TEMPLATE_FMT, fmtValue);
+            AdvanceAndCommit(2);            
+            AddToken(TokenType::TEMPLATE_FMT_END);
             c = Peek();
         }
         else

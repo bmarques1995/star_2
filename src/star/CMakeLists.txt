@@ -4,6 +4,7 @@ file(GLOB_RECURSE STAR_PBL_HDR_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIG
 
 find_package(magic_enum CONFIG REQUIRED)
 find_package(pcre2 CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
 
 set(TARGET_NAME star)
 add_library(${TARGET_NAME} ${STAR_SRC_FILES} ${STAR_PBL_HDR_FILES} ${STAR_PVT_HDR_FILES})
@@ -13,7 +14,7 @@ set_msvc_target_utf8(${TARGET_NAME})
 target_include_directories(${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/public>
                                           PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/private>)
 target_link_libraries(${TARGET_NAME} PRIVATE magic_enum::magic_enum
-                                         PUBLIC PCRE2::8BIT PCRE2::POSIX)
+                                         PUBLIC PCRE2::8BIT PCRE2::POSIX fmt::fmt)
 
 enable_coverage(${TARGET_NAME})
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
