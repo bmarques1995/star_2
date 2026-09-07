@@ -4,9 +4,10 @@ file(GLOB_RECURSE STAR_CLI_HDR_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIG
 set(TARGET_NAME star_cli)
 add_library(${TARGET_NAME} ${STAR_CLI_SRC_FILES} ${STAR_CLI_HDR_FILES})
 set_cxx_project_standards(${TARGET_NAME} 20 FALSE)
-set_artifacts_dir(${TARGET_NAME} ${ARTIFACT_PREFIX})
+set_artifacts_dir(${TARGET_NAME} ${PROJECT_BINARY_DIR})
 set_msvc_target_utf8(${TARGET_NAME})
-target_include_directories(${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+target_include_directories(${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+                                                 $<INSTALL_INTERFACE:include>)
 target_link_libraries(${TARGET_NAME} PRIVATE star)
 
 if(WIN32)
@@ -15,3 +16,12 @@ if(WIN32)
         target_compile_definitions(${TARGET_NAME} PRIVATE STAR_CLI_EXPORTS INTERFACE STAR_CLI_IMPORTS)
     endif()
 endif()
+
+target_installation_behaviour(TARGET_NAME ${TARGET_NAME}
+                              CONFIG_FILE ${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.cmake.in
+                              VERSION ${PROJECT_VERSION}
+                              PROJECT_NAME ${PROJECT_NAME}
+                              NAMESPACE star::
+                              COMPONENT star)
+
+deploy_runtime_dependencies(${TARGET_NAME})
