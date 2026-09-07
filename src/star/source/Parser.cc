@@ -333,8 +333,8 @@ std::shared_ptr<star::Statement::Stmt> star::Parser::Declaration()
 {
     try
     {
-        if(Match(TokenType::VAR)) return VarDeclaration(false);
-		else if(Match(TokenType::AUTO)) return VarDeclaration(true);
+        if(Match(TokenType::VAR)) return VarDeclaration();
+		else if(Match(TokenType::AUTO)) return AutoDeclaration();
 		else return Statement();
     }
     catch (const ParserException& e)
@@ -349,7 +349,7 @@ std::shared_ptr<star::Statement::Stmt> star::Parser::Declaration()
     }
 }
 
-std::shared_ptr<star::Statement::Stmt> star::Parser::VarDeclaration(bool lockType)
+std::shared_ptr<star::Statement::Stmt> star::Parser::VarDeclaration()
 {
     Token name = Consume(TokenType::IDENTIFIER, "Expected variable name.");
 
@@ -363,16 +363,24 @@ std::shared_ptr<star::Statement::Stmt> star::Parser::VarDeclaration(bool lockTyp
             throw ParserException("Invalid variable type: " + typeToken.GetLexeme());
         type = it->second;
     }
-	if(Match(TokenType::EQUAL))
-	{
-		init = Expression();
-	}
+    if (Match(TokenType::EQUAL))
+    {
+        init = Expression();
+    }
     Consume(TokenType::SEMICOLON, "Expected ; after variable declaration.");
-	if(lockType && type == VariableType::Dynamic)
-	{
-        return std::make_shared<Statement::Variable>(name, init, true);
-	}
 	return std::make_shared<Statement::Variable>(name, init, type);
+}
+
+std::shared_ptr<star::Statement::Stmt> star::Parser::AutoDeclaration()
+{
+    Token name = Consume(TokenType::IDENTIFIER, "Expected variable name.");
+    std::shared_ptr<Expression::Expr> init = nullptr;
+    if (Match(TokenType::EQUAL))
+    {
+        init = Expression();
+    }
+    Consume(TokenType::SEMICOLON, "Expected ; after variable declaration.");
+    return std::make_shared<Statement::Variable>(name, init, true);
 }
 
 std::vector<std::shared_ptr<star::Statement::Stmt>> star::Parser::Block()
