@@ -1,5 +1,6 @@
 #include "Value.hh"
 #include "TokenType.hh"
+#include "Function.hh"
 #include <cstdint>
 #include <sstream>
 #include <stdexcept>
@@ -54,16 +55,17 @@ const std::unordered_map<size_t, star::VariableType> star::Value::castedType =
 	{1, VariableType::Boolean},
 	{2, VariableType::Character},
 	{3, VariableType::String},
-	{4, VariableType::Integer8},
-	{5, VariableType::Integer16},
-	{6, VariableType::Integer32},
-	{7, VariableType::Integer64},
-	{8, VariableType::Unsigned8},
-	{9, VariableType::Unsigned16},
-	{10, VariableType::Unsigned32},
-	{11, VariableType::Unsigned64},
-	{12, VariableType::Float32},
-	{13, VariableType::Float64}
+    {4, VariableType::Function},
+	{5, VariableType::Integer8},
+	{6, VariableType::Integer16},
+	{7, VariableType::Integer32},
+	{8, VariableType::Integer64},
+	{9, VariableType::Unsigned8},
+	{10, VariableType::Unsigned16},
+	{11, VariableType::Unsigned32},
+	{12, VariableType::Unsigned64},
+	{13, VariableType::Float32},
+	{14, VariableType::Float64}
 };
 
 star::Value::Value(TokenType type, std::string_view lexeme)
@@ -203,18 +205,18 @@ void star::Value::AssignTypedFloat(std::string_view lexeme, size_t typeOffset)
     divisor += (typeOffset);
     std::string_view radical{lexeme.begin(), divisor};
     std::string_view typeAssignment{divisor, lexeme.end()};
-    static const std::unordered_map<std::string_view, FloatType> castedType = 
+    static const std::unordered_map<std::string_view, VariableType> castedType =
     {
-        {"f32", FloatType::F32},
-        {"f64", FloatType::F64}
+        {"f32", VariableType::Float32},
+        {"f64", VariableType::Float64}
     };
     auto it = castedType.find(typeAssignment);
     if(it != castedType.end())
     {
         switch (it->second) 
         {
-            case FloatType::F32: m_Value = std::stof(radical.data()); break;
-            case FloatType::F64: default: m_Value = std::stod(radical.data()); break;
+            case VariableType::Float32: m_Value = std::stof(radical.data()); break;
+            case VariableType::Float64: default: m_Value = std::stod(radical.data()); break;
         }
     }
 }
@@ -225,19 +227,19 @@ void star::Value::AssignTypedInt(std::string_view lexeme, size_t typeOffset)
     divisor += (typeOffset);
     std::string_view radical{lexeme.begin(), divisor};
     std::string_view typeAssignment{divisor, lexeme.end()};
-    static const std::unordered_map<std::string, IntegerType> castedType = 
+    static const std::unordered_map<std::string, VariableType> castedType =
     {
-        {"i8", IntegerType::I8},
-        {"i16", IntegerType::I16},
-        {"i32", IntegerType::I32},
-        {"i64", IntegerType::I64}
+        {"i8", VariableType::Integer8},
+        {"i16", VariableType::Integer16},
+        {"i32", VariableType::Integer32},
+        {"i64", VariableType::Integer64}
     };
-    static const std::unordered_map<IntegerType, std::pair<int64_t,int64_t>> intLimits = 
+    static const std::unordered_map<VariableType, std::pair<int64_t,int64_t>> intLimits = 
     {
-        {IntegerType::I8, {INT8_MIN, INT8_MAX}},
-        {IntegerType::I16, {INT16_MIN, INT16_MAX}},
-        {IntegerType::I32, {INT32_MIN, INT32_MAX}},
-        {IntegerType::I64, {INT64_MIN, INT64_MAX}}
+        {VariableType::Integer8, {INT8_MIN, INT8_MAX}},
+        {VariableType::Integer16, {INT16_MIN, INT16_MAX}},
+        {VariableType::Integer32, {INT32_MIN, INT32_MAX}},
+        {VariableType::Integer64, {INT64_MIN, INT64_MAX}}
     };
     auto type_it = castedType.find(typeAssignment.data());
     auto limit_it = type_it != castedType.end() ? intLimits.find(type_it->second) : intLimits.end();
@@ -265,10 +267,10 @@ void star::Value::AssignTypedInt(std::string_view lexeme, size_t typeOffset)
         }
         switch (limit_it->first)
         {
-            case IntegerType::I8: m_Value = static_cast<int8_t>(value); break;
-            case IntegerType::I16: m_Value = static_cast<int16_t>(value); break;
-            case IntegerType::I32: m_Value = static_cast<int32_t>(value); break;
-            case IntegerType::I64: default: m_Value = value; break;
+            case VariableType::Integer8: m_Value = static_cast<int8_t>(value); break;
+            case VariableType::Integer16: m_Value = static_cast<int16_t>(value); break;
+            case VariableType::Integer32: m_Value = static_cast<int32_t>(value); break;
+            case VariableType::Integer64: default: m_Value = value; break;
         }
     }
 }
@@ -279,19 +281,19 @@ void star::Value::AssignTypedUint(std::string_view lexeme, size_t typeOffset)
     divisor += (typeOffset);
     std::string_view radical{lexeme.begin(), divisor};
     std::string_view typeAssignment{divisor, lexeme.end()};
-    static const std::unordered_map<std::string, IntegerType> castedType = 
+    static const std::unordered_map<std::string, VariableType> castedType = 
     {
-        {"u8", IntegerType::U8},
-        {"u16", IntegerType::U16},
-        {"u32", IntegerType::U32},
-        {"u64", IntegerType::U64}
+        {"u8", VariableType::Unsigned8},
+        {"u16", VariableType::Unsigned16},
+        {"u32", VariableType::Unsigned32},
+        {"u64", VariableType::Unsigned64}
     };
-    static const std::unordered_map<IntegerType, uint64_t> uintLimits = 
+    static const std::unordered_map<VariableType, uint64_t> uintLimits =
     {
-        {IntegerType::U8, UINT8_MAX},
-        {IntegerType::U16, UINT16_MAX},
-        {IntegerType::U32, UINT32_MAX},
-        {IntegerType::U64, UINT64_MAX}
+        {VariableType::Unsigned8, UINT8_MAX},
+        {VariableType::Unsigned16, UINT16_MAX},
+        {VariableType::Unsigned32, UINT32_MAX},
+        {VariableType::Unsigned64, UINT64_MAX}
     };
     auto type_it = castedType.find(typeAssignment.data());
     auto limit_it = type_it != castedType.end() ? uintLimits.find(type_it->second) : uintLimits.end();
@@ -319,10 +321,10 @@ void star::Value::AssignTypedUint(std::string_view lexeme, size_t typeOffset)
         }
         switch (limit_it->first)
         {
-            case IntegerType::U8: m_Value = static_cast<uint8_t>(value); break;
-            case IntegerType::U16: m_Value = static_cast<uint16_t>(value); break;
-            case IntegerType::U32: m_Value = static_cast<uint32_t>(value); break;
-            case IntegerType::U64: default: m_Value = value; break;
+            case VariableType::Unsigned8: m_Value = static_cast<uint8_t>(value); break;
+            case VariableType::Unsigned16: m_Value = static_cast<uint16_t>(value); break;
+            case VariableType::Unsigned32: m_Value = static_cast<uint32_t>(value); break;
+            case VariableType::Unsigned64: default: m_Value = value; break;
         }
     }
 }
@@ -343,6 +345,10 @@ const std::string star::Value::ToString(const std::string& format) const
             else if constexpr (std::is_same_v<T, bool>)
             {
                 return value ? "true" : "false";
+            }
+            else if constexpr (std::is_same_v<T, std::shared_ptr<Function>>)
+            {
+                return value->ToString();
             }
             else if constexpr (std::is_same_v<T, char8_t>)
             {
@@ -392,6 +398,10 @@ const std::string star::Value::StringifyString() const
             {
                 return helpers::StringifyString(value);
             }
+			else if constexpr (std::is_same_v<T, std::shared_ptr<Function>>)
+			{
+				return value->ToString();
+			}
             else
             {
                 return std::to_string(value);

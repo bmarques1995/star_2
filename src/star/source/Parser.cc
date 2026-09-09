@@ -26,7 +26,9 @@ const std::unordered_map<std::string, star::VariableType> star::Parser::s_TypeKe
 
     
     {"f32", VariableType::Float32},
-	{"f64", VariableType::Float64} 
+	{"f64", VariableType::Float64},
+
+	{"void", VariableType::Void}
 };
 
 const std::unordered_map<star::TokenType, star::TokenType> star::Parser::s_BinaryOperators =
@@ -118,7 +120,8 @@ std::shared_ptr<star::Expression::Expr> star::Parser::Unary()
         std::shared_ptr<Expression::Expr> right = Unary();
         return std::make_shared<star::Expression::Unary>(oper, right);
     }
-    return Primary();
+    //return Primary();
+	return Call();
 }
 
 std::shared_ptr<star::Expression::Expr> star::Parser::Primary()
@@ -233,21 +236,7 @@ std::shared_ptr<star::Expression::Expr> star::Parser::TemplateLiteral()
 
 std::shared_ptr<star::Expression::Expr> star::Parser::Assignment()
 {
-    /*std::shared_ptr<Expression::Expr> expr = Ternary();
-    if (Match(TokenType::EQUAL))
-    {
-        Token equals = Previous();
-        std::shared_ptr<Expression::Expr> value = Assignment();
-        if (auto* variable = dynamic_cast<Expression::Variable*>(expr.get()))
-		{
-			return std::make_shared<Expression::Assignment>(
-				variable->m_Name,
-				value
-			);
-		}
-		throw ParserException("Invalid assignment target.");
-    }
-	return expr;*/
+
     std::shared_ptr<Expression::Expr> expr = Ternary();
 
     if (Match(TokenType::EQUAL, TokenType::REC_PLUS, TokenType::REC_MINUS,
@@ -305,12 +294,49 @@ std::shared_ptr<star::Expression::Expr> star::Parser::LogicalAnd()
     return expr;
 }
 
+std::shared_ptr<star::Expression::Expr> star::Parser::Call()
+{
+    std::shared_ptr<star::Expression::Expr> expr = Primary();
+	while (Match(TokenType::LEFT_PAREN))
+	{
+		expr = FinishCall(expr);
+	}
+	return expr;
+}
+
+std::shared_ptr<star::Expression::Expr> star::Parser::FinishCall(std::shared_ptr<Expression::Expr> callee)
+{
+	std::vector<std::shared_ptr<Expression::Expr>> arguments;
+	if (!Check(TokenType::RIGHT_PAREN))
+	{
+		do
+		{
+			if (arguments.size() >= 255)
+			{
+				throw ParserException("Can't exceed 255 arguments.");
+			}
+			arguments.push_back(Assignment());
+		} while (Match(TokenType::COMMA));
+	}
+	Token paren = Consume(TokenType::RIGHT_PAREN, "Expected ')' after arguments.");
+
+	return std::make_shared<Expression::Call>(callee, std::move(paren), arguments);
+}
+
 std::shared_ptr<star::Statement::Stmt> star::Parser::Statement()
 {
     if(Match(TokenType::PRINT)) return PrintStatement();
     if(Match(TokenType::IF)) return IfStatement();
+    if(Match(TokenType::RETURN)) return ReturnStatement();
 	if(Match(TokenType::WHILE)) return WhileStatement();
     if(Match(TokenType::FOR)) return ForStatement();
+    //if(Match(TokenType::SWITCH)) return SwitchStatement();
+    //if(Match(TokenType::BREAK)) return BreakStatement();
+    //if(Match(TokenType::CONTINUE)) return ContinueStatement();
+    //if(Match(TokenType::FUNCTION)) return Function("function");
+    //if(Match(TokenType::TRY)) return TryStatement();
+    //if(Match(TokenType::THROW)) return ThrowStatement();
+    //if(Match(TokenType::FOREACH)) return ForEachStatement();
 	if(Match(TokenType::LEFT_BRACE)) return std::make_shared<Statement::Block>(Block());
     else return ExpressionStatement();
 }
@@ -334,7 +360,9 @@ std::shared_ptr<star::Statement::Stmt> star::Parser::Declaration()
     try
     {
         if(Match(TokenType::VAR)) return VarDeclaration();
-		else if(Match(TokenType::AUTO)) return AutoDeclaration();
+        else if (Match(TokenType::AUTO)) return AutoDeclaration();
+		//refactor this to use enums instead of strings
+        else if(Match(TokenType::FUN)) return Function("function");
 		else return Statement();
     }
     catch (const ParserException& e)
@@ -354,15 +382,7 @@ std::shared_ptr<star::Statement::Stmt> star::Parser::VarDeclaration()
     Token name = Consume(TokenType::IDENTIFIER, "Expected variable name.");
 
 	std::shared_ptr<Expression::Expr> init = nullptr;
-    VariableType type = VariableType::Dynamic;
-    if(Match(TokenType::HASHTAG))
-    {
-        Token typeToken = Consume(TokenType::IDENTIFIER, "Expected variable type.");
-        auto it = s_TypeKeywords.find(typeToken.GetLexeme());
-        if(it == s_TypeKeywords.end())
-            throw ParserException("Invalid variable type: " + typeToken.GetLexeme());
-        type = it->second;
-    }
+    VariableType type = MatchHashtag();
     if (Match(TokenType::EQUAL))
     {
         init = Expression();
@@ -469,6 +489,63 @@ std::shared_ptr<star::Statement::Stmt> star::Parser::ForStatement()
     }
 
     return body;
+}
+
+std::shared_ptr<star::Statement::Stmt> star::Parser::ReturnStatement()
+{
+	Token keyword = Previous();
+	std::shared_ptr<Expression::Expr> value = nullptr;
+	if (!Check(TokenType::SEMICOLON))
+	{
+		value = Expression();
+	}
+	Consume(TokenType::SEMICOLON, "Expected ; after return value.");
+	return std::make_shared<Statement::Return>(keyword, value);
+}
+
+std::shared_ptr<star::Statement::Function> star::Parser::Function(const std::string& kind)
+{
+#ifdef DISPLAY_IMPROVEMENTS
+#error "improve this code to use kind parameter as an enum class"
+#endif
+	Token functionName = Consume(TokenType::IDENTIFIER, "Expected " + kind + " name.");
+	
+    std::vector<std::shared_ptr<Statement::FunctionArgument>> parameters;
+
+	Consume(TokenType::LEFT_PAREN, "Expected '(' after function name.");
+    if (!Check(TokenType::RIGHT_PAREN))
+    {
+        do
+        {
+            if (parameters.size() >= 255)
+            {
+                throw ParserException("Can't exceed 255 arguments.");
+            }
+			Token paramName = Consume(TokenType::IDENTIFIER, "Expected parameter name.");
+            VariableType paramType = MatchHashtag();
+			parameters.push_back(std::make_shared<Statement::FunctionArgument>(paramName, paramType));
+
+        } while (Match(TokenType::COMMA));
+    }
+    Consume(TokenType::RIGHT_PAREN, "Expected ')' after function name.");
+	VariableType returnType = MatchHashtag();
+    Consume(TokenType::LEFT_BRACE, "Expected '{' after function declaration.");
+    std::vector<std::shared_ptr<Statement::Stmt>> body = Block();
+    return std::make_shared<Statement::Function>(functionName, parameters, body, returnType);
+}
+
+star::VariableType star::Parser::MatchHashtag()
+{
+    VariableType paramType = VariableType::Dynamic;
+    if (Match(TokenType::HASHTAG))
+    {
+        Token typeToken = Consume(TokenType::IDENTIFIER, "Expected parameter type.");
+        auto it = s_TypeKeywords.find(typeToken.GetLexeme());
+        if (it == s_TypeKeywords.end())
+            throw ParserException("Invalid parameter type: " + typeToken.GetLexeme());
+        paramType = it->second;
+    }
+    return paramType;
 }
 
 template<class...T>

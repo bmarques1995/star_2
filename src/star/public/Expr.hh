@@ -4,6 +4,7 @@
 #include "Visitor.hh"
 #include <memory>
 #include "StarMacro.hh"
+#include "Value.hh"
 #include <variant>
 #include <vector>
 #include <utility>
@@ -106,5 +107,16 @@ namespace star
 			~Logical() = default;
 			Value Accept(ExprVisitor& visitor) override;
 		};
+
+        struct STAR_API Call final : public Expr, public std::enable_shared_from_this<Call>
+        {
+            std::shared_ptr<Expr> m_Callee;
+            std::vector<std::shared_ptr<Expr>> m_Arguments;
+            Token m_Paren;
+
+			Call(std::shared_ptr<Expr> callee, Token paren, std::vector<std::shared_ptr<Expr>> arguments);
+			~Call() = default;
+			Value Accept(ExprVisitor& visitor) override;
+        };
     }
 }

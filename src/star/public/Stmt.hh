@@ -42,6 +42,16 @@ namespace star
             const VariableType ExpectedType() const;
         };
 
+        struct STAR_API FunctionArgument : public Stmt, public std::enable_shared_from_this<FunctionArgument>
+        {
+			Token m_Name;
+			VariableType m_ExpectedType;
+
+			FunctionArgument(Token name, VariableType expectedType);
+			Value Accept(StmtVisitor& visitor) override;
+            const VariableType ExpectedType() const;
+        };
+
 		struct STAR_API Block : public Stmt, public std::enable_shared_from_this<Block>
 		{
 			std::vector<std::shared_ptr<Stmt>> m_Statements;
@@ -68,5 +78,26 @@ namespace star
             While(std::shared_ptr<star::Expression::Expr> condition, std::shared_ptr<Stmt> body);
             Value Accept(StmtVisitor& visitor) override;
         };
-    }
+
+        struct STAR_API Function : public Stmt, public std::enable_shared_from_this<Function>
+        {
+            Token m_Name;
+            std::vector<std::shared_ptr<Statement::FunctionArgument>> m_Parameters;
+            std::vector<std::shared_ptr<Stmt>> m_Body;
+
+			VariableType m_ExpectedType;
+			bool m_LockType;
+
+			Function(Token name, std::vector<std::shared_ptr<Statement::FunctionArgument>> parameters, std::vector<std::shared_ptr<Stmt>> body, VariableType expectedType);
+			Value Accept(StmtVisitor& visitor) override;
+        };
+
+		struct STAR_API Return : public Stmt, public std::enable_shared_from_this<Return>
+		{
+			Token m_Keyword;
+			std::shared_ptr<star::Expression::Expr> m_Value;
+			Return(Token keyword, std::shared_ptr<star::Expression::Expr> value);
+			Value Accept(StmtVisitor& visitor) override;
+		};
+	}
 }

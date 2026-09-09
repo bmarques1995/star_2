@@ -4,6 +4,7 @@
 #include "TokenType.hh"
 #include "Value.hh"
 #include "RuntimeError.hh"
+#include "Function.hh"
 #include <sstream>
 #include <variant>
 
@@ -163,6 +164,34 @@ star::Value star::Interpreter::VisitLogicalExpr(std::shared_ptr<Expression::Logi
     return Evaluate(expr->m_Right);
 }
 
+star::Value star::Interpreter::VisitCallExpr(std::shared_ptr<Expression::Call> expr)
+{
+    Value callee = Evaluate(expr->m_Callee);
+    callee.LockType();
+	std::vector<Value> arguments;
+    for (auto& argument : expr->m_Arguments)
+    {
+        arguments.push_back(Evaluate(argument));
+    }
+    std::shared_ptr<Function> function;
+    if (callee.GetType() == VariableType::Function)
+    {
+        if (auto* value = std::get_if<std::shared_ptr<Function>>(&callee.GetLValue()))
+        {
+            function = *value;
+        }
+        else
+        {
+            throw RuntimeError(expr->m_Paren, "Invalid function value");
+        }
+		if (function->Arity() != arguments.size())
+		{
+			throw RuntimeError(expr->m_Paren, "Expected " + std::to_string(function->Arity()) + " arguments but got " + std::to_string(arguments.size()));
+        }
+    }
+    return function->Call(*this, arguments);
+}
+
 bool star::Interpreter::IsTruthy(const Value& object)
 {
     return std::visit([](const auto& shard)-> bool
@@ -217,7 +246,7 @@ star::Value star::Interpreter::Interpret(std::shared_ptr<Expression::Expr> expr)
 star::Value star::Interpreter::Interpret(std::vector<std::shared_ptr<Statement::Stmt>>& statements)
 {
     std::stringstream ss;
-    for(auto stmt: statements)
+    for(auto& stmt: statements)
         ss << ExecuteStmt(stmt) << "\n";
     std::string result = ss.str();
     return {TokenType::NIL, ""};
@@ -238,7 +267,7 @@ void star::Interpreter::ExecuteBlock
     m_CurrentEnv = environment;
     try
     {
-        for (auto stmt : statements)
+        for (auto& stmt : statements)
         {
             ExecuteStmt(stmt);
         }
@@ -313,4 +342,25 @@ star::Value star::Interpreter::VisitWhileStmt(std::shared_ptr<Statement::While> 
 		condition = Evaluate(stmt->m_Condition);
 	}
     return { TokenType::NIL, "" };
+}
+
+star::Value star::Interpreter::VisitFunctionStmt(std::shared_ptr<Statement::Function> stmt)
+{
+    auto function = std::make_shared<Function>(stmt, m_CurrentEnv);
+    m_CurrentEnv->Define(stmt->m_Name, { function });
+    return { TokenType::NIL, "" };
+}
+
+star::Value star::Interpreter::VisitFunctionArgumentStmt(std::shared_ptr<Statement::FunctionArgument> stmt)
+{
+    return { TokenType::NIL, "" };
+}
+
+star::Value star::Interpreter::VisitReturnStmt(std::shared_ptr<Statement::Return> stmt)
+{
+    Value value = { TokenType::NIL, "" };
+    if (stmt->m_Value != nullptr) {
+        value = Evaluate(stmt->m_Value);
+    }
+    throw Returner{ value };
 }

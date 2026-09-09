@@ -45,6 +45,22 @@ const star::VariableType star::Statement::Variable::ExpectedType() const
     return m_ExpectedType;
 }
 
+star::Statement::FunctionArgument::FunctionArgument(Token name, VariableType expectedType) :
+	m_Name(name), m_ExpectedType(expectedType)
+{
+
+}
+
+star::Value star::Statement::FunctionArgument::Accept(StmtVisitor& visitor)
+{
+	return visitor.VisitFunctionArgumentStmt(shared_from_this());
+}
+
+const star::VariableType star::Statement::FunctionArgument::ExpectedType() const
+{
+	return m_ExpectedType;
+}
+
 star::Statement::Block::Block(std::vector<std::shared_ptr<Stmt>> statements) :
 	m_Statements(statements)
 {}
@@ -72,4 +88,27 @@ star::Statement::While::While(std::shared_ptr<star::Expression::Expr> condition,
 star::Value star::Statement::While::Accept(StmtVisitor& visitor)
 {
 	return visitor.VisitWhileStmt(shared_from_this());
+}
+
+star::Statement::Function::Function(Token name, std::vector<std::shared_ptr<Statement::FunctionArgument>> parameters, 
+	std::vector<std::shared_ptr<Stmt>> body, VariableType expectedType) :
+	m_Name(name), m_Parameters(parameters), m_Body(body), m_ExpectedType(expectedType)
+{
+	m_LockType = m_ExpectedType == VariableType::Dynamic ? false : true;
+}
+
+star::Value star::Statement::Function::Accept(StmtVisitor& visitor)
+{
+	return visitor.VisitFunctionStmt(shared_from_this());
+}
+
+star::Statement::Return::Return(Token keyword, std::shared_ptr<star::Expression::Expr> value) :
+	m_Keyword(keyword), m_Value(value)
+{
+
+}
+
+star::Value star::Statement::Return::Accept(StmtVisitor& visitor)
+{
+	return visitor.VisitReturnStmt(shared_from_this());
 }

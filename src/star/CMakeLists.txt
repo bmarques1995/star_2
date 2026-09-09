@@ -22,7 +22,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-    target_compile_definitions(${TARGET_NAME} PUBLIC STAR_PLATFORM_WINDOWS)
+    target_compile_definitions(${TARGET_NAME} PUBLIC STAR_PLATFORM_WINDOWS WIN32_LEAN_AND_MEAN NOMINMAX)
     if(BUILD_SHARED_LIBS)
         target_compile_definitions(${TARGET_NAME} PRIVATE STAR_EXPORTS INTERFACE STAR_IMPORTS)
     endif()

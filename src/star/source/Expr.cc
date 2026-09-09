@@ -93,3 +93,14 @@ star::Value star::Expression::Logical::Accept(ExprVisitor& visitor)
 {
 	return visitor.VisitLogicalExpr(shared_from_this());
 }
+
+star::Expression::Call::Call(std::shared_ptr<Expr> callee, Token paren, std::vector<std::shared_ptr<Expr>> arguments) :
+	m_Callee{ std::move(callee) }, m_Arguments{ std::move(arguments) }, m_Paren{ std::move(paren) }
+{
+
+}
+
+star::Value star::Expression::Call::Accept(ExprVisitor& visitor)
+{
+	return visitor.VisitCallExpr(shared_from_this());
+}

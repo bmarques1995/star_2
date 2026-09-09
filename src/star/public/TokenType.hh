@@ -23,19 +23,9 @@ namespace star
 		TEMPLATE_FMT_START, TEMPLATE_FMT_END, TEMPLATE_FMT,
 
         AND, AUTO, CLASS, ELSE, ST_FALSE, FUN, FOR, IF, NIL, OR,
-        PRINT, RETURN, SUPER, THIS, ST_TRUE, VAR, WHILE,
+        PRINT, RETURN, SUPER, THIS, ST_TRUE, VAR, WHILE, BREAK, CONTINUE,
+		TRY, CATCH, THROW, SWITCH, CASE, DEFAULT, FOREACH, VOID,
 
         ST_EOF
-    };
-
-    enum class FloatType
-    {
-        F32, F64
-    };
-
-    enum class IntegerType
-    {
-        I8, I16, I32, I64,
-        U8, U16, U32, U64
     };
 }

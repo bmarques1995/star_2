@@ -17,7 +17,7 @@
             "program": "${workspaceFolder}/out/build/linux-vcpkg-debug/bin/star",
             "console": "integratedTerminal",
             "args": [
-                "samples/file.st"
+                "samples/func.st"
             ],
             "cwd": "${workspaceFolder}"
         },

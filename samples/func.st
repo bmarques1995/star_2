@@ -1,0 +1,6 @@
+fun square(x#u64)#u64
+{
+	return x * x;
+}
+
+print(square(5u64));

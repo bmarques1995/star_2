@@ -47,6 +47,8 @@ namespace star
         std::shared_ptr<Expression::Expr> Assignment();
         std::shared_ptr<Expression::Expr> LogicalOr();
         std::shared_ptr<Expression::Expr> LogicalAnd();
+        std::shared_ptr<Expression::Expr> Call();
+        std::shared_ptr<Expression::Expr> FinishCall(std::shared_ptr<Expression::Expr> callee);
 
         std::shared_ptr<Statement::Stmt> Statement();
         std::shared_ptr<Statement::Stmt> PrintStatement();
@@ -58,9 +60,17 @@ namespace star
 		std::shared_ptr<Statement::Stmt> IfStatement();
 		std::shared_ptr<Statement::Stmt> WhileStatement();
         std::shared_ptr<Statement::Stmt> ForStatement();
+        //Add expected type
+        std::shared_ptr<Statement::Stmt> ReturnStatement();
+        //std::shared_ptr<Statement::Stmt> ForeachStatement();
 		//std::shared_ptr<Statement::Stmt> SwitchStatement();
+        //std::shared_ptr<Statement::Stmt> ThrowStatement();
 		//std::shared_ptr<Statement::Stmt> TryStatement();
 		//std::shared_ptr<Statement::Stmt> CatchClause();
+
+		std::shared_ptr<Statement::Function> Function(const std::string& name);
+
+        VariableType MatchHashtag();
 
     public:
         Parser(const std::vector<Token>&);

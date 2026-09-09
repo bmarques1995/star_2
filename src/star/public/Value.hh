@@ -6,10 +6,12 @@
 #include <variant>
 #include <cstdint>
 #include <string>
+#include <memory>
 #include <unordered_map>
 
 namespace star
 {
+	struct Function;
 	enum class VariableType
 	{
 		Null,
@@ -17,6 +19,8 @@ namespace star
 
 		Character,
 		String,
+
+		Function,
 
 		Integer8,
 		Integer16,
@@ -31,6 +35,7 @@ namespace star
 		Float32,
 		Float64,
 
+		Void,
 		Dynamic
 	};
 
@@ -53,6 +58,7 @@ namespace star
 	{
 		friend class Interpreter;
 		friend class Environment;
+		friend class Function;
 	public:
 		using Storage = std::variant<
 			std::monostate,
@@ -60,6 +66,8 @@ namespace star
 
 			char8_t,
 			std::string,
+
+			std::shared_ptr<Function>,
 
 			int8_t,
 			int16_t,

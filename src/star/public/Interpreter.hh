@@ -12,8 +12,14 @@
 
 namespace star
 {
+	struct Returner
+	{
+		Value value;
+	};
+
 	class STAR_API Interpreter : public Expression::ExprVisitor, Statement::StmtVisitor, public Output
 	{
+		friend class Function;
 	public:
 		Value VisitGroupingExpr(std::shared_ptr<Expression::Grouping> expr) override;
 		Value VisitLiteralExpr(std::shared_ptr<Expression::Literal> expr) override;
@@ -24,6 +30,7 @@ namespace star
 		Value VisitVariableExpr(std::shared_ptr<Expression::Variable> expr) override;
 		Value VisitAssignmentExpr(std::shared_ptr<Expression::Assignment> expr) override;
 		Value VisitLogicalExpr(std::shared_ptr<Expression::Logical> expr) override;
+		Value VisitCallExpr(std::shared_ptr<Expression::Call> expr) override;
 		
 		Interpreter();
 		virtual ~Interpreter() = default;
@@ -41,6 +48,10 @@ namespace star
 		Value VisitBlockStmt(std::shared_ptr<Statement::Block> stmt) override;
 		Value VisitIfStmt(std::shared_ptr<Statement::If> stmt) override;
 		Value VisitWhileStmt(std::shared_ptr<Statement::While> stmt) override;
+		Value VisitFunctionStmt(std::shared_ptr<Statement::Function> stmt) override;
+		Value VisitFunctionArgumentStmt(std::shared_ptr<Statement::FunctionArgument> stmt) override;
+		Value VisitReturnStmt(std::shared_ptr<Statement::Return> stmt) override;
+
 	private:
 		void CheckNumberOperand(const Token& oper, const Value& operand);
 		void CheckNumberOperands(const Token& oper, const Value& left, const Value& right);
