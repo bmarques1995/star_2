@@ -173,10 +173,10 @@ star::Value star::Interpreter::VisitCallExpr(std::shared_ptr<Expression::Call> e
     {
         arguments.push_back(Evaluate(argument));
     }
-    std::shared_ptr<Function> function;
-    if (callee.GetType() == VariableType::Function)
+    std::shared_ptr<Callable> function;
+    if (callee.GetType() == VariableType::Callable)
     {
-        if (auto* value = std::get_if<std::shared_ptr<Function>>(&callee.GetLValue()))
+        if (auto* value = std::get_if<std::shared_ptr<Callable>>(&callee.GetLValue()))
         {
             function = *value;
         }

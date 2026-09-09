@@ -16,6 +16,10 @@ As I will use fmt, I can use the extra tokens
 
 As long as `PRINT_FMT_START` suceeds a `STR_EXPR_END`, mandatorily
 
+## Add promote, demote, truncate and cast as builtin functions
+
+## Add builtin promotion and alert demotion
+
 ## Add exit as builtin function
 
 ## Fix arrow not moving on REPL at linux and freebsd

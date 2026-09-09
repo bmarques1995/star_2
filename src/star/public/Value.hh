@@ -11,7 +11,7 @@
 
 namespace star
 {
-	struct Function;
+	struct Callable;
 	enum class VariableType
 	{
 		Null,
@@ -20,7 +20,7 @@ namespace star
 		Character,
 		String,
 
-		Function,
+		Callable,
 
 		Integer8,
 		Integer16,
@@ -67,7 +67,7 @@ namespace star
 			char8_t,
 			std::string,
 
-			std::shared_ptr<Function>,
+			std::shared_ptr<Callable>,
 
 			int8_t,
 			int16_t,

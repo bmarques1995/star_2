@@ -55,7 +55,7 @@ const std::unordered_map<size_t, star::VariableType> star::Value::castedType =
 	{1, VariableType::Boolean},
 	{2, VariableType::Character},
 	{3, VariableType::String},
-    {4, VariableType::Function},
+    {4, VariableType::Callable},
 	{5, VariableType::Integer8},
 	{6, VariableType::Integer16},
 	{7, VariableType::Integer32},
@@ -346,7 +346,7 @@ const std::string star::Value::ToString(const std::string& format) const
             {
                 return value ? "true" : "false";
             }
-            else if constexpr (std::is_same_v<T, std::shared_ptr<Function>>)
+            else if constexpr (std::is_same_v<T, std::shared_ptr<Callable>>)
             {
                 return value->ToString();
             }
@@ -398,7 +398,7 @@ const std::string star::Value::StringifyString() const
             {
                 return helpers::StringifyString(value);
             }
-			else if constexpr (std::is_same_v<T, std::shared_ptr<Function>>)
+			else if constexpr (std::is_same_v<T, std::shared_ptr<Callable>>)
 			{
 				return value->ToString();
 			}
