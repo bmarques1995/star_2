@@ -6,11 +6,11 @@
 namespace star
 {
 	// fun exit(code#u32)#void
-	class STAR_API Exit : public Callable
+	class STAR_API Escape : public Callable
 	{
 	public:
-		Exit();
-		~Exit() = default;
+		Escape();
+		~Escape() = default;
 
 		const size_t Arity() const override;
 		std::string ToString() const override;

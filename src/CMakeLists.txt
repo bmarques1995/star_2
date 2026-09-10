@@ -1,8 +1,7 @@
 add_subdirectory(star)
-
+add_subdirectory(star_cli)
 
 if(BUILD_CLI)
-    add_subdirectory(star_cli)
     add_subdirectory(repl)    
 endif()
 

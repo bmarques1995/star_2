@@ -9,6 +9,7 @@
 #include "Scanner.hh"
 #include "Parser.hh"
 #include "Version.hh"
+#include "EscapeObject.hh"
 
 
 namespace fs = std::filesystem;
@@ -49,13 +50,22 @@ void star::Star::RunPrompt()
     star::NeutralConsole() << "[star version: " << Version::GetVersion() << "]" << "\n";
     star::NeutralConsole() << "[" << Version::GetCompilerNameAndVersion() << "]" << "\n\n";
     star::TraceConsole() << replPrefix;
-    for(;;)
+    try
     {
-        if(!std::getline(std::cin, line))
-            break;
-        Run(line);
-        star::TraceConsole() << replPrefix;
+        for (;;)
+        {
+            if (!std::getline(std::cin, line))
+                break;
+            Run(line);
+            star::TraceConsole() << replPrefix;
+        }
     }
+    catch(const EscapeObject& e)
+    {
+        star::TraceConsole() << "Core terminated with code: " << std::to_string(e.m_EscapeCode) << "\n";
+		std::exit(e.m_EscapeCode);
+    }
+    
 }
 
 void star::Star::Run(const std::string& source, const std::string& filepath)
