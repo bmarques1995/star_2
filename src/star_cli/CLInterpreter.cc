@@ -1,11 +1,7 @@
 #include "CLInterpreter.hh"
-#include "Console.hh"
+#include "Print.hh"
 
 star::CLInterpreter::CLInterpreter()
 {
-}
-
-void star::CLInterpreter::Write(const std::string& text) const
-{
-    NeutralConsole() << text << "\n";
+	m_CurrentEnv->Define(Token{ TokenType::FUN, "print", 1, 1, "::native" }, Value{ std::make_shared<Print>() });
 }

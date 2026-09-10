@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Output.hh"
 #include "StarMacro.hh"
 #include "Token.hh"
 #include "Expr.hh"
@@ -17,7 +16,7 @@ namespace star
 		Value value;
 	};
 
-	class STAR_API Interpreter : public Expression::ExprVisitor, Statement::StmtVisitor, public Output
+	class STAR_API Interpreter : public Expression::ExprVisitor, Statement::StmtVisitor
 	{
 		friend class Function;
 	public:
@@ -34,8 +33,6 @@ namespace star
 		
 		Interpreter();
 		virtual ~Interpreter() = default;
-		
-		void Write(const std::string& text) const override;
 
 		Value Interpret(std::shared_ptr<Expression::Expr> expr);
 		Value Interpret(std::vector<std::shared_ptr<Statement::Stmt>>& statements);
@@ -43,7 +40,6 @@ namespace star
 		void ExecuteBlock(const std::vector<std::shared_ptr<Statement::Stmt>>& statements, std::shared_ptr<Environment> environment);
 
 		Value VisitExpressionStmt(std::shared_ptr<Statement::Expression> stmt) override;
-        Value VisitPrintStmt(std::shared_ptr<Statement::Print> stmt) override;
 		Value VisitVariableStmt(std::shared_ptr<Statement::Variable> stmt) override;
 		Value VisitBlockStmt(std::shared_ptr<Statement::Block> stmt) override;
 		Value VisitIfStmt(std::shared_ptr<Statement::If> stmt) override;
@@ -52,7 +48,7 @@ namespace star
 		Value VisitFunctionArgumentStmt(std::shared_ptr<Statement::FunctionArgument> stmt) override;
 		Value VisitReturnStmt(std::shared_ptr<Statement::Return> stmt) override;
 
-	private:
+	protected:
 		void CheckNumberOperand(const Token& oper, const Value& operand);
 		void CheckNumberOperands(const Token& oper, const Value& left, const Value& right);
 		bool IsTruthy(const Value& object);

@@ -41,7 +41,6 @@ namespace star
     namespace Statement
     {
         struct Expression;
-        struct Print;
         struct Variable;
         struct Block;
         struct If;
@@ -57,7 +56,6 @@ namespace star
         struct StmtVisitor
         {
             virtual Value VisitExpressionStmt(std::shared_ptr<Expression> stmt) = 0;
-            virtual Value VisitPrintStmt(std::shared_ptr<Print> stmt) = 0;
             virtual Value VisitVariableStmt(std::shared_ptr<Variable> stmt) = 0;
             
             virtual Value VisitBlockStmt(std::shared_ptr<Block> stmt) = 0;

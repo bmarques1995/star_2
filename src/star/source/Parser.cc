@@ -325,7 +325,6 @@ std::shared_ptr<star::Expression::Expr> star::Parser::FinishCall(std::shared_ptr
 
 std::shared_ptr<star::Statement::Stmt> star::Parser::Statement()
 {
-    if(Match(TokenType::PRINT)) return PrintStatement();
     if(Match(TokenType::IF)) return IfStatement();
     if(Match(TokenType::RETURN)) return ReturnStatement();
 	if(Match(TokenType::WHILE)) return WhileStatement();
@@ -339,13 +338,6 @@ std::shared_ptr<star::Statement::Stmt> star::Parser::Statement()
     //if(Match(TokenType::FOREACH)) return ForEachStatement();
 	if(Match(TokenType::LEFT_BRACE)) return std::make_shared<Statement::Block>(Block());
     else return ExpressionStatement();
-}
-
-std::shared_ptr<star::Statement::Stmt> star::Parser::PrintStatement()
-{
-    std::shared_ptr<Expression::Expr> value = Expression();
-    Consume(TokenType::SEMICOLON, "Expected ; after value.");
-    return std::make_shared<Statement::Print>(value);
 }
 
 std::shared_ptr<star::Statement::Stmt> star::Parser::ExpressionStatement()
@@ -609,7 +601,6 @@ void star::Parser::Synchronize()
             case TokenType::FOR:
             case TokenType::IF:
             case TokenType::WHILE:
-            case TokenType::PRINT:
             case TokenType::RETURN:
             default:
                 return;

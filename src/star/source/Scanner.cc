@@ -28,7 +28,6 @@ const std::unordered_map<std::string, star::TokenType> star::Scanner::s_Keywords
     {"if",     TokenType::IF},
     {"nil",    TokenType::NIL},
     {"or",     TokenType::OR},
-    {"print",  TokenType::PRINT},
     {"return", TokenType::RETURN},
     {"super",  TokenType::SUPER},
     {"this",   TokenType::THIS},
@@ -290,6 +289,7 @@ void star::Scanner::TemplateString()
             AdvanceAndCommit(2);            
             AddToken(TokenType::STR_EXPR_END);
             c = Peek();
+            continue;
         }
         if(c == '@' && Peek(1) == '{')
         {

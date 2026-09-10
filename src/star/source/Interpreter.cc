@@ -235,11 +235,6 @@ star::Value star::Interpreter::Evaluate(std::shared_ptr<Expression::Expr> expr)
     return expr->Accept(*this);
 }
 
-void star::Interpreter::Write(const std::string& text) const
-{
-
-}
-
 star::Value star::Interpreter::Interpret(std::shared_ptr<Expression::Expr> expr)
 {
     return Evaluate(expr);
@@ -286,13 +281,6 @@ void star::Interpreter::ExecuteBlock
 star::Value star::Interpreter::VisitExpressionStmt(std::shared_ptr<Statement::Expression> stmt)
 {
     Value v = Evaluate(stmt->m_Expression);
-    return {TokenType::NIL, ""};
-}
-
-star::Value star::Interpreter::VisitPrintStmt(std::shared_ptr<Statement::Print> stmt)
-{
-    Value v = Evaluate(stmt->m_Expression);
-    Write(Stringify(v, ""));
     return {TokenType::NIL, ""};
 }
 

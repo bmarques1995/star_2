@@ -16,12 +16,6 @@ namespace star
         }
         ~MockInterpreter() = default;
 
-        void Write(const std::string& text) const override
-        {
-            Interpreter::Write(text);
-            m_Result = text;
-        }
-
         const std::string& GetText()
         {
             return m_Result;

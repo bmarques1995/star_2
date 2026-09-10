@@ -10,7 +10,5 @@ namespace star
     public:
         CLInterpreter();
         ~CLInterpreter() = default;
-
-        void Write(const std::string& text) const override;
     };
 }
