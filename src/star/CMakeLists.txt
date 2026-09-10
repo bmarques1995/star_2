@@ -12,6 +12,7 @@ set_cxx_project_standards(${TARGET_NAME} 20 FALSE)
 set_artifacts_dir(${TARGET_NAME} ${PROJECT_BINARY_DIR})
 set_msvc_target_utf8(${TARGET_NAME})
 target_include_directories(${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/public>
+                                                 $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/public/builtin>
                                                  $<INSTALL_INTERFACE:include>
                                           PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/private>)
 target_link_libraries(${TARGET_NAME} PRIVATE magic_enum::magic_enum

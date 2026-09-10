@@ -7,10 +7,12 @@
 #include "Function.hh"
 #include <sstream>
 #include <variant>
+#include "Exit.hh"
 
 star::Interpreter::Interpreter()
 {
 	m_CurrentEnv.reset(new Environment());
+	m_CurrentEnv->Define(Token{ TokenType::FUN, "exit", 1, 1, "::native" }, Value{ std::make_shared<Exit>() });
 }
 
 star::Value star::Interpreter::VisitGroupingExpr(std::shared_ptr<Expression::Grouping> expr)

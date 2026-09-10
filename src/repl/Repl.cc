@@ -51,7 +51,7 @@ void star::Star::RunPrompt()
     star::TraceConsole() << replPrefix;
     for(;;)
     {
-        if(!std::getline(std::cin, line) || (line == "exit"))
+        if(!std::getline(std::cin, line))
             break;
         Run(line);
         star::TraceConsole() << replPrefix;
