@@ -63,6 +63,7 @@ set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_BINARY_DIR}/LICENSE.txt")
 set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
+set(CPACK_PACKAGE_VENDOR "Starlang")
 if(WIN32)
     set(CPACK_GENERATOR "WIX")
     set(CPACK_WIX_VERSION "4")
@@ -75,7 +76,7 @@ if(WIN32)
     # IMPORTANTE:
     # Não é WixUI_InstallDir.
     # É o ID que vamos criar em wix_ui.wxs.
-    set(CPACK_WIX_UI_REF "WixUI_InstallDir")
+    set(CPACK_WIX_UI_REF "StarlangUI")
 
     # CPack normalmente já inclui WixToolset.UI.wixext,
     # mas deixamos explícito.
@@ -83,8 +84,12 @@ if(WIN32)
         "WixToolset.UI.wixext"
     )
 
+    #set(CPACK_WIX_PRODUCT_ICON
+    #    "${CMAKE_CURRENT_SOURCE_DIR}/installer/star.ico"
+    #)
+
     set(CPACK_WIX_EXTRA_SOURCES
-        "${CMAKE_CURRENT_SOURCE_DIR}/wix_path.wxs"
+        "${CMAKE_CURRENT_SOURCE_DIR}/wix/StarlangUI.wxs"
     )
 
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "Starlang")
