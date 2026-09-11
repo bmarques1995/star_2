@@ -8,3 +8,6 @@ coverage/
 *.profraw
 snippets.cpp
 .vs/
+.wix/
+_CPack_Packages/
+*.msi

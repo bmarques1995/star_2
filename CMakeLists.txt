@@ -82,6 +82,7 @@ if(WIN32)
     # mas deixamos explícito.
     set(CPACK_WIX_EXTENSIONS
         "WixToolset.UI.wixext"
+        "WixToolset.Util.wixext"
     )
 
     #set(CPACK_WIX_PRODUCT_ICON
