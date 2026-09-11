@@ -1,0 +1,10 @@
+<CPackWiXPatch>
+	<CPackWiXFragment Id="WixUI_InstallDir">
+		<Publish
+            Dialog="InstallDirDlg"
+            Control="Next"
+            Event="NewDialog"
+            Value="PathOptionsDlg"
+            Order="1" />
+	</CPackWiXFragment>
+</CPackWiXPatch>

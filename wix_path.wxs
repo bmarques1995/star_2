@@ -1,0 +1,31 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+
+	<Fragment>
+
+		<Property
+            Id="ADD_TO_PATH"
+            Value="1" />
+
+		<Component
+            Id="AddToPathComp"
+            Directory="INSTALL_ROOT"
+            Guid="E3B0C442-98FC-4C14-9C78-14D535A66B96"
+            Condition="ADD_TO_PATH = 1">
+
+			<Environment
+                Id="AddToPath"
+                Name="PATH"
+                Value="[INSTALL_ROOT]bin"
+                Action="set"
+                Part="last"
+                System="yes" />
+
+		</Component>
+
+		<FeatureRef Id="ProductFeature">
+			<ComponentRef Id="AddToPathComp" />
+		</FeatureRef>
+
+	</Fragment>
+
+</Wix>
