@@ -64,7 +64,13 @@ add_cpack_wix_configs(
     EXTRA_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/wix/StarlangUI.wxs"
     EXTRA_ACTIONS "STARLANG_ADD_TO_PATH"
 )
-add_cpack_unix_packers()
+add_cpack_unix_packers(
+    MAINTAINER "bmarques1995"
+    URL "https://github.com/bmarques1995/star_2.git"
+    LICENSE BSD-3-Clauses
+    DESC "<DESC>"
+    COMMENT "<COMMENT>"
+    LICENSE_FILE "${PROJECT_SOURCE_DIR}/LICENSE")
 include(CPack)
 
 add_subdirectory(src)

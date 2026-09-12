@@ -11,3 +11,6 @@ snippets.cpp
 .wix/
 _CPack_Packages/
 *.msi
+*.tar.xz
+*.deb
+*.rpm
