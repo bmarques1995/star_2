@@ -47,75 +47,24 @@ FetchContent_Declare(
 # 3. Download the library and make its targets available
 FetchContent_MakeAvailable(cmake_helpers)
 
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake_helpers")
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR};${PROJECT_SOURCE_DIR}/cmake_helpers")
 
 include(target_destination)
 
 include(InstallRequiredSystemLibraries)
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
-configure_file(
-    "${PROJECT_SOURCE_DIR}/LICENSE"
-    "${PROJECT_BINARY_DIR}/LICENSE.txt"
-    COPYONLY
+include(cpack_patcher)
+set_cpack_defaults(LICENSE_IN_FILE ${PROJECT_SOURCE_DIR}/LICENSE LICENSE_OUT_FILE ${PROJECT_BINARY_DIR}/LICENSE.txt)
+add_cpack_wix_configs(
+    UPGRADE_GUID "C411F940-3D69-482A-A5EC-229F8A734F14"
+    UI "StarlangUI"
+    PATCH "${PROJECT_SOURCE_DIR}/wix/wix_patch.xml"
+    EXTENSIONS "WixToolset.UI.wixext" "WixToolset.Util.wixext"
+    EXTRA_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/wix/StarlangUI.wxs"
+    EXTRA_ACTIONS "STARLANG_ADD_TO_PATH"
 )
-set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_BINARY_DIR}/LICENSE.txt")
-set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
-set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
-set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
-set(CPACK_PACKAGE_VENDOR "Starlang")
-if(WIN32)
-    set(CPACK_GENERATOR "WIX")
-    set(CPACK_WIX_VERSION "4")
-    set(CPACK_WIX_UPGRADE_GUID
-        "C411F940-3D69-482A-A5EC-229F8A734F14"
-    )
-
-    # Nossa UI customizada.
-    #
-    # IMPORTANTE:
-    # Não é WixUI_InstallDir.
-    # É o ID que vamos criar em wix_ui.wxs.
-    set(CPACK_WIX_UI_REF "StarlangUI")
-
-    # CPack normalmente já inclui WixToolset.UI.wixext,
-    # mas deixamos explícito.
-    set(CPACK_WIX_EXTENSIONS
-        "WixToolset.UI.wixext"
-        "WixToolset.Util.wixext"
-    )
-
-    #set(CPACK_WIX_PRODUCT_ICON
-    #    "${CMAKE_CURRENT_SOURCE_DIR}/installer/star.ico"
-    #)
-
-    set(CPACK_WIX_EXTRA_SOURCES
-        "${CMAKE_CURRENT_SOURCE_DIR}/wix/StarlangUI.wxs"
-    )
-    set(CPACK_WIX_PATCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/wix/wix_patch.xml")
-
-    set(CPACK_WIX_INSTALL_SCOPE "perMachine")
-    set(CPACK_WIX_CUSTOM_ACTION_PROPERTIES "STARLANG_ADD_TO_PATH")
-
-    set(CPACK_PACKAGE_INSTALL_DIRECTORY "Starlang")
-elseif(APPLE)
-    set(CPACK_GENERATOR "productbuild") 
-elseif(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
-    set(CPACK_GENERATOR "FREEBSD")
-    
-    # Metadados obrigatórios exigidos pelo gerenciador pkg do FreeBSD:
-    set(CPACK_FREEBSD_PACKAGE_MAINTAINER "seu-email@provedor.com")
-    set(CPACK_FREEBSD_PACKAGE_COMMENT "Uma breve descricao do seu programa")
-    set(CPACK_FREEBSD_PACKAGE_DESCRIPTION "Uma descricao mais detalhada do funcionamento do programa.")
-    set(CPACK_FREEBSD_PACKAGE_WWW "https://seu-site.com")
-    set(CPACK_FREEBSD_PACKAGE_LICENSE "BSD-3-Clause") # Ou a licenca correspondente
-else()
-    set(CPACK_GENERATOR "TXZ;DEB;RPM")
-    
-    # Metadados essenciais exigidos para gerar pacotes DEB e RPM sem erros:
-    set(CPACK_PACKAGE_CONTACT "seu-email@provedor.com")
-    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Uma breve descricao do programa para Linux")          # .tar.xz para Linux (Ubuntu, Fedora, etc.)
-endif()
+add_cpack_unix_packers()
 include(CPack)
 
 add_subdirectory(src)
