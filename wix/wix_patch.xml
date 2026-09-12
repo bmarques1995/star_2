@@ -1,15 +1,14 @@
 <CPackWiXPatch>
   <CPackWiXFragment Id="CM_DP_bin">
     <!-- Implement the "CMAKE_IN_PATH" checkbox when installing for all users.  -->
-    <Component Id="CMakeSystemPathEntryCMP" KeyPath="yes" Guid="0E782367-5D68-4539-81D1-B9757AE496A1" Condition="STARLANG_ADD_TO_PATH">
+    <Component Id="StarlangPathEntryCMP" KeyPath="yes" Guid="0E782367-5D68-4539-81D1-B9757AE496A1" Condition="STARLANG_ADD_TO_PATH">
       <Environment Id="CMakeSystemPathEntryENV" Action="set" Part="last"
         Name="PATH" Value="[INSTALL_ROOT]bin"
         System="yes"/>
-      <RegistryValue Root="HKLM" Key="Software\Starlang\Install" Name="InstallInPATH" Type="integer" Value="1" />
     </Component>
   </CPackWiXFragment>
 
   <CPackWiXFragment Id="#PRODUCTFEATURE">
-    <ComponentRef Id="CMakeSystemPathEntryCMP"/>
+    <ComponentRef Id="StarlangPathEntryCMP"/>
   </CPackWiXFragment>
 </CPackWiXPatch>
