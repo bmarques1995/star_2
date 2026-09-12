@@ -28,7 +28,7 @@ endmacro()
 macro(add_cpack_wix_configs)
     if(WIN32)
 
-        set(oneValueArgs "UPGRADE_GUID" "UI" "PATCH")
+        set(oneValueArgs "UPGRADE_GUID" "UI" "PATCH" "ICON" "BANNER" "DIALOG")
         set(options)
         set(multiValueArgs "EXTENSIONS" "EXTRA_SOURCES"  "EXTRA_ACTIONS")
         cmake_parse_arguments(WIX_PACKER "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -43,18 +43,15 @@ macro(add_cpack_wix_configs)
             ${WIX_PACKER_UPGRADE_GUID}
         )
 
-        #set(CPACK_WIX_PRODUCT_ICON
-        #    "@CMake_SOURCE_DIR@/Utilities/Release/CMakeLogo.ico"
-        #)
-
-        #set(CPACK_WIX_UI_BANNER
-        #    "@CMake_SOURCE_DIR@/Utilities/Release/WiX/ui_banner.jpg"
-        #)
-
-        #set(CPACK_WIX_UI_DIALOG
-        #    "@CMake_SOURCE_DIR@/Utilities/Release/WiX/ui_dialog.jpg"
-        #)
-
+        if(DEFINED WIX_PACKER_ICON)
+            set(CPACK_WIX_PRODUCT_ICON ${WIX_PACKER_ICON})
+        endif()
+        if(DEFINED WIX_PACKER_BANNER)
+            set(CPACK_WIX_UI_BANNER ${WIX_PACKER_BANNER})
+        endif()
+        if(DEFINED WIX_PACKER_DIALOG)
+            set(CPACK_WIX_UI_DIALOG ${WIX_PACKER_DIALOG})
+        endif()
         set(CPACK_WIX_UI_REF ${WIX_PACKER_UI})
 
         # CPack normalmente já inclui WixToolset.UI.wixext,

@@ -50,7 +50,17 @@ FetchContent_MakeAvailable(cmake_helpers)
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR};${PROJECT_SOURCE_DIR}/cmake_helpers")
 
 include(target_destination)
-
+include(source_downloader)
+if(WIN32)
+    download_remote_files(
+    SOURCE_INPUTS 
+        "https://media.githubusercontent.com/media/bmarques1995/star_homepage/refs/heads/master/public/banner.png"
+        "https://media.githubusercontent.com/media/bmarques1995/star_homepage/refs/heads/master/public/dialog.png"
+        "https://media.githubusercontent.com/media/bmarques1995/star_homepage/refs/heads/master/public/favicon.ico"
+    SOURCE_BASE_OUTPUT_DIR
+        ${PROJECT_BINARY_DIR}
+    )
+endif()
 include(InstallRequiredSystemLibraries)
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
@@ -63,6 +73,9 @@ add_cpack_wix_configs(
     EXTENSIONS "WixToolset.UI.wixext" "WixToolset.Util.wixext"
     EXTRA_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/wix/StarlangUI.wxs"
     EXTRA_ACTIONS "STARLANG_ADD_TO_PATH"
+    ICON ${PROJECT_BINARY_DIR}/favicon.ico
+    BANNER ${PROJECT_BINARY_DIR}/banner.png
+    DIALOG ${PROJECT_BINARY_DIR}/dialog.png
 )
 add_cpack_unix_packers(
     MAINTAINER "bmarques1995"

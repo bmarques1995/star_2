@@ -1,5 +1,21 @@
 set(TARGET_NAME star_repl)
-add_executable(${TARGET_NAME} main.cc Repl.hh Repl.cc)
+set(REPL_SOURCES main.cc Repl.hh Repl.cc)
+
+if(MSVC)
+    set(ICON_PATH "${PROJECT_BINARY_DIR}/favicon.ico")
+    
+    # This generates a real app.rc in your build directory with the correct absolute path
+    configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/app.rc.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/app.rc"
+        @ONLY
+    )
+    
+    # Add the generated .rc file to your source list
+    set(REPL_SOURCES ${REPL_SOURCES} "${CMAKE_CURRENT_BINARY_DIR}/app.rc")
+endif()
+
+add_executable(${TARGET_NAME} ${REPL_SOURCES})
 target_link_libraries(${TARGET_NAME} PRIVATE star star_cli)
 
 set_cxx_project_standards(${TARGET_NAME} 20 FALSE)

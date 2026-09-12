@@ -68,19 +68,24 @@
             <Publish Dialog="BrowseDlg" Control="OK" Event="SetTargetPath" Value="[_BrowseProperty]" Order="3" />
             <Publish Dialog="BrowseDlg" Control="OK" Event="EndDialog" Value="Return" Order="4" />
             <Dialog Id="AddToPathDlg" Width="370" Height="270" Title="[ProductName] Setup" NoMinimize="yes">
-                <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="30" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Configuração do PATH" />
+                <Control Id="Banner" Type="Bitmap" X="0" Y="0" Width="370" Height="44" Text="WixUI_Bmp_Banner" />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="30" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Add to PATH" />
+                <Control Id="Subtitle"
+                    Type="Text"
+                    X="25" Y="18"
+                    Width="340" Height="16"
+                    Transparent="yes"
+                    NoPrefix="yes"
+                    Text="Starlang can be added to PATH:" />
                 <Control Id="Line" Type="Line" X="0" Y="44" Width="370" Height="1" />
-                <Control Id="Description" Type="Text" X="20" Y="65" Width="330" Height="55" Transparent="yes" NoPrefix="yes" Text="O Starlang pode ser adicionado ao PATH do usuário. Isso permite executar os comandos do Starlang diretamente pelo terminal." />
-                <Control Id="PathText" Type="Text" X="20" Y="130" Width="330" Height="18" Transparent="yes" NoPrefix="yes" Text="Diretório que será utilizado:" />
-                <Control Id="InstallPath" Type="Text" X="20" Y="150" Width="330" Height="30" Sunken="yes" NoPrefix="yes" Text="[INSTALL_ROOT]bin" />
-                <Control Id="AddToPath" Type="CheckBox" X="20" Y="195" Width="330" Height="18" Property="STARLANG_ADD_TO_PATH" CheckBoxValue="1" Text="Adicionar o Starlang ao PATH do usuário" />
-                <Control Id="Back" Type="PushButton" X="172" Y="243" Width="56" Height="17" Text="Voltar">
+                <Control Id="AddToPath" Type="CheckBox" X="20" Y="75" Width="330" Height="18" Property="STARLANG_ADD_TO_PATH" CheckBoxValue="1" Text="Add Starlang to PATH" />
+                <Control Id="Back" Type="PushButton" X="172" Y="243" Width="56" Height="17" Text="Back">
                     <Publish Event="NewDialog" Value="InstallDirDlg" />
                 </Control>
-                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Avançar">
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next">
                     <Publish Event="NewDialog" Value="VerifyReadyDlg" />
                 </Control>
-                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancelar">
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
                     <Publish Event="EndDialog" Value="Exit" />
                 </Control>
             </Dialog>
