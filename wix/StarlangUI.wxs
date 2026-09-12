@@ -34,8 +34,8 @@
                 Action="set"
                 Part="last"
                 Separator=";"
-                System="no"
-                Permanent="no"/>
+                System="yes"
+                Permanent="yes"/>
         </Component>
     </Fragment>
 
@@ -84,7 +84,7 @@
                     <Publish Event="EndDialog" Value="Exit" />
                 </Control>
             </Dialog>
-            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="InstallDirDlg" Order="1" Condition="NOT Installed" />
+            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="AddToPathDlg" Order="1" Condition="NOT Installed" />
             <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2" Condition="Installed AND NOT PATCH" />
             <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2" Condition="Installed AND PATCH" />
             <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg" />

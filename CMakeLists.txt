@@ -92,6 +92,10 @@ if(WIN32)
     set(CPACK_WIX_EXTRA_SOURCES
         "${CMAKE_CURRENT_SOURCE_DIR}/wix/StarlangUI.wxs"
     )
+    set(CPACK_WIX_PATCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/wix/wix_patch.xml")
+
+    set(CPACK_WIX_INSTALL_SCOPE "perMachine")
+    set(CPACK_WIX_CUSTOM_ACTION_PROPERTIES "STARLANG_ADD_TO_PATH")
 
     set(CPACK_PACKAGE_INSTALL_DIRECTORY "Starlang")
 elseif(APPLE)
